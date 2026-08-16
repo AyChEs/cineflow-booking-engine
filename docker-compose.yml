@@ -1,0 +1,60 @@
+# Desarrollo / demo local con Docker.
+#   docker compose up --build           → CineFlow en http://localhost:8000 (SQLite)
+#   docker compose --profile mysql up    → arranca también MySQL (usa DB_CONNECTION=mysql)
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_CONNECTION: sqlite
+      # Cartelera en vivo (TMDB now_playing region=ES). Sin TMDB_API_KEY en tu
+      # .env cae automáticamente al seeder demo, así que es seguro dejarlo activo.
+      MOVIES_API_ENABLED: "true"
+      TMDB_API_KEY: "${TMDB_API_KEY:-}"
+      # Cartelera real de Yelmo (espeja lo que proyecta Yelmo hoy). Requiere TMDB.
+      YELMO_ENABLED: "${YELMO_ENABLED:-false}"
+      YELMO_CITIES: "${YELMO_CITIES:-madrid,barcelona,valencia,sevilla,bilbao}"
+      # Descomenta para usar MySQL (junto con --profile mysql):
+      # DB_CONNECTION: mysql
+      # DB_HOST: mysql
+      # DB_PORT: 3306
+      # DB_DATABASE: cineflow
+      # DB_USERNAME: cineflow
+      # DB_PASSWORD: secret
+      # Stripe (pago real en modo test). Pon tus claves test en el .env del host
+      # (STRIPE_KEY / STRIPE_SECRET). Si quedan vacías, el pago es simulado.
+      STRIPE_KEY: "${STRIPE_KEY:-}"
+      STRIPE_SECRET: "${STRIPE_SECRET:-}"
+      STRIPE_CURRENCY: "${STRIPE_CURRENCY:-eur}"
+      # Correo. Con MAIL_MAILER=log no se envía nada; pon "smtp" y rellena el
+      # resto en el .env del host para enviar las entradas con QR de verdad.
+      MAIL_MAILER: "${MAIL_MAILER:-log}"
+      MAIL_HOST: "${MAIL_HOST:-}"
+      MAIL_PORT: "${MAIL_PORT:-587}"
+      MAIL_USERNAME: "${MAIL_USERNAME:-}"
+      MAIL_PASSWORD: "${MAIL_PASSWORD:-}"
+      MAIL_FROM_ADDRESS: "${MAIL_FROM_ADDRESS:-entradas@cineflow.test}"
+      MAIL_FROM_NAME: "${MAIL_FROM_NAME:-CineFlow}"
+    volumes:
+      - cineflow_sqlite:/var/www/html/database
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8
+    profiles: ["mysql"]
+    environment:
+      MYSQL_DATABASE: cineflow
+      MYSQL_USER: cineflow
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - cineflow_mysql:/var/lib/mysql
+
+volumes:
+  cineflow_sqlite:
+  cineflow_mysql:

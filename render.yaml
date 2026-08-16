@@ -1,0 +1,48 @@
+# Render.com — Blueprint de despliegue (Docker)
+# Despliega con un clic: https://render.com/deploy  (o "New + → Blueprint")
+services:
+  - type: web
+    name: cineflow
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: APP_KEY
+        sync: false            # genera una con:  php artisan key:generate --show
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        sync: false            # p.ej. https://cineflow.onrender.com
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: MOVIES_API_ENABLED
+        value: "false"
+      # Stripe (opcional). Sin claves, el pago usa el modo simulado integrado.
+      - key: STRIPE_KEY
+        sync: false
+      - key: STRIPE_SECRET
+        sync: false
+      # Correo. MAIL_MAILER=log no envía nada; pon "smtp" y rellena el resto
+      # con un SMTP gratuito (Brevo, Gmail…) para enviar las entradas con QR.
+      - key: MAIL_MAILER
+        value: log
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false
