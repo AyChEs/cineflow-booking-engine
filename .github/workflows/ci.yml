@@ -2,9 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, plan/mejoras]
   pull_request:
-    branches: [ main ]
 
 jobs:
   tests:
@@ -24,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Copy environment file
         run: cp .env.example .env
@@ -46,4 +45,4 @@ jobs:
           touch database/testing.sqlite
 
       - name: Run tests
-        run: php artisan test
+        run: php artisan test --display-skipped
