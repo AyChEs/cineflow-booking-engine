@@ -32,7 +32,12 @@ Léelo entero antes de empezar cualquier sesión. Si una skill choca con esto, m
 
 ## Entorno de esta máquina
 
-- Hay Node 22 y `gh` con sesión de `AyChEs`. **No hay PHP, Composer ni Docker en el sistema** (comprobado el 2026-10-18). La sesión 00 deja un PHP 8.4 y Composer en `~/.local/php/` y añade aquí cómo usarlos. Si no lo consigue, la verificación de PHP se hace solo en CI.
+- Hay Node 22 y `gh` con sesión de `AyChEs`. **No hay PHP, Composer ni Docker en el sistema** (comprobado el 2026-10-18). La sesión 00 dejó un PHP 8.4.23 (static-php-cli) y Composer 2.10 en `~/.local/php/`. Para usarlos en cada terminal nueva:
+  ```bash
+  export PATH="$HOME/.local/php:$PATH"
+  alias composer="php $HOME/.local/php/composer.phar"
+  ```
+  El binario es `php` (8.4.23, cli) y trae `pdo_sqlite`, `mbstring`, `dom`, `curl`, `zip`, `bcmath`, `gd`. No trae `intl` (no es imprescindible para este proyecto).
 - Arranque local (tras la sesión 00): `cp -n .env.example .env && php artisan key:generate && touch database/database.sqlite && php artisan migrate:fresh --seed && npm ci && npm run build && php artisan serve --port=8000`.
 - Cuentas del seeder: `admin@cineflow.test` / `admin1234`, `taquilla@cineflow.test` / `taquilla1234`, `cliente@cineflow.test` / `cliente1234`.
 - Contra la demo pública (`cineflow-ufe0.onrender.com`) solo se navega. No se compra, no se bloquean butacas a propósito y no se crean cuentas.
