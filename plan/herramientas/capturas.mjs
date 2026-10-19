@@ -4,7 +4,8 @@ import fs from 'fs';
 const [,, name, base, pagesJson, loginJson] = process.argv;
 const pages = JSON.parse(pagesJson);
 const login = loginJson ? JSON.parse(loginJson) : null;
-const out = `/tmp/capt/out/${name}`; fs.mkdirSync(out, { recursive: true });
+// CAPT_OUT cambia la carpeta de salida (por defecto /tmp/capt/out).
+const out = `${process.env.CAPT_OUT || '/tmp/capt/out'}/${name}`; fs.mkdirSync(out, { recursive: true });
 const spa = process.env.SPA === '1';
 async function go(page, url) {
   if (!spa) return page.goto(base + url, { waitUntil: 'networkidle', timeout: 90000 });

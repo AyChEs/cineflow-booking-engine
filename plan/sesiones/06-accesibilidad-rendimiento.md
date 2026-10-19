@@ -22,7 +22,8 @@ Lee `plan/REGLAS.md`, `plan/DISENO.md` y `plan/AUDITORIA.md`. Las sesiones 02 a 
    - Sin peticiones a terceros además de TMDB y Stripe (`grep -rnE "https?://" resources/views | grep -vE "tmdb|stripe|github"` revisado).
    - Lighthouse móvil ≥ 90 en rendimiento y 100 en accesibilidad en `/`, `/peliculas` y `/peliculas/{id}`. Si rendimiento no llega por Render (arranque en frío), mide en local y anótalo.
 6. Prueba automática de accesibilidad: `tests/browser/a11y.spec.mjs` (Playwright + `@axe-core/playwright` como devDependencies de npm) que, con la app en local, recorre las 14 pantallas de «Terminado significa» de `plan/PLAN.md` a 390 y 1440 px y falla con `serious`/`critical`. Añade un job `a11y` al CI que: instala PHP como el job `tests`, prepara la base con `migrate:fresh --seed`, arranca `php artisan serve &`, espera a `curl -sf localhost:8000`, `npx playwright install --with-deps chromium` y ejecuta la prueba.
-7. README: capturas nuevas (sustituye la referencia si hay, o añade una tabla con portada, mapa de butacas y entrada) y la sección de accesibilidad (rejilla con teclado, estados con forma y texto, cuenta atrás anunciada).
+7. Añadido por 01: quita el naranja `#f39c12` de «pendent» en `cliente/dashboard.blade.php` y `reservas/show.blade.php`, y cambia la paleta de `GeneratePosterPlaceholders` para que no use naranja ni degradados morados (solo colores, sin cambiar la lógica).
+8. README: capturas nuevas (sustituye la referencia si hay, o añade una tabla con portada, mapa de butacas y entrada) y la sección de accesibilidad (rejilla con teclado, estados con forma y texto, cuenta atrás anunciada).
 
 ## No hacer
 
