@@ -166,7 +166,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('compra.step3.store') }}" id="payForm">
+        <form method="POST" action="{{ $stripeEnabled ? route('compra.stripe.checkout') : route('compra.step3.store') }}" id="payForm">
             @csrf
 
             {{-- PERSONAL DETAILS --}}
@@ -208,34 +208,12 @@
             <div id="panelTargeta">
 
                 @if($stripeEnabled)
-                {{-- Embedded payment with Stripe Payment Element (test mode) — without leaving the site --}}
+                {{-- Stripe Checkout (modo de prueba): se paga en la página de Stripe y la reserva la confirma el webhook --}}
                 <div class="stripe-pay-card">
-                    <div class="stripe-pay-head">
-                        <span class="stripe-pay-badge">
-                            <i class="fas fa-lock"></i> Secure payment
-                        </span>
-                        <span class="stripe-pay-brands">
-                            <i class="fab fa-cc-visa text-[#1a1f71]"></i>
-                            <i class="fab fa-cc-mastercard text-[#eb001b]"></i>
-                            <i class="fab fa-cc-amex text-[#007bc1]"></i>
-                        </span>
-                    </div>
-
-                    {{-- Stripe mounts the card form here (Payment Element) --}}
-                    <div id="stripe-payment-element" class="mb-1"></div>
-
-                    {{-- Payment error messages --}}
-                    <div id="stripe-errors" class="hidden text-red-600 text-sm mt-3 flex items-start gap-1.5">
-                        <i class="fas fa-exclamation-circle mt-0.5"></i><span id="stripe-errors-text"></span>
-                    </div>
-
+                    <p class="text-sm">Pagarás en la página segura de Stripe y volverás aquí al terminar.</p>
                     <div class="stripe-pay-testcard">
-                        Test mode → card <strong>4242 4242 4242 4242</strong> · any future date · any CVC
+                        Modo de prueba: usa la tarjeta <strong>4242 4242 4242 4242</strong>, cualquier fecha futura y cualquier CVC.
                     </div>
-                    <p class="text-xs text-gray-400 text-center mt-3">
-                        <i class="fas fa-shield-alt mr-1"></i>
-                        Data encrypted and processed by Stripe. CineFlow never stores it.
-                    </p>
                 </div>
                 @else
 
@@ -410,122 +388,18 @@
 </div>
 
 @if($stripeEnabled)
-{{-- EMBEDDED STRIPE FLOW (Payment Element) — payment happens without leaving the site --}}
-<script src="https://js.stripe.com/v3/"></script>
 <script>
 (function () {
-    const pk       = @json(config('services.stripe.key'));
-    const amount   = {{ (int) round($compra['total'] * 100) }};
-    const currency = @json(config('services.stripe.currency', 'eur'));
-    const intentUrl = @json(route('compra.stripe.intent'));
-    const returnUrl = @json(route('compra.stripe.return'));
-    const csrf     = document.querySelector('input[name="_token"]').value;
-
-    const form      = document.getElementById('payForm');
-    const btn       = document.getElementById('btnRealitzar');
-    const terms     = document.getElementById('terms');
-    const errBox    = document.getElementById('stripe-errors');
-    const errText   = document.getElementById('stripe-errors-text');
-
-    const stripe = Stripe(pk);
-    // Deferred mode: we create the Payment Element without a client_secret and generate the
-    // PaymentIntent on the server right when the payment is confirmed.
-    const elements = stripe.elements({
-        mode: 'payment',
-        amount: amount,
-        currency: currency,
-        appearance: {
-            theme: 'stripe',
-            variables: {
-                colorPrimary: '#1e3a5f',
-                colorText: '#1f2937',
-                borderRadius: '10px',
-                fontFamily: 'Figtree, system-ui, sans-serif',
-            },
-        },
-    });
-    const paymentElement = elements.create('payment', { layout: 'tabs' });
-    paymentElement.mount('#stripe-payment-element');
-
-    // Enable/disable the button based on the terms checkbox
+    const terms = document.getElementById('terms');
+    const btn = document.getElementById('btnRealitzar');
     function refreshBtn() {
-        const ok = terms.checked;
-        btn.disabled = !ok;
-        if (ok) {
-            btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
-            btn.classList.add('bg-[#1e3a5f]', 'hover:bg-[#152a45]', 'cursor-pointer', 'shadow-[0_6px_20px_rgba(30,58,95,.35)]');
-        } else {
-            btn.classList.remove('bg-[#1e3a5f]', 'hover:bg-[#152a45]', 'cursor-pointer', 'shadow-[0_6px_20px_rgba(30,58,95,.35)]');
-            btn.classList.add('bg-gray-300', 'cursor-not-allowed');
-        }
+        btn.disabled = !terms.checked;
+        btn.classList.toggle('bg-gray-300', !terms.checked);
+        btn.classList.toggle('cursor-not-allowed', !terms.checked);
+        btn.classList.toggle('bg-[#1e3a5f]', terms.checked);
     }
     terms.addEventListener('change', refreshBtn);
     refreshBtn();
-
-    function showError(msg) {
-        errText.textContent = msg;
-        errBox.classList.remove('hidden');
-    }
-    function hideError() { errBox.classList.add('hidden'); }
-
-    let processing = false;
-
-    // Confirms the payment without leaving the page
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (processing || btn.disabled) return;
-        processing = true;
-        hideError();
-        btn.disabled = true;
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>PROCESSING…';
-
-        const fail = (msg) => {
-            showError(msg);
-            btn.innerHTML = originalHtml;
-            processing = false;
-            refreshBtn();
-        };
-
-        // 1) Validate the Payment Element data
-        const { error: submitError } = await elements.submit();
-        if (submitError) return fail(submitError.message);
-
-        // 2) Create the PaymentIntent on the server and get the client_secret
-        let clientSecret;
-        try {
-            const res = await fetch(intentUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-                body: JSON.stringify({
-                    nom:   form.querySelector('input[name="nom"]').value,
-                    email: form.querySelector('input[name="email"]').value,
-                }),
-            });
-            const data = await res.json();
-            if (!res.ok) return fail(data.error || 'Could not start the payment. Check your details.');
-            clientSecret = data.clientSecret;
-        } catch (_) {
-            return fail('Could not connect to the payment gateway. Please try again.');
-        }
-
-        // 3) Confirm the payment. With redirect:'if_required' cards are charged
-        //    on the same page; only methods that require it redirect to return_url.
-        const { error, paymentIntent } = await stripe.confirmPayment({
-            elements,
-            clientSecret,
-            confirmParams: { return_url: returnUrl },
-            redirect: 'if_required',
-        });
-
-        if (error) return fail(error.message || 'The payment could not be completed.');
-
-        if (paymentIntent && paymentIntent.status === 'succeeded') {
-            window.location = returnUrl + '?payment_intent=' + encodeURIComponent(paymentIntent.id);
-        } else {
-            fail('The payment is pending. Please try again.');
-        }
-    });
 })();
 </script>
 @else

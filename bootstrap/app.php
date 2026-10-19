@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // upstream) so url()/asset() generate https:// links instead of http://.
         $middleware->trustProxies(at: '*');
 
+        // Stripe no envía token CSRF: el webhook se protege con su firma.
+        $middleware->validateCsrfTokens(except: ['stripe/webhook']);
+
         // Àlies dels middlewares personalitzats de control de rols
         $middleware->alias([
             'isAdmin'   => \App\Http\Middleware\IsAdmin::class,
