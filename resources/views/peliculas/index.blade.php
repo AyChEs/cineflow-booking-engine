@@ -1,318 +1,103 @@
 @extends('layout')
 
-@section('title', 'Now Showing')
+@section('title', 'Cartelera')
 
 @section('content')
-<div class="container py-10 max-w-7xl">
+@php
+    $total = $peliculas->count();
+    $resumen = $total === 1 ? '1 película' : "{$total} películas";
+@endphp
+<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14">
 
-    {{-- Single form: wraps the whole listing so search,
-         sort and filters travel together on every submit. --}}
-    <form method="GET" action="{{ route('peliculas.index') }}" id="filterForm">
-
-    {{-- ================= Capçalera + toolbar ================= --}}
-    <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-            <h1 class="page-title mb-1 section-title-accent is-visible">NOW SHOWING</h1>
-            <p class="text-[color:var(--color-text-secondary)] text-sm">
-                <span class="text-carmin-400 font-black">{{ $peliculas->count() }}</span> movies
-                @if($filtered)
-                    <span class="text-carmin-400"> · filtered</span>
-                @endif
+            <h1 class="display text-4xl text-texto md:text-5xl">Cartelera</h1>
+            <p class="cifras mt-2 text-texto-2" aria-live="polite" id="resultado">
+                {{ $resumen }}@if ($filtered) con los filtros elegidos @endif
             </p>
         </div>
-
-        <div class="flex items-center gap-2 flex-wrap">
-            {{-- Ordre --}}
-            <label class="flex items-center gap-2 text-xs">
-                <span class="text-[color:var(--color-text-secondary)] uppercase tracking-widest font-black text-[0.6rem] hidden sm:inline">Sort</span>
-                <select name="orden" onchange="document.getElementById('filterForm').submit()"
-                        class="form-select text-sm py-1.5 w-auto">
-                    <option value="rating" {{ $orden === 'rating' ? 'selected' : '' }}>Top Rated</option>
-                    <option value="titulo" {{ $orden === 'titulo' ? 'selected' : '' }}>Title (A–Z)</option>
-                    <option value="durada" {{ $orden === 'durada' ? 'selected' : '' }}>Duration</option>
-                </select>
-            </label>
-
-            {{-- Filters button (mobile/tablet only) --}}
-            <button type="button" id="filtersToggle" class="btn btn-secondary btn-sm filters-toggle">
-                <x-icon name="sliders" class="h-4 w-4 mr-1.5" />Filters
-                @if($activeFilters > 0)
-                    <span class="filter-count">{{ $activeFilters }}</span>
-                @endif
-            </button>
-
-            @auth
-                @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.peliculas.index') }}" class="btn btn-secondary btn-sm">
-                        <x-icon name="settings" class="h-4 w-4 mr-1.5" /> Manage
-                    </a>
-                @endif
-            @endauth
-        </div>
+        @auth
+            @if (auth()->user()->isAdmin())
+                <a href="{{ route('admin.peliculas.index') }}" class="btn btn-secondary btn-sm">
+                    <x-icon name="settings" class="h-4 w-4" />Gestionar películas
+                </a>
+            @endif
+        @endauth
     </div>
 
-    {{-- ================= Cercador ================= --}}
-    <div class="search-cartelera mb-5">
-        <x-icon name="search" class="h-4 w-4 search-cartelera-icon" />
-        <input type="search" name="q" value="{{ request('q') }}"
-               placeholder="Search for a movie…"
-               autocomplete="off"
-               class="search-cartelera-input">
-        @if(request('q'))
-            <a href="{{ route('peliculas.index', request()->except('q')) }}"
-               class="search-cartelera-clear" aria-label="Clear search">&times;</a>
-        @endif
-    </div>
-
-    {{-- ================= Chips de filtres actius ================= --}}
-    @if($filtered)
-        <div class="flex flex-wrap items-center gap-2 mb-6">
-            <span class="text-[color:var(--color-text-secondary)] text-xs uppercase tracking-widest font-black mr-1">Filters:</span>
-
-            @if(request('q'))
-                <a href="{{ route('peliculas.index', request()->except('q')) }}" class="filter-chip">
-                    <x-icon name="search" class="h-4 w-4" /> “{{ Str::limit(request('q'), 20) }}” <span>&times;</span>
-                </a>
-            @endif
-            @if(request('dia'))
-                <a href="{{ route('peliculas.index', request()->except('dia')) }}" class="filter-chip">
-                    <x-icon name="calendar" class="h-4 w-4" />
-                    {{ \Carbon\Carbon::parse(request('dia'))->locale('en')->isoFormat('ddd D MMM') }} <span>&times;</span>
-                </a>
-            @endif
-            @if(request('cine_id'))
-                @php $cineActiu = $filterCines->firstWhere('id', (int) request('cine_id')); @endphp
-                <a href="{{ route('peliculas.index', request()->except('cine_id')) }}" class="filter-chip">
-                    <x-icon name="map-pin" class="h-4 w-4" /> {{ $cineActiu->nombre ?? 'Cinema' }} <span>&times;</span>
-                </a>
-            @endif
-            @if(request('categoria_id'))
-                @php $catActiva = $filterCats->firstWhere('id', (int) request('categoria_id')); @endphp
-                <a href="{{ route('peliculas.index', request()->except('categoria_id')) }}" class="filter-chip">
-                    <x-icon name="tag" class="h-4 w-4" /> {{ $catActiva->nombre ?? 'Genre' }} <span>&times;</span>
-                </a>
-            @endif
-            @if(request('hora_desde', 0) > 0 || request('hora_hasta', 23) < 23)
-                <a href="{{ route('peliculas.index', request()->except(['hora_desde', 'hora_hasta'])) }}" class="filter-chip">
-                    <x-icon name="clock" class="h-4 w-4" />
-                    {{ str_pad(request('hora_desde', 0), 2, '0', STR_PAD_LEFT) }}:00–{{ str_pad(request('hora_hasta', 23), 2, '0', STR_PAD_LEFT) }}:00
-                    <span>&times;</span>
-                </a>
-            @endif
-
-            <a href="{{ route('peliculas.index') }}" class="filter-chip filter-chip-clear">
-                Clear all
-            </a>
-        </div>
+    @if (session('success'))
+        <div class="alert alert-success" role="status"><x-icon name="check-circle" class="mt-0.5 h-4 w-4 shrink-0" />{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-error" role="alert"><x-icon name="alert" class="mt-0.5 h-4 w-4 shrink-0" />{{ session('error') }}</div>
     @endif
 
-    @if(session('success'))
-        <div class="alert alert-success flex items-center gap-3 mb-6">
-            <x-icon name="check-circle" class="h-4 w-4 flex-shrink-0" />
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
-    {{-- ================= Layout: sidebar + grid ================= --}}
-    <div class="cartelera-layout">
-
-        {{-- Fons fosc quan el panell està obert en mòbil --}}
-        <div class="filters-backdrop" id="filtersBackdrop" aria-hidden="true"></div>
-
-        {{-- ============ SIDEBAR DE FILTRES ============ --}}
-        <aside class="cartelera-sidebar" id="filtersPanel">
-
-            <div class="flex justify-between items-center mb-5">
-                <span class="text-xs font-black uppercase tracking-[0.2em]">Filters</span>
-                <div class="flex items-center gap-3">
-                    @if($filtered)
-                        <a href="{{ route('peliculas.index') }}"
-                           class="text-carmin-400 text-xs font-bold hover:opacity-70 transition-opacity">
-                            Clear &times;
-                        </a>
-                    @endif
-                    {{-- Close (mobile only) --}}
-                    <button type="button" id="filtersClose" class="filters-close" aria-label="Close filters">
-                        <x-icon name="close" class="h-4 w-4" />
-                    </button>
-                </div>
-            </div>
-
-            {{-- DIA --}}
-            <p class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[color:var(--color-text-secondary)] mb-2">Day</p>
-            @if($filterDates->isEmpty())
-                <p class="text-[color:var(--color-text-secondary)] text-xs mb-4">No screenings scheduled</p>
-            @else
-                <select name="dia" onchange="document.getElementById('filterForm').submit()"
-                        class="form-select text-sm py-1.5 mb-4">
-                    <option value="">-- All days --</option>
-                    @foreach($filterDates as $dia)
-                        <option value="{{ $dia }}" {{ request('dia') == $dia ? 'selected' : '' }}>
-                            {{ \Carbon\Carbon::parse($dia)->locale('en')->isoFormat('ddd D MMM') }}
-                        </option>
-                    @endforeach
-                </select>
-            @endif
-
-            <div class="h-px bg-black/10 my-4"></div>
-
-            {{-- HORARI --}}
-            <p class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[color:var(--color-text-secondary)] mb-3">Time</p>
-            <div class="mb-4">
-                <div class="flex justify-between items-center mb-2">
-                    <span id="lblDesde" class="text-carmin-400 text-sm font-bold">
-                        {{ str_pad(request('hora_desde', 0), 2, '0', STR_PAD_LEFT) }}:00
-                    </span>
-                    <span class="text-[color:var(--color-text-secondary)] text-xs opacity-50">&ndash;</span>
-                    <span id="lblHasta" class="text-carmin-400 text-sm font-bold">
-                        {{ str_pad(request('hora_hasta', 23), 2, '0', STR_PAD_LEFT) }}:00
-                    </span>
-                </div>
-                <div class="relative h-5">
-                    <input type="range" name="hora_desde" id="rangeDesde"
-                           min="0" max="23" step="1" value="{{ request('hora_desde', 0) }}"
-                           oninput="syncHoraRange()" onchange="document.getElementById('filterForm').submit()"
-                           class="absolute w-full accent-carmin-600">
-                    <input type="range" name="hora_hasta" id="rangeHasta"
-                           min="0" max="23" step="1" value="{{ request('hora_hasta', 23) }}"
-                           oninput="syncHoraRange()" onchange="document.getElementById('filterForm').submit()"
-                           class="absolute w-full accent-carmin-600">
-                </div>
-            </div>
-
-            <div class="h-px bg-black/10 my-4"></div>
-
-            {{-- CINEMA --}}
-            <p class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[color:var(--color-text-secondary)] mb-3">Cinema</p>
-            @foreach($filterCines as $cine)
-                <label class="flex items-center gap-2.5 cursor-pointer py-1.5 group">
-                    <input type="radio" name="cine_id" value="{{ $cine->id }}"
-                           {{ request('cine_id') == $cine->id ? 'checked' : '' }}
-                           onchange="document.getElementById('filterForm').submit()"
-                           class="accent-carmin-600 w-4 h-4 flex-shrink-0">
-                    <span class="text-sm leading-tight group-hover:text-carmin-400 transition-colors">
-                        {{ $cine->nombre }}
-                        <span class="block text-[color:var(--color-text-secondary)] text-xs">{{ $cine->ciudad }}</span>
-                    </span>
-                </label>
-            @endforeach
-
-            <div class="h-px bg-black/10 my-4"></div>
-
-            {{-- GÈNERE --}}
-            <p class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[color:var(--color-text-secondary)] mb-3">Genre</p>
-            @foreach($filterCats as $cat)
-                <label class="flex items-center gap-2.5 cursor-pointer py-1 group">
-                    <input type="radio" name="categoria_id" value="{{ $cat->id }}"
-                           {{ request('categoria_id') == $cat->id ? 'checked' : '' }}
-                           onchange="document.getElementById('filterForm').submit()"
-                           class="accent-carmin-600 w-4 h-4 flex-shrink-0">
-                    <span class="text-sm group-hover:text-carmin-400 transition-colors">{{ $cat->nombre }}</span>
-                </label>
-            @endforeach
-
-            {{-- Apply (mobile only, closes the panel) --}}
-            <button type="submit" class="btn btn-primary btn-full filters-apply">
-                View {{ $peliculas->count() }} results
-            </button>
-
-        </aside>
-
-        {{-- ============ MOVIE GRID ============ --}}
+    <form method="GET" action="{{ route('peliculas.index') }}" role="search" aria-label="Filtrar la cartelera"
+          class="mb-10 grid gap-4 rounded-card border border-sala-700 bg-sala-900 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-[2fr,1fr,1fr,1fr,1fr]">
         <div>
-            <div class="grid reveal-stagger"
-                 style="grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1.75rem 1.5rem;">
-                @forelse($peliculas as $pelicula)
-                    <div class="card-movie">
-                        <div class="card-movie-poster">
-                            <img src="{{ $pelicula->poster_url }}"
-                                 alt="Poster for {{ $pelicula->titulo }}"
-                                 loading="lazy">
-
-                            <div class="card-movie-overlay">
-                                <div class="text-center px-3 flex flex-col gap-2 w-full">
-                                    <a href="{{ route('peliculas.show', $pelicula) }}{{ request('cine_id') ? '?cine_id='.request('cine_id') : '' }}"
-                                       class="btn btn-secondary btn-sm w-full">Details</a>
-                                    <a href="{{ route('peliculas.show', $pelicula) }}{{ request('cine_id') ? '?cine_id='.request('cine_id') : '' }}"
-                                       class="btn btn-primary btn-sm w-full">Buy Tickets</a>
-                                </div>
-                            </div>
-
-                            @if($pelicula->categorias->first())
-                                <div class="card-movie-badge">{{ $pelicula->categorias->first()->nombre }}</div>
-                            @endif
-                        </div>
-
-                        <div class="card-movie-body">
-                            <div class="card-movie-title">{{ $pelicula->titulo }}</div>
-                            <div class="card-movie-meta">
-                                @if($pelicula->rating)
-                                    <span class="cm-rating"><x-icon name="star" class="h-4 w-4" />{{ number_format($pelicula->rating, 1) }}</span>
-                                    <span class="cm-sep">·</span>
-                                @endif
-                                <span>{{ $pelicula->duracion_min ?? '?' }} min</span>
-                                <span class="cm-sep">·</span>
-                                <span>{{ $pelicula->classificacio_edad ?? 'TP' }}</span>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-span-full text-center py-16 text-[color:var(--color-text-secondary)]">
-                        <x-icon name="film" class="h-12 w-12 opacity-20 block mb-4" />
-                        @if(request('q'))
-                            We couldn't find any movie for “<span class="font-bold text-carmin-400">{{ request('q') }}</span>”.
-                        @else
-                            No movies match the selected filters.
-                        @endif
-                        <br>
-                        <a href="{{ route('peliculas.index') }}"
-                           class="text-carmin-400 text-sm mt-3 inline-block hover:opacity-80 transition-opacity">
-                            View all &rarr;
-                        </a>
-                    </div>
-                @endforelse
+            <label for="f-q" class="form-label">Buscar</label>
+            <div class="relative">
+                <x-icon name="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-texto-2" />
+                <input id="f-q" type="search" name="q" value="{{ request('q') }}" placeholder="Título de la película"
+                       class="form-input pl-9" autocomplete="off">
             </div>
         </div>
-
-    </div>{{-- /cartelera-layout --}}
-
+        <div>
+            <label for="f-categoria" class="form-label">Género</label>
+            <select id="f-categoria" name="categoria_id" class="form-select">
+                <option value="">Todos</option>
+                @foreach ($filterCats as $cat)
+                    <option value="{{ $cat->id }}" @selected(request('categoria_id') == $cat->id)>{{ $cat->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <label for="f-cine" class="form-label">Cine</label>
+            <select id="f-cine" name="cine_id" class="form-select">
+                <option value="">Todos</option>
+                @foreach ($filterCines as $cine)
+                    <option value="{{ $cine->id }}" @selected(request('cine_id') == $cine->id)>{{ $cine->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <label for="f-dia" class="form-label">Día</label>
+            <select id="f-dia" name="dia" class="form-select">
+                <option value="">Cualquiera</option>
+                @foreach ($filterDates as $dia)
+                    <option value="{{ $dia }}" @selected(request('dia') == $dia)>{{ ucfirst(\Carbon\Carbon::parse($dia)->locale('es')->isoFormat('dddd D [de] MMMM')) }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <label for="f-orden" class="form-label">Ordenar por</label>
+            <select id="f-orden" name="orden" class="form-select">
+                <option value="rating" @selected($orden === 'rating')>Mejor valoradas</option>
+                <option value="titulo" @selected($orden === 'titulo')>Título</option>
+                <option value="durada" @selected($orden === 'durada')>Duración</option>
+            </select>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-5">
+            <button type="submit" class="btn btn-primary"><x-icon name="sliders" class="h-4 w-4" />Filtrar</button>
+            @if ($filtered || request()->filled('orden'))
+                <a href="{{ route('peliculas.index') }}" class="btn btn-secondary">Quitar filtros</a>
+            @endif
+        </div>
     </form>
 
+    @if ($peliculas->isEmpty())
+        <div class="rounded-card border border-sala-700 bg-sala-900 px-6 py-12 text-center">
+            <h2 class="text-lg font-semibold text-texto">No hay películas con estos filtros</h2>
+            <p class="mt-2 text-texto-2">Prueba con otro día u otro cine.</p>
+            <a href="{{ route('peliculas.index') }}" class="btn btn-secondary mt-6">Quitar filtros</a>
+        </div>
+    @else
+        <h2 class="sr-only">Películas</h2>
+        <ul class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-6">
+            @foreach ($peliculas as $pelicula)
+                <li><x-movie-card :pelicula="$pelicula" /></li>
+            @endforeach
+        </ul>
+    @endif
 </div>
-
-<script>
-function syncHoraRange() {
-    var d = parseInt(document.getElementById('rangeDesde').value);
-    var h = parseInt(document.getElementById('rangeHasta').value);
-    if (h < d) { document.getElementById('rangeHasta').value = d; h = d; }
-    var pad = (n) => String(n).padStart(2, '0');
-    document.getElementById('lblDesde').textContent = pad(d) + ':00';
-    document.getElementById('lblHasta').textContent = pad(h) + ':00';
-}
-document.addEventListener('DOMContentLoaded', function () {
-    syncHoraRange();
-
-    // Panell de filtres (mòbil/tablet)
-    const panel    = document.getElementById('filtersPanel');
-    const backdrop = document.getElementById('filtersBackdrop');
-    const openBtn  = document.getElementById('filtersToggle');
-    const closeBtn = document.getElementById('filtersClose');
-
-    function openFilters() {
-        panel.classList.add('is-open');
-        backdrop.classList.add('is-open');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeFilters() {
-        panel.classList.remove('is-open');
-        backdrop.classList.remove('is-open');
-        document.body.style.overflow = '';
-    }
-
-    openBtn?.addEventListener('click', openFilters);
-    closeBtn?.addEventListener('click', closeFilters);
-    backdrop?.addEventListener('click', closeFilters);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFilters(); });
-});
-</script>
 @endsection
