@@ -32,6 +32,8 @@ services:
         sync: false
       - key: STRIPE_SECRET
         sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
       # Correo. MAIL_MAILER=log no envía nada; pon "smtp" y rellena el resto
       # con un SMTP gratuito (Brevo, Gmail…) para enviar las entradas con QR.
       - key: MAIL_MAILER
