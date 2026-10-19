@@ -1,0 +1,13 @@
+{
+ "url": "http://localhost:8000/",
+ "formFactor": "desktop",
+ "scores": {
+  "performance": 1,
+  "accessibility": 0.93,
+  "best-practices": 0.96,
+  "seo": 0.92
+ },
+ "LCP": "0.5\u00a0s",
+ "CLS": "0",
+ "TBT": "0\u00a0ms"
+}

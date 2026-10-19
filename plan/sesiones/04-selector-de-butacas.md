@@ -45,6 +45,7 @@ Hoy, en `resources/views/compra/step2.blade.php`, el mapa es una `<table>` de `<
 7. Pruebas:
    - `tests/Feature/SeatMapViewTest.php`: el paso 2 devuelve un `role="grid"` con tantas `role="gridcell"` como asientos de la sala; una butaca vendida (crea una `ReservaSeat`) tiene `aria-disabled="true"` y la palabra «vendida» en su `aria-label`; una butaca bloqueada por otro token tiene «retenida».
    - Prueba de navegador con Playwright en `tests/browser/seat-map.spec.mjs` (fuera de PHPUnit, se lanza a mano con `node`): en local, con 2 entradas, recorre el mapa con flechas, elige dos butacas con Espacio, comprueba `aria-pressed` y el texto de `#seat-status`, y que «Continuar» queda activo. Documenta cómo lanzarla en el PR.
+8. Añadido por 01: `CompraController::computeLayout` debe entender el formato `FxC` de `disposicion_butacas` (filas × columnas, el que usan `SalaSeeder` y `ReservaSeeder`), manteniendo `vip`, `premium` y `standard` como hoy. Hoy una sala `8x10` se pinta como 6 filas de 14. Prueba en `SeatMapViewTest`: una sala `8x10` da 8 filas y 80 butacas. No cambia rutas ni campos.
 
 ## No hacer
 
