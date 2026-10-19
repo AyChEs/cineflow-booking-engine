@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\SeatAlreadyReservedException;
-use App\Mail\EntradaConfirmada;
 use App\Models\Reserva;
 use App\Models\ReservaSeat;
 use App\Models\SeatLock;
 use App\Models\Sesion;
+use App\Services\EnvioEntrada;
 use App\Services\PurchaseService;
 use App\Services\StripeService;
 use App\Services\TicketService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class CompraController extends Controller
 {
@@ -24,6 +22,16 @@ class CompraController extends Controller
         'familia' => ['label' => 'Family',         'desc' => 'Price per person',          'factor' => 0.82],
         'jubilat' => ['label' => 'Senior +65',     'desc' => '',                          'factor' => 0.70],
     ];
+
+    /**
+     * Precio de una entrada de un tipo, en céntimos. Es la única fórmula de
+     * precio: la usan el total del paso 1 y las líneas de Stripe Checkout, así
+     * que lo mostrado y lo cobrado coinciden siempre.
+     */
+    public static function precioCentimos(float $preuBase, string $tipus): int
+    {
+        return (int) round($preuBase * self::TIPUS[$tipus]['factor'] * 100);
+    }
 
     // Paso 1: el usuario elige cuántas entradas de cada tipo quiere
     public function step1(Request $request)
@@ -65,7 +73,7 @@ class CompraController extends Controller
             $qty = max(0, $qty);
             $entrades[$key] = $qty;
             $numEntrades += $qty;
-            $total += round($sesion->preu_base * $info['factor'] * $qty, 2);
+            $total += self::precioCentimos((float) $sesion->preu_base, $key) * $qty;
         }
 
         if ($numEntrades < 1) {
@@ -80,7 +88,7 @@ class CompraController extends Controller
                 'sesion_id'    => $sesion->id,
                 'entrades'     => $entrades,
                 'num_entrades' => $numEntrades,
-                'total'        => round($total, 2),
+                'total'        => round($total / 100, 2),
                 'butaques'     => [],
             ],
         ]);
@@ -235,47 +243,6 @@ class CompraController extends Controller
         ]);
     }
 
-    /**
-     * Crea un PaymentIntent para el carrito actual y devuelve su client_secret.
-     * Lo consume el Payment Element embebido para cobrar sin salir del sitio.
-     */
-    public function stripeIntent(Request $request)
-    {
-        $compra = session('compra');
-        if (! $compra || empty($compra['butaques'])) {
-            return response()->json(['error' => 'Your purchase session has expired.'], 422);
-        }
-
-        $stripe = app(StripeService::class);
-        if (! $stripe->isEnabled()) {
-            return response()->json(['error' => 'Card payment is not available.'], 422);
-        }
-
-        $validated = $request->validate([
-            'nom'   => 'required|string|max:100',
-            'email' => 'required|email|max:150',
-        ]);
-
-        // Guardamos los datos del comprador para la pantalla de confirmación.
-        session(['compra_buyer' => ['nom' => $validated['nom'], 'email' => $validated['email']]]);
-
-        $sesion = Sesion::with('pelicula')->findOrFail($compra['sesion_id']);
-
-        try {
-            $intent = $stripe->createPaymentIntent(
-                (float) $compra['total'],
-                (int) $compra['num_entrades'],
-                $validated['email'],
-                'CineFlow · ' . ($sesion->pelicula->titulo ?? 'Cinema session'),
-                (int) $sesion->id,
-            );
-        } catch (\Throwable $e) {
-            return response()->json(['error' => 'Could not start the payment. Please try again.'], 500);
-        }
-
-        return response()->json(['clientSecret' => $intent->client_secret]);
-    }
-
     public function step3Store(Request $request)
     {
         $compra = session('compra');
@@ -283,8 +250,13 @@ class CompraController extends Controller
             return redirect()->route('peliculas.index');
         }
 
-        // Con Stripe activo el pago se cobra de forma embebida (Payment Element)
-        // vía AJAX antes de llegar aquí, por lo que este endpoint solo atiende el
+        // Con Stripe activo no se acepta el pago simulado: sería reservar sin pagar.
+        if (app(StripeService::class)->isEnabled()) {
+            return redirect()->route('compra.step3');
+        }
+
+        // Con Stripe activo se paga en Stripe Checkout (PagoController) y la reserva
+        // la confirma el webhook, por lo que este endpoint solo atiende el
         // flujo de tarjeta simulada (cuando Stripe no está configurado).
         $rules = [
             'nom'    => 'required|string|max:100',
@@ -327,38 +299,8 @@ class CompraController extends Controller
     }
 
     /**
-     * Vuelta tras confirmar el pago con Stripe: verificamos el PaymentIntent y
-     * confirmamos la reserva. Se usa tanto en el flujo inline (tarjeta) como en
-     * el redirect que Stripe hace para métodos que lo requieren.
-     */
-    public function stripeReturn(Request $request)
-    {
-        $compra = session('compra');
-        if (! $compra || empty($compra['butaques'])) {
-            return redirect()->route('peliculas.index');
-        }
-
-        $intentId = $request->query('payment_intent');
-        if (! $intentId) {
-            return redirect()->route('compra.step3')->with('error', 'Payment confirmation was not received.');
-        }
-
-        try {
-            $intent = app(StripeService::class)->retrievePaymentIntent($intentId);
-        } catch (\Throwable $e) {
-            return redirect()->route('compra.step3')->with('error', 'Could not verify the payment with Stripe.');
-        }
-
-        if (($intent->status ?? null) !== 'succeeded') {
-            return redirect()->route('compra.step3')->with('error', 'The payment was not completed. Please try again.');
-        }
-
-        return $this->finalizeReservation($compra);
-    }
-
-    /**
      * Crea la reserva de forma atómica y prepara la pantalla de confirmación.
-     * Punto único de salida usado tanto por el pago simulado como por Stripe.
+     * Solo para el pago simulado; con Stripe la reserva la crea el webhook.
      */
     private function finalizeReservation(array $compra): \Illuminate\Http\RedirectResponse
     {
@@ -396,9 +338,7 @@ class CompraController extends Controller
 
         // Enviamos la entrada por email con el QR. Un fallo de correo no debe
         // romper la compra: la reserva ya está confirmada.
-        if (! empty($buyer['email'])) {
-            $this->enviarEntrada($reserva, $buyer['nom'], $buyer['email'], $compra);
-        }
+        app(EnvioEntrada::class)->enviar($reserva, $buyer['nom'], (string) $buyer['email'], $compra['butaques'], (float) $compra['total']);
 
         // Guardamos los datos de confirmación para mostrarlos en la pantalla de éxito
         session([
@@ -414,26 +354,6 @@ class CompraController extends Controller
         session()->forget(['compra', 'compra_buyer']);
 
         return redirect()->route('compra.confirmacio');
-    }
-
-    private function enviarEntrada(Reserva $reserva, string $nombre, string $email, array $compra): void
-    {
-        try {
-            $reserva->load('sesion.pelicula', 'sesion.sala.cine');
-
-            Mail::to($email)->send(new EntradaConfirmada(
-                $reserva,
-                $nombre,
-                app(TicketService::class)->qrPng($reserva),
-                $compra['butaques'],
-                (float) $compra['total'],
-            ));
-        } catch (\Throwable $e) {
-            Log::warning('No se pudo enviar el email de la entrada', [
-                'reserva_id' => $reserva->id,
-                'error'      => $e->getMessage(),
-            ]);
-        }
     }
 
     public function confirmacio(Request $request)
