@@ -37,6 +37,11 @@
     a {
         text-underline-offset: 3px;
     }
+
+    /* Lo oculto con el atributo hidden no lo puede mostrar ninguna clase */
+    [hidden] {
+        display: none !important;
+    }
 }
 
 @layer utilities {
@@ -62,6 +67,7 @@
     }
 }
 
+@layer components {
 /* Saltar al contenido: visible solo con el foco */
 .skip-link {
     @apply absolute left-4 top-2 z-[1100] -translate-y-24 rounded-control bg-marquesina px-4 py-2 font-semibold text-sala-950;
@@ -279,6 +285,107 @@
     @apply font-semibold text-carmin-400 underline hover:text-texto;
 }
 
+}
+
+/* ── Mapa de butacas (plan/DISENO.md, «Estados de la butaca») ── */
+@layer components {
+    .screen {
+        @apply mx-auto mb-8 w-4/5 max-w-md text-center;
+    }
+    .screen::before {
+        content: '';
+        @apply mb-2 block h-3 rounded-[50%/100%_100%_0_0] border-t-4 border-sala-700;
+    }
+    .screen span {
+        @apply text-xs font-semibold uppercase tracking-[0.3em] text-texto-2;
+    }
+
+    .seat {
+        @apply cifras relative inline-flex h-9 w-9 shrink-0 items-center justify-center text-[11px] font-semibold leading-none sm:h-8 sm:w-8;
+        border-radius: 8px 8px 3px 3px;
+        border: 2px solid transparent;
+    }
+    button.seat {
+        cursor: pointer;
+    }
+    button.seat[aria-disabled="true"] {
+        cursor: not-allowed;
+    }
+    .seat::after {
+        content: '';
+        position: absolute;
+        background-color: currentColor;
+        -webkit-mask: var(--icono) center / contain no-repeat;
+        mask: var(--icono) center / contain no-repeat;
+    }
+
+    /* Libre: hueco con borde y número */
+    .seat--libre {
+        @apply bg-transparent text-texto;
+        border-color: theme('colors.libre');
+    }
+    .seat--libre:hover {
+        border-color: theme('colors.texto.DEFAULT');
+    }
+    @media (prefers-reduced-motion: no-preference) {
+        button.seat--libre {
+            transition: transform .12s ease, border-color .12s ease;
+        }
+        button.seat--libre:hover {
+            transform: scale(1.06);
+        }
+    }
+
+    /* Tuya: relleno de marquesina, número y ✓ */
+    .seat--tuya {
+        @apply bg-marquesina text-sala-950;
+        border-color: theme('colors.marquesina');
+    }
+    .seat--tuya::after {
+        --icono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+        top: 2px;
+        right: 2px;
+        width: 9px;
+        height: 9px;
+    }
+
+    /* Retenida por otra persona: rayado, borde discontinuo y candado */
+    .seat--retenida {
+        color: #E4E0EA;
+        border-style: dashed;
+        border-color: theme('colors.libre');
+        background: repeating-linear-gradient(45deg, rgb(140 135 148 / .35) 0 3px, transparent 3px 7px);
+    }
+    .seat--retenida .seat-num,
+    .seat--vendida .seat-num {
+        visibility: hidden;
+    }
+    .seat--retenida::after {
+        --icono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Vendida: relleno gris y ✕ */
+    .seat--vendida {
+        @apply bg-ocupada;
+        color: #E4E0EA;
+        border-color: theme('colors.ocupada');
+    }
+    .seat--vendida::after {
+        --icono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
+        width: 12px;
+        height: 12px;
+    }
+
+    .seat--muestra {
+        @apply h-8 w-8;
+    }
+    .seat.is-pendiente {
+        opacity: .6;
+    }
+}
+
 /* Utilidades heredadas (las vistas antiguas las usan con estos valores) */
 .flex-between {
     display: flex;
@@ -314,7 +421,7 @@
     }
 }
 
-/* ── Heredado: portada, cartelera y cines (la sesión 03 los sustituye) ── */
+/* ── Heredado: tarjetas del catálogo de TMDB (admin) y apariciones al hacer scroll ── */
 /* Tarjetas de Película — póster + pie de información sobre superficie clara */
 .movies-grid {
     display: grid;
@@ -439,377 +546,6 @@
 }
 
 
-/* Hero Section */
-.hero-section {
-    position: relative;
-    height: 100vh;
-    min-height: 600px;
-    background-image: linear-gradient(to top, rgba(18, 18, 18, 0.9) 0%, transparent 50%),
-        none;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-badge-vertical {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: var(--color-accent-bright);
-    writing-mode: vertical-lr;
-    padding: 1.5rem 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 900;
-    letter-spacing: 0.2em;
-    color: white;
-    box-shadow: 4px 0 20px var(--shadow-red);
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    max-width: 900px;
-    padding: 0 2rem;
-}
-
-.hero-title {
-    font-size: 6rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 1rem;
-    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
-}
-
-.hero-subtitle {
-    font-size: 1.5rem;
-    color: var(--color-text-secondary);
-    margin-bottom: 2rem;
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.hero-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 200px;
-    background: linear-gradient(to top, var(--color-bg-primary), transparent);
-}
-
-/* Section Headers */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.section-title {
-    font-size: 2rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-/* Cards de Cine */
-.cines-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
-}
-
-.card-cine {
-    position: relative;
-    aspect-ratio: 3/2;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--border-subtle);
-    transition: transform 0.3s ease;
-}
-
-.card-cine:hover {
-    transform: translateY(-8px);
-}
-
-.card-cine img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.card-cine-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 2rem;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-}
-
-.card-cine-title {
-    font-size: 1.5rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-}
-
-.card-cine-ciudad {
-    color: var(--color-accent-bright);
-    font-size: 0.875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-
-/* Capa cinematográfica: hero por capas, atmósfera, scroll reveals y
-   micro-interacciones. Solo animamos propiedades GPU-safe
-   (transform / opacity / filter) y respetamos prefers-reduced-motion. */
-
-/* Hero cinematográfico por capas */
-.hero-cinematic {
-    position: relative;
-    height: 100vh;
-    min-height: 640px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    isolation: isolate;
-}
-
-/* Capa base (depth-0): poster a pantalla completa con leve blur y
-   scale para que el parallax nunca deje bordes vacíos. */
-.hero-cinematic .hc-layer {
-    position: absolute;
-    inset: 0;
-    will-change: transform;
-}
-
-.hc-poster {
-    background-size: cover;
-    background-position: center top;
-    transform: scale(1.12);
-    filter: saturate(1.05);
-}
-
-/* Degradado de lectura sobre el poster (depth-1) */
-.hc-scrim {
-    background:
-        linear-gradient(to right, rgba(10, 0, 0, 0.92) 30%, rgba(10, 0, 0, 0.35) 70%, rgba(10, 0, 0, 0.15)),
-        linear-gradient(to top, var(--color-bg-primary) 2%, transparent 45%);
-}
-
-/* Blobs de luz atmosférica (depth-1) */
-.hc-glow {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.5;
-    mix-blend-mode: screen;
-    pointer-events: none;
-}
-
-.hc-glow-a {
-    width: 42vw;
-    height: 42vw;
-    left: -8vw;
-    top: -6vw;
-    background: radial-gradient(circle at center, rgba(212, 24, 61, 0.55), transparent 65%);
-    animation: hcGlowDrift 14s ease-in-out infinite;
-}
-
-.hc-glow-b {
-    width: 34vw;
-    height: 34vw;
-    right: -6vw;
-    bottom: -10vw;
-    background: radial-gradient(circle at center, rgba(128, 0, 0, 0.6), transparent 65%);
-    animation: hcGlowDrift 18s ease-in-out infinite reverse;
-}
-
-@keyframes hcGlowDrift {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-    50%      { transform: translate3d(3vw, 2vw, 0) scale(1.12); }
-}
-
-/* Grano de película (depth-5) — textura sutil en foreground */
-.hc-grain {
-    position: absolute;
-    inset: -50%;
-    pointer-events: none;
-    opacity: 0.06;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation: hcGrain 0.6s steps(3) infinite;
-    z-index: 4;
-}
-
-@keyframes hcGrain {
-    0%   { transform: translate(0, 0); }
-    33%  { transform: translate(-4%, 2%); }
-    66%  { transform: translate(3%, -3%); }
-    100% { transform: translate(0, 0); }
-}
-
-/* Contenido del hero (depth-4) — texto claro sobre el poster oscuro */
-.hero-cinematic .hero-content {
-    position: relative;
-    z-index: 5;
-    text-align: left;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    width: 100%;
-    color: #ffffff;
-}
-
-.hero-cinematic .hero-title {
-    color: #ffffff;
-}
-
-.hero-cinematic .hero-subtitle {
-    color: rgba(255, 255, 255, 0.82);
-}
-
-.hero-cinematic .hc-scroll-cue {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.hc-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.7rem;
-    font-weight: 900;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--color-accent-bright);
-    padding: 0.4rem 0.9rem;
-    border: 1px solid var(--border-subtle);
-    border-radius: 9999px;
-    background: rgba(212, 24, 61, 0.08);
-    backdrop-filter: blur(6px);
-    margin-bottom: 1.5rem;
-}
-
-.hc-badge::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-accent-bright);
-    box-shadow: 0 0 10px var(--color-accent-bright);
-    animation: hcPulse 2s ease-in-out infinite;
-}
-
-@keyframes hcPulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%      { opacity: 0.4; transform: scale(0.7); }
-}
-
-.hero-cinematic .hero-title {
-    font-size: clamp(2.75rem, 7vw, 6rem);
-    line-height: 0.95;
-    margin-bottom: 1.25rem;
-    max-width: 15ch;
-    text-shadow: 0 8px 40px rgba(0, 0, 0, 0.9);
-}
-
-.hero-cinematic .hero-subtitle {
-    max-width: 46ch;
-    margin-left: 0;
-    margin-right: 0;
-}
-
-.hero-cinematic .hero-buttons {
-    justify-content: flex-start;
-}
-
-.hero-cinematic .btn-secondary {
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.4);
-}
-
-.hero-cinematic .btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.12);
-    border-color: #ffffff;
-}
-
-/* Botón shimmer para CTAs premium */
-.btn-shine {
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-shine::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-    transform: skewX(-18deg);
-    transition: left 0.7s ease;
-}
-
-.btn-shine:hover::after {
-    left: 130%;
-}
-
-/* Indicador de scroll animado en el hero */
-.hc-scroll-cue {
-    position: absolute;
-    bottom: 1.75rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--color-text-secondary);
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    opacity: 0.7;
-}
-
-.hc-scroll-cue i {
-    animation: hcBob 1.8s ease-in-out infinite;
-}
-
-@keyframes hcBob {
-    0%, 100% { transform: translateY(0); opacity: 0.4; }
-    50%      { transform: translateY(6px); opacity: 1; }
-}
-
-/* Entradas cinematográficas del hero */
-.hc-enter {
-    opacity: 0;
-    transform: translateY(26px);
-    animation: hcEnter 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.hc-enter-1 { animation-delay: 0.05s; }
-.hc-enter-2 { animation-delay: 0.20s; }
-.hc-enter-3 { animation-delay: 0.35s; }
-.hc-enter-4 { animation-delay: 0.50s; }
-
-@keyframes hcEnter {
-    to { opacity: 1; transform: translateY(0); }
-}
-
 /* Scroll reveal genérico (IntersectionObserver) */
 .reveal {
     opacity: 0;
@@ -870,295 +606,10 @@
     width: 3.5rem;
 }
 
-/* Realce extra de tarjetas de película (encima del hover existente) */
-.card-movie {
-    box-shadow: none;
-}
 
-.card-movie:hover {
-    border-color: rgba(212, 24, 61, 0.45);
-}
-
-/* Responsive del hero cinematográfico */
-@media (max-width: 640px) {
-    .hero-cinematic .hero-content { text-align: center; }
-    .hero-cinematic .hero-title  { margin-left: auto; margin-right: auto; }
-    .hero-cinematic .hero-subtitle { margin-left: auto; margin-right: auto; }
-    .hero-cinematic .hero-buttons { justify-content: center; }
-    .hc-scrim {
-        background:
-            linear-gradient(to bottom, rgba(10, 0, 0, 0.55), rgba(10, 0, 0, 0.85)),
-            linear-gradient(to top, var(--color-bg-primary) 2%, transparent 45%);
-    }
-}
-
-/* Cartelera: buscador, chips, nota y panel de filtros.
-   Escritorio: sidebar fija en columna. Móvil/tablet: drawer. */
-
-/* Layout base (escritorio) */
-.cartelera-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 2rem;
-    align-items: start;
-}
-
-.cartelera-sidebar {
-    background: var(--color-bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    padding: 1.5rem;
-    position: sticky;
-    top: 6rem;
-    box-shadow: none;
-}
-
-/* Elementos que solo existen en el drawer móvil */
-.filters-toggle,
-.filters-close,
-.filters-apply,
-.filters-backdrop {
-    display: none;
-}
-
-/* Buscador */
-.search-cartelera {
-    position: relative;
-    max-width: 520px;
-}
-
-.search-cartelera-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-text-secondary);
-    font-size: 0.9rem;
-    pointer-events: none;
-}
-
-.search-cartelera-input {
-    width: 100%;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--border-subtle);
-    color: var(--color-text-primary);
-    border-radius: 9999px;
-    padding: 0.7rem 2.75rem;
-    font-size: 0.95rem;
-    transition: border-color 0.25s, box-shadow 0.25s;
-}
-
-.search-cartelera-input::placeholder {
-    color: var(--color-text-secondary);
-}
-
-.search-cartelera-input:focus {
-    outline: none;
-    border-color: var(--color-accent-bright);
-    box-shadow: 0 0 0 3px rgba(212, 24, 61, 0.14);
-}
-
-.search-cartelera-clear {
-    position: absolute;
-    right: 0.9rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-text-secondary);
-    font-size: 1.25rem;
-    line-height: 1;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.search-cartelera-clear:hover {
-    color: var(--color-accent-bright);
-}
-
-/* Chips de filtros activos */
-.filter-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.35rem 0.7rem;
-    border-radius: 9999px;
-    background: rgba(212, 24, 61, 0.10);
-    border: 1px solid rgba(212, 24, 61, 0.35);
-    color: var(--color-accent-dark);
-    text-decoration: none;
-    transition: background 0.2s, border-color 0.2s;
-    white-space: nowrap;
-}
-
-.filter-chip i {
-    font-size: 0.62rem;
-    opacity: 0.75;
-}
-
-.filter-chip span {
-    opacity: 0.6;
-    font-size: 0.95rem;
-    line-height: 1;
-}
-
-.filter-chip:hover {
-    background: rgba(212, 24, 61, 0.18);
-    border-color: var(--color-accent-bright);
-}
-
-.filter-chip-clear {
-    background: transparent;
-    border-color: var(--border-subtle);
-    color: var(--color-text-secondary);
-}
-
-.filter-chip-clear:hover {
-    background: rgba(29, 20, 24, 0.05);
-    color: var(--color-text-primary);
-    border-color: rgba(29, 20, 24, 0.25);
-}
-
-/* Contador de filtros en el botón (móvil) */
-.filter-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.15rem;
-    height: 1.15rem;
-    padding: 0 0.3rem;
-    margin-left: 0.4rem;
-    border-radius: 9999px;
-    background: var(--color-accent-bright);
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 900;
-    line-height: 1;
-}
-
-/* Nota de valoración en la tarjeta */
-.rating-badge {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    background: rgba(0, 0, 0, 0.72);
-    color: theme('colors.marquesina');
-    font-size: 0.66rem;
-    font-weight: 900;
-    padding: 0.22rem 0.45rem;
-    border-radius: 6px;
-    backdrop-filter: blur(4px);
-    border: 1px solid theme('colors.sala.700');
-    z-index: 2;
-}
-
-.rating-badge i {
-    font-size: 0.6rem;
-}
-
-/* Tablet y móvil: sidebar convertida en drawer deslizante */
-@media (max-width: 1024px) {
-    .cartelera-layout {
-        display: block;
-    }
-
-    .filters-toggle {
-        display: inline-flex;
-        align-items: center;
-    }
-
-    .filters-backdrop {
-        position: fixed;
-        inset: 0;
-        z-index: 9997;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(3px);
-        -webkit-backdrop-filter: blur(3px);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.25s ease;
-    }
-
-    .filters-backdrop.is-open {
-        display: block;
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .cartelera-sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: min(320px, 88vw);
-        border-radius: 0;
-        border-left: none;
-        border-top: none;
-        border-bottom: none;
-        border-right: 1px solid var(--border-subtle);
-        background: var(--color-bg-surface);
-        box-shadow: none;
-        padding: 1.25rem;
-        overflow-y: auto;
-        z-index: 9998;
-        transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .cartelera-sidebar.is-open {
-        transform: translateX(0);
-    }
-
-    .filters-close {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 1.9rem;
-        height: 1.9rem;
-        border-radius: 50%;
-        background: rgba(29, 20, 24, 0.05);
-        border: 1px solid var(--border-subtle);
-        color: var(--color-text-secondary);
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: background 0.2s, color 0.2s;
-    }
-
-    .filters-close:hover {
-        background: rgba(212, 24, 61, 0.25);
-        color: var(--color-accent-bright);
-    }
-
-    .filters-apply {
-        display: block;
-    }
-}
-
-/* En escritorio no mostramos el botón cerrar ni el aplicar */
-@media (min-width: 1025px) {
-    .filters-close,
-    .filters-apply {
-        display: none !important;
-    }
-}
-
-/* Accesibilidad: desactiva el movimiento si el usuario lo pide */
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-
-    .hc-poster { transform: none; }
-
     .reveal,
-    .reveal-stagger > *,
-    .hc-enter {
+    .reveal-stagger > * {
         opacity: 1 !important;
         transform: none !important;
     }

@@ -17,10 +17,10 @@ class CompraController extends Controller
 {
     // Tipos de entrada disponibles con su descuento aplicado sobre el precio base
     const TIPUS = [
-        'adult'   => ['label' => 'Adult',          'desc' => '',                         'factor' => 1.00],
-        'reduit'  => ['label' => 'Reduced',        'desc' => 'Under 14 / Youth card',     'factor' => 0.80],
-        'familia' => ['label' => 'Family',         'desc' => 'Price per person',          'factor' => 0.82],
-        'jubilat' => ['label' => 'Senior +65',     'desc' => '',                          'factor' => 0.70],
+        'adult'   => ['label' => 'Adulto',      'nombre' => 'de adulto',      'desc' => '',                              'factor' => 1.00],
+        'reduit'  => ['label' => 'Reducida',    'nombre' => 'reducida',       'desc' => 'Menores de 14 y carné joven',  'factor' => 0.80],
+        'familia' => ['label' => 'Familiar',    'nombre' => 'familiar',       'desc' => 'Precio por persona',            'factor' => 0.82],
+        'jubilat' => ['label' => 'Mayor de 65', 'nombre' => 'de mayor de 65', 'desc' => '',                              'factor' => 0.70],
     ];
 
     /**
@@ -38,12 +38,12 @@ class CompraController extends Controller
     {
         $sesionId = $request->query('sesion_id');
         if (! $sesionId) {
-            return redirect()->route('peliculas.index')->with('error', 'Please select a session first.');
+            return redirect()->route('peliculas.index')->with('error', 'Elige primero una sesión.');
         }
 
         $sesion = Sesion::with('pelicula', 'sala.cine')->findOrFail($sesionId);
         if ($sesion->fecha_hora->isPast()) {
-            return redirect()->route('peliculas.index')->with('error', 'This session has already passed.');
+            return redirect()->route('peliculas.index')->with('error', 'Esa sesión ya ha pasado.');
         }
 
         // Siempre empezamos desde cero: limpiamos bloqueos y datos de compra anteriores
@@ -77,10 +77,10 @@ class CompraController extends Controller
         }
 
         if ($numEntrades < 1) {
-            return back()->with('error', 'Select at least 1 ticket.')->withInput();
+            return back()->with('error', 'Elige al menos una entrada.')->withInput();
         }
         if ($numEntrades > 10) {
-            return back()->with('error', 'Maximum 10 tickets per transaction.')->withInput();
+            return back()->with('error', 'Puedes comprar 10 entradas como máximo.')->withInput();
         }
 
         session([
@@ -117,8 +117,7 @@ class CompraController extends Controller
 
         $lockedSeats = SeatLock::where('sesion_id', $sesion->id)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->pluck('butaca')
             ->all();
 
@@ -134,7 +133,15 @@ class CompraController extends Controller
         $sala = $sesion->sala;
         $layout = $this->computeLayout($sala->capacidad, $sala->disposicion_butacas);
 
+        // Caducidad del primer bloqueo propio: la cuenta atrás de la vista.
+        $expiresAt = SeatLock::where('sesion_id', $sesion->id)
+            ->where('expires_at', '>=', now())
+            ->when($myUserId, fn($q) => $q->where('user_id', $myUserId))
+            ->when(! $myUserId, fn($q) => $q->where('session_token', $myToken))
+            ->min('expires_at');
+
         return view('compra.step2', [
+            'expiresAt'   => $expiresAt ? \Illuminate\Support\Carbon::parse($expiresAt) : null,
             'sesion'      => $sesion,
             'compra'      => $compra,
             'layout'      => $layout,
@@ -161,7 +168,7 @@ class CompraController extends Controller
 
         if (count($butaques) !== $compra['num_entrades']) {
             return back()->with('error', sprintf(
-                'You must select exactly %d seats (%d selected).',
+                'Tienes que elegir %d butacas (has elegido %d).',
                 $compra['num_entrades'],
                 count($butaques)
             ));
@@ -180,18 +187,17 @@ class CompraController extends Controller
                 ->where('butaca', $butaca)
                 ->exists();
             if ($taken) {
-                return back()->with('error', "Seat $butaca is already reserved. Please select again.");
+                return back()->with('error', "La butaca $butaca ya está vendida. Elige otra.");
             }
 
             // Comprueba si otro usuario la tiene bloqueada temporalmente
             $locked = SeatLock::where('sesion_id', $sesionId)
                 ->where('butaca', $butaca)
                 ->where('expires_at', '>=', now())
-                ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-                ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+                ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
                 ->exists();
             if ($locked) {
-                return back()->with('error', "Seat $butaca is currently being selected by another user. Please select again.");
+                return back()->with('error', "La butaca $butaca la tiene otra persona ahora mismo. Elige otra.");
             }
         }
 
@@ -398,6 +404,18 @@ class CompraController extends Controller
         return redirect()->route('peliculas.index');
     }
 
+    /**
+     * Bloqueos que no son de quien pregunta. Un bloqueo de invitado tiene
+     * user_id nulo: con «user_id != X» SQL no lo cuenta (NULL no compara), así
+     * que se incluye a mano. Igual con session_token para los invitados.
+     */
+    private function deOtros($query, ?int $userId, string $token)
+    {
+        return $userId
+            ? $query->whereNull('user_id')->orWhere('user_id', '!=', $userId)
+            : $query->whereNull('session_token')->orWhere('session_token', '!=', $token);
+    }
+
     // Libera los bloqueos de butacas del usuario actual
     private function releaseLocks(): void
     {
@@ -426,8 +444,7 @@ class CompraController extends Controller
 
         $locked = SeatLock::where('sesion_id', $sesionId)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->pluck('butaca')->all();
 
         $mine = SeatLock::where('sesion_id', $sesionId)
@@ -468,8 +485,7 @@ class CompraController extends Controller
         $otherLock = SeatLock::where('sesion_id', $sesionId)
             ->where('butaca', $butaca)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->exists();
         if ($otherLock) {
             return response()->json(['ok' => false, 'reason' => 'locked']);
@@ -509,6 +525,23 @@ class CompraController extends Controller
 
     private function computeLayout(int $capacidad, string $disposicion): array
     {
+        // Formato «FxC» (filas × columnas), el que usan SalaSeeder y ReservaSeeder.
+        if (preg_match('/^\s*(\d+)\s*x\s*(\d+)\s*$/i', $disposicion, $m) && (int) $m[1] > 0 && (int) $m[2] > 0) {
+            $rows = (int) $m[1];
+            $seatsPerRow = (int) $m[2];
+            $lastRowSeats = $capacidad - ($rows - 1) * $seatsPerRow;
+            if ($lastRowSeats < 1 || $lastRowSeats > $seatsPerRow) {
+                $lastRowSeats = $seatsPerRow;
+            }
+
+            return [
+                'rows'         => $rows,
+                'seatsPerRow'  => $seatsPerRow,
+                'lastRowSeats' => $lastRowSeats,
+                'total'        => ($rows - 1) * $seatsPerRow + $lastRowSeats,
+            ];
+        }
+
         $seatsPerRow = match (strtolower($disposicion)) {
             'vip'     => 8,
             'premium' => 12,
