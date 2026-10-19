@@ -1,0 +1,58 @@
+[
+ {
+  "id": "paso1-vacio",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "paso1",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "paso2",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "paso2-elegidas",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 390,
+  "consoleErrors": []
+ },
+ {
+  "id": "paso1-vacio",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "paso1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "paso2",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "paso2-elegidas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 1440,
+  "consoleErrors": []
+ }
+]
