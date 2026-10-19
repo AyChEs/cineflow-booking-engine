@@ -364,4 +364,14 @@ class StripeCheckoutTest extends TestCase
             ->assertSee('name="num_targeta"', false)
             ->assertDontSee(route('compra.stripe.checkout'), false);
     }
+
+    public function test_sin_claves_el_webhook_responde_400_y_no_revienta(): void
+    {
+        config(['services.stripe.secret' => null, 'services.stripe.webhook_secret' => null]);
+        // Sin el doble: la pasarela real del contenedor, sin claves.
+        $this->app->forgetInstance(PasarelaPago::class);
+        $this->app->register(\App\Providers\AppServiceProvider::class, true);
+
+        $this->call('POST', '/stripe/webhook', [], [], [], ['CONTENT_TYPE' => 'application/json'], '{}')->assertStatus(400);
+    }
 }
