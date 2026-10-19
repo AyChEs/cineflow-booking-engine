@@ -25,7 +25,7 @@ CineFlow is a production-grade cinema booking engine built with **Laravel 12**. 
 - 🔒 **Real-time seat locking (concurrency).** When a user selects a seat, a temporary `SeatLock` (8 minutes) is created, tied to their user/session. Other users see the seat as taken instantly via AJAX polling.
 - ⚔️ **Double-booking prevention with pessimistic locking.** Purchase confirmation runs inside `DB::transaction(attempts: 3)` using `lockForUpdate()`, so two simultaneous purchases of the same seat get serialized and the second one fails cleanly instead of creating an overbooking.
 - 💶 **Dynamic pricing.** The price is calculated from the session's `preu_base` by applying factors per ticket type: Adult ×1.00, Reduced ×0.80, Family ×0.82, Senior 65+ ×0.70.
-- 💳 **Stripe Checkout payments (test mode) + simulated fallback.** If Stripe keys are configured, card payment uses Stripe's hosted Checkout page (test card `4242 4242 4242 4242`). Without keys, it falls back automatically to a simulated payment flow so the app can be tested without a Stripe account.
+- 💳 **Stripe Checkout payments (test mode), confirmed by a signed, idempotent webhook.** Seats stay held while paying and are released as soon as the payment expires or fails; if another purchase wins the seat, the payment is refunded. Without Stripe keys, a simulated payment (card or Bizum) keeps the app testable. See [Payments](#payments).
 - 🎟️ **Tickets with signed QR codes (HMAC)** and a customer dashboard with booking history.
 - 🗂️ **Zero-config to deploy.** Uses SQLite by default (no database server to provision); MySQL-compatible for dev/production.
 
@@ -85,17 +85,36 @@ php artisan serve
 | Box office | `taquilla@cineflow.test` | `taquilla1234` |
 | Customer | `cliente@cineflow.test` | `cliente1234` |
 
-## Configuring Stripe (optional)
+## Payments
 
-Add to your `.env`:
+Card payments use **Stripe Checkout in test mode**; the reservation is confirmed **only by a signed webhook**, never by the browser coming back.
+
+1. **Pay.** Step 3 creates a `CheckoutPago` (status `abierto`) and a Checkout Session with one line per ticket type. Amounts are computed on the server, in integer cents, from the session price and the ticket-type factor (the same formula as the step 1 total). Every Stripe write carries an idempotency key (`checkout-pago-{id}`).
+2. **Hold the seats while paying.** The 8-minute `SeatLock`s are extended to the Checkout Session expiry (30 min, Stripe's minimum) + 2 min, so nobody else can take them while the customer is on Stripe.
+3. **Webhook `POST /stripe/webhook`.** The signature is verified before anything else (invalid or missing: `400`). Each `event_id` is stored in `stripe_eventos` inside the same transaction, so a repeated event is a no-op; the `CheckoutPago` row is locked and only acts while `abierto`, so two different events for the same payment create one reservation.
+   - `checkout.session.completed` (paid) / `async_payment_succeeded` → `PurchaseService::confirmPurchase` (the same `lockForUpdate` transaction with 3 attempts), payment `pagado`, locks released, ticket emailed.
+   - If another purchase won the seat a moment earlier → automatic **refund** (`reembolso-{id}`), payment `reembolsado`, logged in the `audit` channel.
+   - `checkout.session.expired` / `async_payment_failed` → `caducado` / `fallido` and the seats are **released immediately**.
+4. **Return page.** `/comprar/stripe/return` only shows "Confirmando tu pago…" and polls `/comprar/estado/{id}` (owner only, `403` otherwise) until the webhook has confirmed the reservation. Cancelling on Stripe expires the session and frees the seats.
+5. **Safety net.** `php artisan checkout:limpiar` (scheduled every 5 minutes) expires abandoned payments if a webhook never arrives. Render has no cron, so there the `checkout.session.expired` webhook is the main path.
+
+Stripe is enabled only when **both** `STRIPE_SECRET` and `STRIPE_WEBHOOK_SECRET` are set; otherwise step 3 uses the built-in simulated payment (card with Luhn check, or Bizum), which confirms directly.
 
 ```env
 STRIPE_KEY=pk_test_xxx
 STRIPE_SECRET=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
 STRIPE_CURRENCY=eur
 ```
 
-Without these keys, card payment uses the simulated flow. With them, it uses real Stripe Checkout in test mode.
+Try it locally with the [Stripe CLI](https://docs.stripe.com/stripe-cli):
+
+```bash
+stripe listen --forward-to localhost:8000/stripe/webhook   # prints the whsec_… secret for .env
+php artisan serve
+```
+
+Pay with `4242 4242 4242 4242`, any future date and any CVC. In production, create the webhook endpoint in the Stripe dashboard pointing to `/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed` and `checkout.session.expired`.
 
 ## Tests
 
