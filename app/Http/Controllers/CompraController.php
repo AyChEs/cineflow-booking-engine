@@ -232,7 +232,16 @@ class CompraController extends Controller
 
         $stripeEnabled = app(StripeService::class)->isEnabled();
 
+        // Caducidad del primer bloqueo propio: la cuenta atrás del resumen.
+        $expiresAt = SeatLock::where('sesion_id', $sesion->id)
+            ->whereIn('butaca', $compra['butaques'])
+            ->where('expires_at', '>=', now())
+            ->when(auth()->id(), fn($q) => $q->where('user_id', auth()->id()))
+            ->when(! auth()->id(), fn($q) => $q->where('session_token', session()->getId()))
+            ->min('expires_at');
+
         return view('compra.step3', [
+            'expiresAt'     => $expiresAt ? \Illuminate\Support\Carbon::parse($expiresAt) : null,
             'sesion'        => $sesion,
             'compra'        => $compra,
             'tipus'         => self::TIPUS,

@@ -1,5 +1,5 @@
 @extends('layout')
-@section('title', 'Confirmando tu pago · CineFlow')
+@section('title', 'Confirmando tu pago')
 @section('content')
 
 @include('compra._progress', ['step' => 3])
