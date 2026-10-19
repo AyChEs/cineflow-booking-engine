@@ -30,7 +30,7 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 03 | Cartelera y ficha de película | GLM | 02 | hecha (PR #5) |
 | 04 | Selector de butacas accesible | GLM | 02 | hecha (PR #6) |
 | 04b | Bloqueos de invitados | | 00b | hecha (PR #7) |
-| 05 | Stripe Checkout con webhook | Pro | 00 | pendiente |
+| 05 | Stripe Checkout con webhook | Pro | 00 | hecha (PR #8) |
 | 06 | Accesibilidad global, rendimiento y textos | GLM | 03, 04, 05 | pendiente |
 | 07 | Revisión final | Revisión | 06 | pendiente |
 
