@@ -41,13 +41,13 @@
             @if($destacada)
                 @foreach($destacada->categorias->take(3) as $cat)
                     <span class="px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest
-                                 bg-cinema-accent/20 text-cinema-accent border border-cinema-accent/40">
+                                 bg-carmin-600/20 text-carmin-400 border border-carmin-400/40">
                         {{ $cat->nombre }}
                     </span>
                 @endforeach
                 @if($destacada->duracion_min)
                     <span class="px-4 py-1 rounded-full text-xs font-semibold
-                                 bg-white/5 text-cinema-muted border border-white/10">
+                                 bg-white/5 text-texto-2 border border-white/10">
                         {{ $destacada->duracion_min }} min
                     </span>
                 @endif
@@ -55,21 +55,21 @@
                 @foreach(array_slice(explode(',', $tmdbHero['genre'] ?? ''), 0, 3) as $g)
                     @if(trim($g))
                         <span class="px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest
-                                     bg-cinema-accent/20 text-cinema-accent border border-cinema-accent/40">
+                                     bg-carmin-600/20 text-carmin-400 border border-carmin-400/40">
                             {{ trim($g) }}
                         </span>
                     @endif
                 @endforeach
                 @if($tmdbHero['year'] ?? null)
                     <span class="px-4 py-1 rounded-full text-xs font-semibold
-                                 bg-white/5 text-cinema-muted border border-white/10">
+                                 bg-white/5 text-texto-2 border border-white/10">
                         {{ $tmdbHero['year'] }}
                     </span>
                 @endif
                 @if($tmdbHero['stars'] ?? null)
                     <span class="px-4 py-1 rounded-full text-xs font-semibold
                                  bg-yellow-400/10 text-yellow-400 border border-yellow-400/20">
-                        <i class="fas fa-star mr-1"></i>{{ number_format($tmdbHero['stars'], 1) }}/5
+                        <x-icon name="star" class="h-4 w-4 mr-1" />{{ number_format($tmdbHero['stars'], 1) }}/5
                     </span>
                 @endif
             @endif
@@ -77,11 +77,11 @@
 
         <div class="hero-buttons hc-enter hc-enter-4" id="heroButtons">
             <a href="{{ $heroLink }}" class="btn btn-primary btn-lg btn-shine">
-                <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
+                <x-icon name="ticket" class="h-4 w-4 mr-2" />Buy Tickets
             </a>
             @if($heroTrailer)
                 <a href="{{ $heroTrailer }}" target="_blank" rel="noopener" class="btn btn-secondary btn-lg">
-                    <i class="fas fa-play mr-2"></i>Watch Trailer
+                    <x-icon name="play" class="h-4 w-4 mr-2" />Watch Trailer
                 </a>
             @endif
         </div>
@@ -89,7 +89,7 @@
 
     <div class="hc-scroll-cue" aria-hidden="true">
         <span>Discover</span>
-        <i class="fas fa-chevron-down"></i>
+        <x-icon name="chevron-down" class="h-4 w-4" />
     </div>
 </section>
 
@@ -108,7 +108,7 @@
                 @if(auth()->user()->isAdmin())
                     <a href="{{ route('peliculas.external.index') }}" class="btn btn-secondary btn-sm"
                        title="TMDB catalog — admin only">
-                        <i class="fas fa-satellite-dish mr-1"></i>TMDB
+                        <x-icon name="satellite" class="h-4 w-4 mr-1" />TMDB
                     </a>
                 @endif
             @endauth
@@ -167,7 +167,7 @@
     </style>
 
     <div class="carousel-wrapper">
-        <button id="carouselPrev" class="carousel-btn prev" onclick="moveCarousel(-1)" aria-label="Previous" disabled>&#8249;</button>
+        <button id="carouselPrev" class="carousel-btn prev" onclick="moveCarousel(-1)" aria-label="Películas anteriores" disabled>&#8249;</button>
 
         <div class="carousel-viewport" id="carouselViewport">
             <div id="carouselTrack">
@@ -194,7 +194,7 @@
                             <div class="card-movie-title">{{ $pelicula->titulo }}</div>
                             <div class="card-movie-meta">
                                 @if($pelicula->rating)
-                                    <span class="cm-rating"><i class="fas fa-star"></i>{{ number_format($pelicula->rating, 1) }}</span>
+                                    <span class="cm-rating"><x-icon name="star" class="h-4 w-4" />{{ number_format($pelicula->rating, 1) }}</span>
                                     <span class="cm-sep">·</span>
                                 @endif
                                 <span>{{ $pelicula->duracion_min ?? '?' }} min</span>
@@ -209,7 +209,7 @@
             </div>
         </div>
 
-        <button id="carouselNext" class="carousel-btn next" onclick="moveCarousel(1)" aria-label="Next">&#8250;</button>
+        <button id="carouselNext" class="carousel-btn next" onclick="moveCarousel(1)" aria-label="Más películas">&#8250;</button>
     </div>
 
     <div id="carouselDots" class="flex justify-center gap-2 mt-5"></div>
@@ -254,6 +254,8 @@
             if (pages <= 1) return;
             for (let i = 0; i < pages; i++) {
                 const d = document.createElement('button');
+                d.type = 'button';
+                d.setAttribute('aria-label', 'Ir al grupo ' + (i + 1) + ' de ' + pages);
                 d.style.cssText = `width:8px;height:8px;border-radius:50%;border:none;padding:0;cursor:pointer;
                     transition:background .2s,transform .2s;
                     background:${i === current ? 'var(--color-accent-bright)' : 'rgba(255,255,255,0.25)'};
@@ -310,7 +312,7 @@
 
                 <div class="w-full h-full flex items-center justify-center"
                      style="background: linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);">
-                    <i class="fas fa-film text-white/5 text-8xl"></i>
+                    <x-icon name="film" class="h-4 w-4 text-white/5 text-8xl" />
                 </div>
 
                 <div class="card-cine-overlay z-[2]">

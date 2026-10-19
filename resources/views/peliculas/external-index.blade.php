@@ -10,8 +10,8 @@
         <div>
             <h1 class="page-title mb-1">TMDB NOW SHOWING</h1>
             <p class="text-[color:var(--color-text-secondary)] text-sm flex items-center gap-2">
-                <i class="fas fa-satellite-dish text-cinema-accent text-xs"></i>
-                Movies from <code class="bg-cinema-surface px-2 py-0.5 rounded text-xs">api.themoviedb.org/3</code>
+                <x-icon name="satellite" class="h-3 w-3 text-carmin-400" />
+                Movies from <code class="bg-sala-900 px-2 py-0.5 rounded text-xs">api.themoviedb.org/3</code>
             </p>
         </div>
         <div class="flex gap-3">
@@ -20,13 +20,13 @@
                     <form method="POST" action="{{ route('admin.peliculas.external.sync-local') }}">
                         @csrf
                         <button type="submit" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-sync-alt mr-1"></i> Update local listings
+                            <x-icon name="refresh" class="h-4 w-4 mr-1" /> Update local listings
                         </button>
                     </form>
                 @endif
             @endauth
             <a href="{{ route('peliculas.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fas fa-arrow-left mr-1"></i> Local listings
+                <x-icon name="arrow-left" class="h-4 w-4 mr-1" /> Local listings
             </a>
         </div>
     </div>
@@ -34,14 +34,14 @@
     {{-- Session alerts --}}
     @if(session('success'))
         <div class="alert alert-success flex items-center gap-3 mb-6">
-            <i class="fas fa-check-circle text-lg flex-shrink-0"></i>
+            <x-icon name="check-circle" class="h-5 w-5 flex-shrink-0" />
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
         <div class="alert alert-error flex items-center gap-3 mb-6">
-            <i class="fas fa-exclamation-circle text-lg flex-shrink-0"></i>
+            <x-icon name="alert" class="h-5 w-5 flex-shrink-0" />
             <span>{{ session('error') }}</span>
         </div>
     @endif
@@ -49,7 +49,7 @@
     {{-- Aviso API desactivada --}}
     @if(! $apiEnabled)
         <div class="alert alert-warning flex items-start gap-3 mb-6">
-            <i class="fas fa-exclamation-triangle text-xl flex-shrink-0 mt-0.5"></i>
+            <x-icon name="warning" class="h-6 w-6 flex-shrink-0 mt-0.5" />
             <div>
                 <p class="font-bold text-sm mb-1">TMDB is not configured</p>
                 <p class="text-sm opacity-80">
@@ -62,8 +62,8 @@
 
     {{-- Info readonly --}}
     <div class="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl border border-black/10 bg-black/[0.03] text-[color:var(--color-text-secondary)] text-sm">
-        <i class="fas fa-info-circle text-cinema-accent/70 flex-shrink-0"></i>
-        <span>This TMDB integration is <strong class="text-cinema-accent">read-only</strong>. To update your local listings, use the <strong class="text-cinema-accent">Update local listings</strong> button.</span>
+        <x-icon name="info" class="h-4 w-4 text-carmin-400 flex-shrink-0" />
+        <span>This TMDB integration is <strong class="text-carmin-400">read-only</strong>. To update your local listings, use the <strong class="text-carmin-400">Update local listings</strong> button.</span>
     </div>
 
     {{-- Filter form: parameters are sent as a query string so filtered URLs can be shared --}}
@@ -84,7 +84,7 @@
 
         <div>
             <label for="stars" class="block text-xs font-bold uppercase tracking-widest text-[color:var(--color-text-secondary)] mb-1.5">
-                <i class="fas fa-star text-yellow-500 mr-0.5"></i> Rating (0-5)
+                <x-icon name="star" class="h-4 w-4 text-marquesina mr-0.5" /> Rating (0-5)
             </label>
             <input id="stars" name="stars" type="number" min="0" max="5" step="0.1" value="{{ request('stars') }}"
                    class="form-input text-sm py-2">
@@ -99,19 +99,19 @@
 
         <div class="flex gap-2">
             <button type="submit" class="btn btn-primary btn-sm flex-1">
-                <i class="fas fa-search mr-1"></i> Filter
+                <x-icon name="search" class="h-4 w-4 mr-1" /> Filter
             </button>
             <a href="{{ route('peliculas.external.index') }}" class="btn btn-secondary btn-sm px-3" title="Clear filters">
-                <i class="fas fa-times"></i>
+                <x-icon name="close" class="h-4 w-4" />
             </a>
         </div>
     </form>
 
     {{-- Count of results returned by TMDB after applying the current filter --}}
     <p class="text-[color:var(--color-text-secondary)] text-sm mb-5">
-        <span class="text-cinema-accent font-black">{{ count($movies) }}</span> result{{ count($movies) !== 1 ? 's' : '' }}
+        <span class="text-carmin-400 font-black">{{ count($movies) }}</span> result{{ count($movies) !== 1 ? 's' : '' }}
         @if(request()->hasAny(['genre','year','stars','limit']))
-            <span class="text-cinema-accent"> · filtered</span>
+            <span class="text-carmin-400"> · filtered</span>
         @endif
     </p>
 
@@ -135,7 +135,7 @@
                 <div class="card-movie-body">
                     <div class="card-movie-title">{{ $movie['title'] }}</div>
                     <div class="card-movie-meta">
-                        <span class="cm-rating"><i class="fas fa-star"></i>{{ number_format((float) ($movie['stars'] ?? 0), 1) }}</span>
+                        <span class="cm-rating"><x-icon name="star" class="h-4 w-4" />{{ number_format((float) ($movie['stars'] ?? 0), 1) }}</span>
                         <span class="cm-sep">·</span>
                         <span>{{ $movie['year'] ?: 'N/A' }}</span>
                     </div>
@@ -143,7 +143,7 @@
             </div>
         @empty
             <div class="col-span-full text-center py-20 text-[color:var(--color-text-secondary)]">
-                <i class="fas fa-film text-5xl opacity-20 block mb-4"></i>
+                <x-icon name="film" class="h-12 w-12 opacity-20 block mb-4" />
                 <p class="text-lg font-semibold mb-2">No results</p>
                 <p class="text-sm mb-5">No movies match those filters in the external API.</p>
                 <a href="{{ route('peliculas.external.index') }}" class="btn btn-secondary btn-sm">

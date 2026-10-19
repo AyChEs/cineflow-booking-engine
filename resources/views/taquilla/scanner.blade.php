@@ -12,7 +12,7 @@
             <h1 style="font-size:1.6rem;font-weight:900;margin:0;letter-spacing:-0.5px;">Validate Tickets</h1>
         </div>
         <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-sm">
-            <i class="fas fa-arrow-left" style="margin-right:6px;"></i> Dashboard
+            <x-icon name="arrow-left" class="h-4 w-4 mr-1.5" /> Dashboard
         </a>
     </div>
 
@@ -20,7 +20,7 @@
     <div style="background:var(--color-bg-surface);border:1px solid var(--border-subtle);border-radius:16px;padding:1.5rem;box-shadow:0 8px 24px var(--shadow-soft);margin-bottom:1.5rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
             <span style="font-weight:800;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;">
-                <i class="fas fa-camera" style="color:var(--color-accent-bright);margin-right:8px;"></i>Camera Scanner
+                <x-icon name="camera" class="h-4 w-4 text-carmin-400 mr-2" />Camera Scanner
             </span>
             <button id="btnToggleCam" class="btn btn-primary btn-sm" type="button">Start Camera</button>
         </div>
@@ -34,7 +34,7 @@
     {{-- Manual validation --}}
     <div style="background:var(--color-bg-surface);border:1px solid var(--border-subtle);border-radius:16px;padding:1.5rem;box-shadow:0 8px 24px var(--shadow-soft);margin-bottom:1.5rem;">
         <span style="font-weight:800;font-size:0.8rem;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:0.85rem;">
-            <i class="fas fa-keyboard" style="color:var(--color-accent-bright);margin-right:8px;"></i>Manual Entry
+            <x-icon name="keyboard" class="h-4 w-4 text-carmin-400 mr-2" />Manual Entry
         </span>
         <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
             <input id="manualInput" type="text" placeholder="Paste the ticket code (ID.TOKEN.SIGNATURE)"
@@ -70,7 +70,7 @@
             resultEl.style.background = '#e9f9ef';
             resultEl.style.border = '1px solid #34d17f';
             resultEl.innerHTML = `
-                <div style="font-size:2.4rem;color:#22a35a;margin-bottom:0.4rem;"><i class="fas fa-check-circle"></i></div>
+                <div style="font-size:2.4rem;color:#22a35a;margin-bottom:0.4rem;"><x-icon name="check-circle" class="h-4 w-4" /></div>
                 <h2 style="margin:0 0 0.75rem;color:#12603a;font-weight:900;">VALID TICKET</h2>
                 <div style="text-align:left;max-width:340px;margin:0 auto;font-size:0.9rem;color:#1d1418;display:flex;flex-direction:column;gap:0.35rem;">
                     <div><strong>Booking:</strong> #${r.id}</div>
@@ -83,7 +83,7 @@
             resultEl.style.background = '#fdeaea';
             resultEl.style.border = '1px solid #e2757a';
             resultEl.innerHTML = `
-                <div style="font-size:2.4rem;color:#c0392b;margin-bottom:0.4rem;"><i class="fas fa-times-circle"></i></div>
+                <div style="font-size:2.4rem;color:#c0392b;margin-bottom:0.4rem;"><x-icon name="x-circle" class="h-4 w-4" /></div>
                 <h2 style="margin:0 0 0.35rem;color:#8f1f1f;font-weight:900;">INVALID TICKET</h2>
                 <p style="margin:0;color:#8f1f1f;font-size:0.88rem;">Incorrect, expired, or already used code.</p>`;
         }

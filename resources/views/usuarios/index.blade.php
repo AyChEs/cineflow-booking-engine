@@ -13,7 +13,7 @@
             </p>
         </div>
         <a href="{{ route('usuarios.create') }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus mr-1.5"></i> Add User
+            <x-icon name="plus" class="h-4 w-4 mr-1.5" /> Add User
         </a>
     </div>
 
@@ -41,7 +41,7 @@
                     <td>
                         @php
                             $rolClass = match($user->rol) {
-                                'admin'    => 'bg-cinema-accent/20 text-cinema-accent border-cinema-accent/30',
+                                'admin'    => 'bg-carmin-600/20 text-carmin-400 border-carmin-400/30',
                                 'taquilla' => 'bg-amber-500/20 text-amber-400 border-amber-500/30',
                                 default    => 'bg-black/5 text-[color:var(--color-text-secondary)] border-black/10',
                             };
@@ -67,7 +67,7 @@
                 @empty
                 <tr>
                     <td colspan="7" class="text-center py-10 text-[color:var(--color-text-secondary)]">
-                        <i class="fas fa-users text-3xl opacity-20 block mb-2"></i>
+                        <x-icon name="users" class="h-8 w-8 opacity-20 block mb-2" />
                         No users registered.
                     </td>
                 </tr>

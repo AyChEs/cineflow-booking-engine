@@ -14,9 +14,9 @@
         <div>
             <h1 class="page-title mb-1 section-title-accent is-visible">NOW SHOWING</h1>
             <p class="text-[color:var(--color-text-secondary)] text-sm">
-                <span class="text-cinema-accent font-black">{{ $peliculas->count() }}</span> movies
+                <span class="text-carmin-400 font-black">{{ $peliculas->count() }}</span> movies
                 @if($filtered)
-                    <span class="text-cinema-accent"> · filtered</span>
+                    <span class="text-carmin-400"> · filtered</span>
                 @endif
             </p>
         </div>
@@ -35,7 +35,7 @@
 
             {{-- Filters button (mobile/tablet only) --}}
             <button type="button" id="filtersToggle" class="btn btn-secondary btn-sm filters-toggle">
-                <i class="fas fa-sliders-h mr-1.5"></i>Filters
+                <x-icon name="sliders" class="h-4 w-4 mr-1.5" />Filters
                 @if($activeFilters > 0)
                     <span class="filter-count">{{ $activeFilters }}</span>
                 @endif
@@ -44,7 +44,7 @@
             @auth
                 @if(auth()->user()->isAdmin())
                     <a href="{{ route('admin.peliculas.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-cog mr-1.5"></i> Manage
+                        <x-icon name="settings" class="h-4 w-4 mr-1.5" /> Manage
                     </a>
                 @endif
             @endauth
@@ -53,7 +53,7 @@
 
     {{-- ================= Cercador ================= --}}
     <div class="search-cartelera mb-5">
-        <i class="fas fa-search search-cartelera-icon"></i>
+        <x-icon name="search" class="h-4 w-4 search-cartelera-icon" />
         <input type="search" name="q" value="{{ request('q') }}"
                placeholder="Search for a movie…"
                autocomplete="off"
@@ -71,30 +71,30 @@
 
             @if(request('q'))
                 <a href="{{ route('peliculas.index', request()->except('q')) }}" class="filter-chip">
-                    <i class="fas fa-search"></i> “{{ Str::limit(request('q'), 20) }}” <span>&times;</span>
+                    <x-icon name="search" class="h-4 w-4" /> “{{ Str::limit(request('q'), 20) }}” <span>&times;</span>
                 </a>
             @endif
             @if(request('dia'))
                 <a href="{{ route('peliculas.index', request()->except('dia')) }}" class="filter-chip">
-                    <i class="fas fa-calendar-day"></i>
+                    <x-icon name="calendar" class="h-4 w-4" />
                     {{ \Carbon\Carbon::parse(request('dia'))->locale('en')->isoFormat('ddd D MMM') }} <span>&times;</span>
                 </a>
             @endif
             @if(request('cine_id'))
                 @php $cineActiu = $filterCines->firstWhere('id', (int) request('cine_id')); @endphp
                 <a href="{{ route('peliculas.index', request()->except('cine_id')) }}" class="filter-chip">
-                    <i class="fas fa-map-marker-alt"></i> {{ $cineActiu->nombre ?? 'Cinema' }} <span>&times;</span>
+                    <x-icon name="map-pin" class="h-4 w-4" /> {{ $cineActiu->nombre ?? 'Cinema' }} <span>&times;</span>
                 </a>
             @endif
             @if(request('categoria_id'))
                 @php $catActiva = $filterCats->firstWhere('id', (int) request('categoria_id')); @endphp
                 <a href="{{ route('peliculas.index', request()->except('categoria_id')) }}" class="filter-chip">
-                    <i class="fas fa-tag"></i> {{ $catActiva->nombre ?? 'Genre' }} <span>&times;</span>
+                    <x-icon name="tag" class="h-4 w-4" /> {{ $catActiva->nombre ?? 'Genre' }} <span>&times;</span>
                 </a>
             @endif
             @if(request('hora_desde', 0) > 0 || request('hora_hasta', 23) < 23)
                 <a href="{{ route('peliculas.index', request()->except(['hora_desde', 'hora_hasta'])) }}" class="filter-chip">
-                    <i class="fas fa-clock"></i>
+                    <x-icon name="clock" class="h-4 w-4" />
                     {{ str_pad(request('hora_desde', 0), 2, '0', STR_PAD_LEFT) }}:00–{{ str_pad(request('hora_hasta', 23), 2, '0', STR_PAD_LEFT) }}:00
                     <span>&times;</span>
                 </a>
@@ -108,7 +108,7 @@
 
     @if(session('success'))
         <div class="alert alert-success flex items-center gap-3 mb-6">
-            <i class="fas fa-check-circle flex-shrink-0"></i>
+            <x-icon name="check-circle" class="h-4 w-4 flex-shrink-0" />
             <span>{{ session('success') }}</span>
         </div>
     @endif
@@ -127,13 +127,13 @@
                 <div class="flex items-center gap-3">
                     @if($filtered)
                         <a href="{{ route('peliculas.index') }}"
-                           class="text-cinema-accent text-xs font-bold hover:opacity-70 transition-opacity">
+                           class="text-carmin-400 text-xs font-bold hover:opacity-70 transition-opacity">
                             Clear &times;
                         </a>
                     @endif
                     {{-- Close (mobile only) --}}
                     <button type="button" id="filtersClose" class="filters-close" aria-label="Close filters">
-                        <i class="fas fa-times"></i>
+                        <x-icon name="close" class="h-4 w-4" />
                     </button>
                 </div>
             </div>
@@ -160,11 +160,11 @@
             <p class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[color:var(--color-text-secondary)] mb-3">Time</p>
             <div class="mb-4">
                 <div class="flex justify-between items-center mb-2">
-                    <span id="lblDesde" class="text-cinema-accent text-sm font-bold">
+                    <span id="lblDesde" class="text-carmin-400 text-sm font-bold">
                         {{ str_pad(request('hora_desde', 0), 2, '0', STR_PAD_LEFT) }}:00
                     </span>
                     <span class="text-[color:var(--color-text-secondary)] text-xs opacity-50">&ndash;</span>
-                    <span id="lblHasta" class="text-cinema-accent text-sm font-bold">
+                    <span id="lblHasta" class="text-carmin-400 text-sm font-bold">
                         {{ str_pad(request('hora_hasta', 23), 2, '0', STR_PAD_LEFT) }}:00
                     </span>
                 </div>
@@ -172,11 +172,11 @@
                     <input type="range" name="hora_desde" id="rangeDesde"
                            min="0" max="23" step="1" value="{{ request('hora_desde', 0) }}"
                            oninput="syncHoraRange()" onchange="document.getElementById('filterForm').submit()"
-                           class="absolute w-full accent-cinema-accent">
+                           class="absolute w-full accent-carmin-600">
                     <input type="range" name="hora_hasta" id="rangeHasta"
                            min="0" max="23" step="1" value="{{ request('hora_hasta', 23) }}"
                            oninput="syncHoraRange()" onchange="document.getElementById('filterForm').submit()"
-                           class="absolute w-full accent-cinema-accent">
+                           class="absolute w-full accent-carmin-600">
                 </div>
             </div>
 
@@ -189,8 +189,8 @@
                     <input type="radio" name="cine_id" value="{{ $cine->id }}"
                            {{ request('cine_id') == $cine->id ? 'checked' : '' }}
                            onchange="document.getElementById('filterForm').submit()"
-                           class="accent-cinema-accent w-4 h-4 flex-shrink-0">
-                    <span class="text-sm leading-tight group-hover:text-cinema-accent transition-colors">
+                           class="accent-carmin-600 w-4 h-4 flex-shrink-0">
+                    <span class="text-sm leading-tight group-hover:text-carmin-400 transition-colors">
                         {{ $cine->nombre }}
                         <span class="block text-[color:var(--color-text-secondary)] text-xs">{{ $cine->ciudad }}</span>
                     </span>
@@ -206,8 +206,8 @@
                     <input type="radio" name="categoria_id" value="{{ $cat->id }}"
                            {{ request('categoria_id') == $cat->id ? 'checked' : '' }}
                            onchange="document.getElementById('filterForm').submit()"
-                           class="accent-cinema-accent w-4 h-4 flex-shrink-0">
-                    <span class="text-sm group-hover:text-cinema-accent transition-colors">{{ $cat->nombre }}</span>
+                           class="accent-carmin-600 w-4 h-4 flex-shrink-0">
+                    <span class="text-sm group-hover:text-carmin-400 transition-colors">{{ $cat->nombre }}</span>
                 </label>
             @endforeach
 
@@ -247,7 +247,7 @@
                             <div class="card-movie-title">{{ $pelicula->titulo }}</div>
                             <div class="card-movie-meta">
                                 @if($pelicula->rating)
-                                    <span class="cm-rating"><i class="fas fa-star"></i>{{ number_format($pelicula->rating, 1) }}</span>
+                                    <span class="cm-rating"><x-icon name="star" class="h-4 w-4" />{{ number_format($pelicula->rating, 1) }}</span>
                                     <span class="cm-sep">·</span>
                                 @endif
                                 <span>{{ $pelicula->duracion_min ?? '?' }} min</span>
@@ -258,15 +258,15 @@
                     </div>
                 @empty
                     <div class="col-span-full text-center py-16 text-[color:var(--color-text-secondary)]">
-                        <i class="fas fa-film text-5xl opacity-20 block mb-4"></i>
+                        <x-icon name="film" class="h-12 w-12 opacity-20 block mb-4" />
                         @if(request('q'))
-                            We couldn't find any movie for “<span class="font-bold text-cinema-accent">{{ request('q') }}</span>”.
+                            We couldn't find any movie for “<span class="font-bold text-carmin-400">{{ request('q') }}</span>”.
                         @else
                             No movies match the selected filters.
                         @endif
                         <br>
                         <a href="{{ route('peliculas.index') }}"
-                           class="text-cinema-accent text-sm mt-3 inline-block hover:opacity-80 transition-opacity">
+                           class="text-carmin-400 text-sm mt-3 inline-block hover:opacity-80 transition-opacity">
                             View all &rarr;
                         </a>
                     </div>

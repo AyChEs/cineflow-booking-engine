@@ -162,7 +162,7 @@
 
         @if(session('error'))
             <div class="bg-red-50 border border-red-300 text-red-600 px-4 py-3 rounded-lg mb-6 text-sm">
-                <i class="fas fa-exclamation-circle mr-1.5"></i>{{ session('error') }}
+                <x-icon name="alert" class="h-4 w-4 mr-1.5" />{{ session('error') }}
             </div>
         @endif
 
@@ -172,7 +172,7 @@
             {{-- PERSONAL DETAILS --}}
             <h2 class="text-[#1e3a5f] text-base font-bold mb-5 pb-2 border-b-2 border-gray-100
                         flex items-center gap-2">
-                <i class="fas fa-user-circle text-red-600"></i> Personal information
+                <x-icon name="user" class="h-4 w-4 text-carmin-400" /> Personal information
             </h2>
 
             <div class="personal-grid grid grid-cols-2 gap-4 mb-4">
@@ -199,7 +199,7 @@
             {{-- PAYMENT METHOD --}}
             <h2 class="text-[#1e3a5f] text-base font-bold mb-5 pb-2 border-b-2 border-gray-100
                         flex items-center gap-2">
-                <i class="fas fa-credit-card text-red-600"></i> Payment method
+                <x-icon name="card" class="h-4 w-4 text-carmin-400" /> Payment method
             </h2>
 
             <input type="hidden" name="metode" id="metodeInput" value="targeta">
@@ -212,12 +212,12 @@
                 <div class="stripe-pay-card">
                     <div class="stripe-pay-head">
                         <span class="stripe-pay-badge">
-                            <i class="fas fa-lock"></i> Secure payment
+                            <x-icon name="lock" class="h-4 w-4" /> Secure payment
                         </span>
                         <span class="stripe-pay-brands">
-                            <i class="fab fa-cc-visa text-[#1a1f71]"></i>
-                            <i class="fab fa-cc-mastercard text-[#eb001b]"></i>
-                            <i class="fab fa-cc-amex text-[#007bc1]"></i>
+                            <x-icon name="card" class="h-4 w-4 text-[#1a1f71]" />
+                            <x-icon name="card" class="h-4 w-4 text-[#eb001b]" />
+                            <x-icon name="card" class="h-4 w-4 text-[#007bc1]" />
                         </span>
                     </div>
 
@@ -226,14 +226,14 @@
 
                     {{-- Payment error messages --}}
                     <div id="stripe-errors" class="hidden text-red-600 text-sm mt-3 flex items-start gap-1.5">
-                        <i class="fas fa-exclamation-circle mt-0.5"></i><span id="stripe-errors-text"></span>
+                        <x-icon name="alert" class="h-4 w-4 mt-0.5" /><span id="stripe-errors-text"></span>
                     </div>
 
                     <div class="stripe-pay-testcard">
                         Test mode → card <strong>4242 4242 4242 4242</strong> · any future date · any CVC
                     </div>
                     <p class="text-xs text-gray-400 text-center mt-3">
-                        <i class="fas fa-shield-alt mr-1"></i>
+                        <x-icon name="shield" class="h-4 w-4 mr-1" />
                         Data encrypted and processed by Stripe. CineFlow never stores it.
                     </p>
                 </div>
@@ -358,7 +358,7 @@
                         <label for="guardarTargeta" class="cursor-pointer text-sm text-gray-700 leading-relaxed">
                             <strong>Save card</strong> for future purchases
                             <span class="block text-xs text-gray-400 mt-0.5">
-                                <i class="fas fa-lock mr-1"></i>We only securely store the last 4 digits.
+                                <x-icon name="lock" class="h-4 w-4 mr-1" />We only securely store the last 4 digits.
                             </span>
                         </label>
                     </div>
@@ -387,19 +387,19 @@
                        text-base font-bold tracking-[2px] uppercase cursor-not-allowed
                        transition-all duration-200"
                 disabled>
-                <i class="fas fa-lock mr-2"></i>PAY NOW
+                <x-icon name="lock" class="h-4 w-4 mr-2" />PAY NOW
             </button>
 
             {{-- Security icons and accepted payment methods --}}
             <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 mt-4
                         text-xs text-gray-400">
-                <span><i class="fas fa-shield-alt mr-1"></i>100% secure payment · SSL</span>
+                <span><x-icon name="shield" class="h-4 w-4 mr-1" />100% secure payment · SSL</span>
                 <span>·</span>
-                <i class="fab fa-cc-visa text-lg text-[#1a1f71]"></i>
-                <i class="fab fa-cc-mastercard text-lg text-[#eb001b]"></i>
-                <i class="fab fa-cc-amex text-lg text-[#007bc1]"></i>
+                <x-icon name="card" class="h-5 w-5 text-[#1a1f71]" />
+                <x-icon name="card" class="h-5 w-5 text-[#eb001b]" />
+                <x-icon name="card" class="h-5 w-5 text-[#007bc1]" />
                 <span>·</span>
-                <span><i class="fab fa-google-pay text-lg mr-1"></i>Google Pay</span>
+                <span><x-icon name="card" class="h-5 w-5 mr-1" />Google Pay</span>
             </div>
 
         </form>
@@ -478,7 +478,7 @@
         hideError();
         btn.disabled = true;
         const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>PROCESSING…';
+        btn.innerHTML = '<x-icon name="loader" class="h-4 w-4 mr-2 animate-spin" />PROCESSING…';
 
         const fail = (msg) => {
             showError(msg);

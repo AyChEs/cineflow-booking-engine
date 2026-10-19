@@ -17,7 +17,7 @@ Completed steps show a checkmark, the active step is bold with a red accent. --}
                         <span style="width: 1.1rem; height: 1.1rem; background: #16a34a; border-radius: 50%;
                                          display: flex; align-items: center; justify-content: center;
                                          font-size: 0.55rem; color: white; margin-bottom: 0.15rem; flex-shrink: 0;">
-                            <i class="fas fa-check"></i>
+                            <x-icon name="check" class="h-4 w-4" />
                         </span>
                     @else
                         <span style="font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
@@ -44,7 +44,7 @@ Completed steps show a checkmark, the active step is bold with a red accent. --}
                   transition: border-color 0.2s, color 0.2s;"
             onmouseover="this.style.borderColor='var(--color-accent-bright)';this.style.color='var(--color-accent-bright)'"
             onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--color-text-secondary)'">
-            <i class="fas fa-times" style="font-size: 0.7rem;"></i>
+            <x-icon name="close" class="h-3 w-3" />
         </a>
     </div>
 </div>
