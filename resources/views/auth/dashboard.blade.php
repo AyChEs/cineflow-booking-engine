@@ -55,17 +55,17 @@
         </div>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
             <a href="{{ route('taquilla.scanner') }}" class="btn btn-primary" style="padding:0.5rem 1.25rem;font-size:0.85rem;">
-                <i class="fas fa-qrcode" style="margin-right:6px;"></i>Validate Tickets
+                <x-icon name="qr" class="h-4 w-4 mr-1.5" />Validate Tickets
             </a>
             <a href="{{ route('sesiones.create') }}" class="btn btn-secondary" style="padding:0.5rem 1.25rem;font-size:0.85rem;">
-                <i class="fas fa-plus" style="margin-right:6px;"></i>New Showtime
+                <x-icon name="plus" class="h-4 w-4 mr-1.5" />New Showtime
             </a>
             @if($isAdmin)
             <a href="{{ route('peliculas.create') }}" class="btn btn-secondary" style="padding:0.5rem 1.25rem;font-size:0.85rem;">
-                <i class="fas fa-film" style="margin-right:6px;"></i>New Movie
+                <x-icon name="film" class="h-4 w-4 mr-1.5" />New Movie
             </a>
             <a href="{{ route('cines.create') }}" class="btn btn-secondary" style="padding:0.5rem 1.25rem;font-size:0.85rem;">
-                <i class="fas fa-building" style="margin-right:6px;"></i>New Cinema
+                <x-icon name="building" class="h-4 w-4 mr-1.5" />New Cinema
             </a>
             @endif
         </div>
@@ -179,16 +179,16 @@
                 <p style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--color-text-secondary);margin:0 0 1rem;">QUICK MANAGEMENT</p>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
                     <a href="{{ route('admin.peliculas.index') }}" class="btn btn-secondary" style="text-align:center;padding:0.6rem;font-size:0.8rem;">
-                        <i class="fas fa-film" style="display:block;font-size:1.2rem;margin-bottom:4px;"></i>Movies
+                        <x-icon name="film" class="h-5 w-5 block mb-1" />Movies
                     </a>
                     <a href="{{ route('admin.cines.index') }}" class="btn btn-secondary" style="text-align:center;padding:0.6rem;font-size:0.8rem;">
-                        <i class="fas fa-building" style="display:block;font-size:1.2rem;margin-bottom:4px;"></i>Cinemas
+                        <x-icon name="building" class="h-5 w-5 block mb-1" />Cinemas
                     </a>
                     <a href="{{ route('salas.index') }}" class="btn btn-secondary" style="text-align:center;padding:0.6rem;font-size:0.8rem;">
-                        <i class="fas fa-door-open" style="display:block;font-size:1.2rem;margin-bottom:4px;"></i>Screens
+                        <x-icon name="door" class="h-5 w-5 block mb-1" />Screens
                     </a>
                     <a href="{{ route('usuarios.index') }}" class="btn btn-secondary" style="text-align:center;padding:0.6rem;font-size:0.8rem;">
-                        <i class="fas fa-users" style="display:block;font-size:1.2rem;margin-bottom:4px;"></i>Users
+                        <x-icon name="users" class="h-5 w-5 block mb-1" />Users
                     </a>
                 </div>
             </div>
@@ -199,10 +199,10 @@
                 <p style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--color-text-secondary);margin:0 0 1rem;">BOX OFFICE</p>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
                     <a href="{{ route('taquilla.scanner') }}" class="btn btn-secondary" style="text-align:center;padding:0.6rem;font-size:0.8rem;">
-                        <i class="fas fa-qrcode" style="display:block;font-size:1.2rem;margin-bottom:4px;"></i>Validate Tickets
+                        <x-icon name="qr" class="h-5 w-5 block mb-1" />Validate Tickets
                     </a>
                     <a href="{{ route('reservas.index') }}" class="btn btn-secondary" style="text-align:center;padding:0.6rem;font-size:0.8rem;">
-                        <i class="fas fa-ticket-alt" style="display:block;font-size:1.2rem;margin-bottom:4px;"></i>Bookings
+                        <x-icon name="ticket" class="h-5 w-5 block mb-1" />Bookings
                     </a>
                 </div>
             </div>
