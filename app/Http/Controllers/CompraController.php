@@ -285,14 +285,17 @@ class CompraController extends Controller
 
         // Con Stripe activo el pago se cobra de forma embebida (Payment Element)
         // vía AJAX antes de llegar aquí, por lo que este endpoint solo atiende el
-        // flujo de tarjeta simulada (cuando Stripe no está configurado).
+        // pago simulado (cuando Stripe no está configurado): tarjeta o Bizum.
         $rules = [
             'nom'    => 'required|string|max:100',
             'email'  => 'required|email|max:150',
-            'metode' => 'required|in:targeta',
+            'metode' => 'required|in:targeta,bizum',
         ];
 
-        if ($request->input('card_mode') !== 'saved') {
+        if ($request->input('metode') === 'bizum') {
+            // Bizum va asociado a un móvil español: 9 cifras que empiezan por 6 o 7.
+            $rules['telefon_bizum'] = ['required', 'regex:/^[67]\d{8}$/'];
+        } elseif ($request->input('card_mode') !== 'saved') {
             // Validamos formato y también la firma de Luhn para detectar números inventados
             $rules['num_targeta']     = ['required', 'string', 'max:25', function ($attr, $value, $fail) {
                 if (!$this->isValidCardNumber($value)) {
@@ -314,7 +317,8 @@ class CompraController extends Controller
         session(['compra_buyer' => ['nom' => $request->nom, 'email' => $request->email]]);
 
         // Si el usuario quiere guardar la tarjeta, almacenamos los últimos 4 dígitos enmascarados
-        if (auth()->id() && $request->input('card_mode') !== 'saved'
+        if (auth()->id() && $request->input('metode') === 'targeta'
+            && $request->input('card_mode') !== 'saved'
             && $request->boolean('guardar_targeta')) {
             $cardDigits = preg_replace('/\D/', '', $request->input('num_targeta', ''));
             if (strlen($cardDigits) >= 4) {

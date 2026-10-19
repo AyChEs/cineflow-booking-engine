@@ -137,6 +137,11 @@ Route::middleware(['auth', 'verified', 'canManage'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', function () {
+        // Los clientes tienen su propio panel; el resto de roles, el general.
+        if (auth()->user()->rol === 'cliente') {
+            return redirect()->route('cliente.dashboard');
+        }
+
         return view('auth.dashboard');
     })->name('dashboard');
 
