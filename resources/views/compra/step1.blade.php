@@ -161,7 +161,7 @@
                            cursor:not-allowed; opacity:0.55;
                            transition:background 0.2s, opacity 0.2s;"
                     disabled>
-                    <i class="fas fa-arrow-right" style="margin-right:0.5rem;"></i>NEXT
+                    <x-icon name="arrow-right" class="h-4 w-4 mr-2" />NEXT
                 </button>
             </div>
         </form>

@@ -7,15 +7,15 @@
 
     <a href="{{ route('sesiones.index') }}"
        class="inline-flex items-center gap-2 text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-bright)] text-sm font-semibold transition-colors mb-6">
-        <i class="fas fa-arrow-left text-xs"></i> Back to showtimes
+        <x-icon name="arrow-left" class="h-3 w-3" /> Back to showtimes
     </a>
 
-    <div class="bg-cinema-surface border border-white/10 rounded-2xl p-8">
-        <h1 class="page-title mb-6">EDIT SHOWTIME <span class="text-cinema-accent">#{{ $sesion->id }}</span></h1>
+    <div class="bg-sala-900 border border-white/10 rounded-2xl p-8">
+        <h1 class="page-title mb-6">EDIT SHOWTIME <span class="text-carmin-400">#{{ $sesion->id }}</span></h1>
 
         @if ($errors->any())
             <div class="alert alert-error flex items-start gap-3 mb-6">
-                <i class="fas fa-exclamation-circle flex-shrink-0 mt-0.5"></i>
+                <x-icon name="alert" class="h-4 w-4 flex-shrink-0 mt-0.5" />
                 <ul class="list-disc list-inside space-y-0.5 text-sm">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -72,7 +72,7 @@
 
             <div class="flex gap-3 mt-6">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save mr-1.5"></i> Update Showtime
+                    <x-icon name="save" class="h-4 w-4 mr-1.5" /> Update Showtime
                 </button>
                 <a href="{{ route('sesiones.index') }}" class="btn btn-secondary">Cancel</a>
             </div>

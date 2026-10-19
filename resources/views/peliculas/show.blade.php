@@ -8,14 +8,14 @@
     {{-- Back --}}
     <a href="{{ route('peliculas.index') }}{{ $cineId ? '?cine_id='.$cineId : '' }}"
        class="inline-flex items-center gap-2 text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-bright)] text-sm font-semibold transition-colors mb-8">
-        <i class="fas fa-arrow-left text-xs"></i> Back to Now Showing
+        <x-icon name="arrow-left" class="h-3 w-3" /> Back to Now Showing
     </a>
 
     {{-- Capçalera: poster + info --}}
     <div class="grid gap-8 items-start mb-10" style="grid-template-columns: 200px 1fr;">
 
         {{-- Poster --}}
-        <div class="aspect-[2/3] bg-gradient-to-br from-cinema-surface to-black rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+        <div class="aspect-[2/3] bg-gradient-to-br from-sala-900 to-black rounded-xl overflow-hidden border border-white/10 shadow-2xl">
             <img src="{{ $pelicula->poster_url }}"
                  alt="Poster for {{ $pelicula->titulo }}"
                  class="w-full h-full object-cover block">
@@ -29,20 +29,20 @@
             <div class="flex flex-wrap gap-2 mb-4">
                 @if($pelicula->classificacio_edad)
                     <span class="px-3 py-1 rounded text-xs font-black uppercase tracking-wider
-                                 bg-cinema-red text-white">
+                                 bg-carmin-600 text-white">
                         {{ $pelicula->classificacio_edad }}
                     </span>
                 @endif
                 @foreach($pelicula->categorias as $cat)
                     <span class="px-3 py-1 rounded text-xs font-semibold
-                                 bg-cinema-surface text-cinema-muted border border-white/10">
+                                 bg-sala-900 text-texto-2 border border-white/10">
                         {{ $cat->nombre }}
                     </span>
                 @endforeach
                 @if($pelicula->duracion_min)
                     <span class="px-3 py-1 rounded text-xs font-semibold
-                                 bg-cinema-surface text-cinema-muted border border-white/10">
-                        <i class="fas fa-clock mr-1 opacity-60"></i>{{ $pelicula->duracion_min }} min
+                                 bg-sala-900 text-texto-2 border border-white/10">
+                        <x-icon name="clock" class="h-4 w-4 mr-1 opacity-60" />{{ $pelicula->duracion_min }} min
                     </span>
                 @endif
             </div>
@@ -55,8 +55,8 @@
 
             @if($pelicula->trailer_url)
                 <a href="{{ $pelicula->trailer_url }}" target="_blank" rel="noopener"
-                   class="inline-flex items-center gap-2 text-cinema-accent font-bold text-sm hover:opacity-80 transition-opacity mb-5">
-                    <i class="fas fa-play-circle"></i> Watch Trailer
+                   class="inline-flex items-center gap-2 text-carmin-400 font-bold text-sm hover:opacity-80 transition-opacity mb-5">
+                    <x-icon name="play" class="h-4 w-4" /> Watch Trailer
                 </a>
             @endif
 
@@ -64,14 +64,14 @@
             @auth @if(auth()->user()->isAdmin())
                 <div class="flex gap-3 mt-6">
                     <a href="{{ route('peliculas.edit', $pelicula->id) }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-edit mr-1"></i> Edit
+                        <x-icon name="pencil" class="h-4 w-4 mr-1" /> Edit
                     </a>
                     <form action="{{ route('peliculas.destroy', $pelicula->id) }}" method="POST"
                           onsubmit="return confirm('Delete this movie and its screenings?')">
                         @csrf @method('DELETE')
                         <button type="submit"
                                 class="btn btn-secondary btn-sm border-red-500/50 text-red-400 hover:bg-red-500/10">
-                            <i class="fas fa-trash mr-1"></i> Delete
+                            <x-icon name="trash" class="h-4 w-4 mr-1" /> Delete
                         </button>
                     </form>
                 </div>
@@ -82,7 +82,7 @@
     {{-- Sessions disponibles --}}
     <div>
         <h2 class="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--color-text-secondary)] mb-5">
-            <i class="fas fa-calendar-alt mr-2 text-cinema-accent/60"></i>Available Screenings
+            <x-icon name="calendar" class="h-4 w-4 mr-2 text-carmin-400" />Available Screenings
         </h2>
 
         @php
@@ -96,7 +96,7 @@
                 {{-- Day label with relative indicator (Today / Tomorrow / day name) --}}
                 <h3 class="flex items-center gap-2.5 mb-4">
                     @if($dia === $today)
-                        <span class="bg-cinema-accent text-white text-[0.6rem] font-black px-2.5 py-1
+                        <span class="bg-carmin-600 text-white text-[0.6rem] font-black px-2.5 py-1
                                      rounded uppercase tracking-widest">
                             Today
                         </span>
@@ -115,15 +115,15 @@
                 {{-- Showtime cards: large time + highlighted price + buy button --}}
                 <div class="flex flex-wrap gap-3">
                     @foreach($sessions as $sesion)
-                        <div class="bg-cinema-surface border border-white/10 rounded-xl p-4 min-w-[200px]
-                                    hover:border-cinema-accent/50 hover:bg-white/[0.03] transition-all duration-200">
+                        <div class="bg-sala-900 border border-white/10 rounded-xl p-4 min-w-[200px]
+                                    hover:border-carmin-400/50 hover:bg-white/[0.03] transition-all duration-200">
 
                             {{-- Hora grande en acento rojo --}}
-                            <div class="text-2xl font-black text-cinema-accent leading-none mb-1">
+                            <div class="text-2xl font-black text-carmin-400 leading-none mb-1">
                                 {{ $sesion->fecha_hora->format('H:i') }}
                             </div>
 
-                            <div class="text-xs text-cinema-muted mb-3 leading-snug">
+                            <div class="text-xs text-texto-2 mb-3 leading-snug">
                                 {{ $sesion->sala->cine->nombre }}
                                 <span class="opacity-30 mx-1">–</span>
                                 {{ $sesion->sala->nombre }}
@@ -134,22 +134,22 @@
                                 <span class="text-xl font-black text-white leading-none">
                                     {{ number_format($sesion->preu_base, 2) }}€
                                 </span>
-                                <span class="text-[0.6rem] text-cinema-muted opacity-60 mb-0.5">
+                                <span class="text-[0.6rem] text-texto-2 opacity-60 mb-0.5">
                                     / ticket
                                 </span>
                             </div>
 
                             <a href="{{ route('compra.step1', ['sesion_id' => $sesion->id]) }}"
                                class="btn btn-primary btn-sm block text-center">
-                                <i class="fas fa-ticket-alt mr-1.5"></i>Buy Tickets
+                                <x-icon name="ticket" class="h-4 w-4 mr-1.5" />Buy Tickets
                             </a>
                         </div>
                     @endforeach
                 </div>
             </div>
         @empty
-            <div class="bg-cinema-surface border border-white/10 rounded-xl p-8 text-center text-cinema-muted">
-                <i class="fas fa-calendar-times text-3xl opacity-20 block mb-3"></i>
+            <div class="bg-sala-900 border border-white/10 rounded-xl p-8 text-center text-texto-2">
+                <x-icon name="calendar-x" class="h-8 w-8 opacity-20 block mb-3" />
                 This movie has no screenings scheduled.
             </div>
         @endforelse
