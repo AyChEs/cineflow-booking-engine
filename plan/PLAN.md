@@ -23,7 +23,7 @@ Después de la revisión, Opus solo revisa el resultado final.
 
 | NN | Sesión | Modelo | Depende de | Estado |
 |---|---|---|---|---|
-| 00 | Entorno local y CI en cada PR | Flash | | hecha (PR #1, fusionado con 3 pruebas preexistentes en rojo, ya en `main`) |
+| 00 | Entorno local y CI en cada PR | Flash | | hecha (PR #1, fusionado con 3 pruebas en rojo que ya fallaban en `main`; arregladas en 00b) |
 | 00b | Pruebas de la línea base en verde | | 00 | hecha (PR #2) |
 | 01 | Auditoría (solo informe) | Flash | 00, 00b | hecha (PR #3) |
 | 02 | Tokens de diseño y layout base | GLM | 01 | hecha (PR #4) |
