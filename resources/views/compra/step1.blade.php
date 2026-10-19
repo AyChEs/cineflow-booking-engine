@@ -19,7 +19,7 @@
 
             <ul class="divide-y divide-sala-700 rounded-card border border-sala-700">
                 @foreach ($tipus as $key => $info)
-                    @php $precio = round($sesion->preu_base * $info['factor'], 2); @endphp
+                    @php $precio = \App\Http\Controllers\CompraController::precioCentimos((float) $sesion->preu_base, $key) / 100; @endphp
                     <li class="grid grid-cols-[1fr,auto] items-center gap-x-4 gap-y-3 px-4 py-4 sm:flex">
                         <div class="col-span-2 min-w-0 sm:flex-1">
                             <p class="font-semibold text-texto" id="tipo-{{ $key }}">{{ $info['label'] }}</p>
