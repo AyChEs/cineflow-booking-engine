@@ -27,8 +27,8 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 00b | Pruebas de la línea base en verde | | 00 | hecha (PR #2) |
 | 01 | Auditoría (solo informe) | Flash | 00, 00b | hecha (PR #3) |
 | 02 | Tokens de diseño y layout base | GLM | 01 | hecha (PR #4) |
-| 03 | Cartelera y ficha de película | GLM | 02 | pendiente |
-| 04 | Selector de butacas accesible | GLM | 02 | pendiente |
+| 03 | Cartelera y ficha de película | GLM | 02 | hecha (PR #5) |
+| 04 | Selector de butacas accesible | GLM | 02 | hecha (PR #6) |
 | 04b | Bloqueos de invitados | | 00b | hecha (PR #7) |
 | 05 | Stripe Checkout con webhook | Pro | 00 | pendiente |
 | 06 | Accesibilidad global, rendimiento y textos | GLM | 03, 04, 05 | pendiente |
