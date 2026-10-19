@@ -112,4 +112,22 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enlace de recuperación en modo demo
+    |--------------------------------------------------------------------------
+    |
+    | Sin un servidor de correo real (MAIL_MAILER=log o array) el enlace de
+    | recuperación no llegaría a nadie. En ese caso, y nunca en producción, se
+    | muestra en pantalla. En producción mostrarlo permitiría a cualquiera
+    | cambiar la contraseña de otra cuenta, así que solo se activa a propósito
+    | con AUTH_DEMO_RESET_LINK=true.
+    |
+    */
+
+    'demo_reset_link' => (bool) env(
+        'AUTH_DEMO_RESET_LINK',
+        env('APP_ENV') !== 'production' && in_array(env('MAIL_MAILER', 'log'), ['log', 'array'], true)
+    ),
+
 ];

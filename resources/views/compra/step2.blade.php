@@ -45,7 +45,7 @@
 }
 
 .seat-btn.locked {
-    background-color: #d97706;
+    background-color: #8C8794;
     cursor: not-allowed;
     opacity: 0.6;
 }
@@ -253,7 +253,7 @@
                 <span class="legend-label">Sold</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background-color: #d97706;"></div>
+                <div class="legend-color" style="background-color: #8C8794;"></div>
                 <span class="legend-label">Held by others</span>
             </div>
         </div>

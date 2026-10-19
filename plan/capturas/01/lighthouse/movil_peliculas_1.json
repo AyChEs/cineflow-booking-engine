@@ -1,0 +1,13 @@
+{
+ "url": "http://localhost:8000/peliculas/1",
+ "formFactor": "mobile",
+ "scores": {
+  "performance": 0.92,
+  "accessibility": 0.82,
+  "best-practices": 0.96,
+  "seo": 0.92
+ },
+ "LCP": "2.5\u00a0s",
+ "CLS": "0",
+ "TBT": "60\u00a0ms"
+}

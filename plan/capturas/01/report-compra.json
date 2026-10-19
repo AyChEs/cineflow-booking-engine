@@ -1,0 +1,112 @@
+[
+ {
+  "url": "/comprar?sesion_id=153",
+  "id": "compra1",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1) #mobileMenuToggle",
+   "serious color-contrast (10) .step1-main > p | strong",
+   "critical label (4) #qty_adult | #qty_reduit"
+  ]
+ },
+ {
+  "url": "/comprar/butaques",
+  "id": "compra2",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1) #mobileMenuToggle",
+   "serious color-contrast (39) .step2-subtitle | .legend-item:nth-child(1) > .legend-label"
+  ]
+ },
+ {
+  "url": "/comprar/butaques",
+  "id": "compra2-elegidas",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1) #mobileMenuToggle",
+   "serious color-contrast (40) .step2-subtitle | .legend-item:nth-child(1) > .legend-label"
+  ]
+ },
+ {
+  "url": "/comprar/pagament",
+  "id": "compra3",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1) #mobileMenuToggle",
+   "serious color-contrast (11) .text-\\[0\\.65rem\\] | .font-normal"
+  ]
+ },
+ {
+  "w": 390,
+  "consoleErrors": [
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+  ]
+ },
+ {
+  "url": "/comprar?sesion_id=153",
+  "id": "compra1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (10) .step1-main > p | strong",
+   "critical label (4) #qty_adult | #qty_reduit"
+  ]
+ },
+ {
+  "url": "/comprar/butaques",
+  "id": "compra2",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (39) .step2-subtitle | .legend-item:nth-child(1) > .legend-label",
+   "serious target-size (79) button[data-seat=\"A1\"] | button[data-seat=\"A2\"]"
+  ]
+ },
+ {
+  "url": "/comprar/butaques",
+  "id": "compra2-elegidas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (40) .step2-subtitle | .legend-item:nth-child(1) > .legend-label",
+   "serious target-size (79) button[data-seat=\"A1\"] | button[data-seat=\"A2\"]"
+  ]
+ },
+ {
+  "url": "/comprar/pagament",
+  "id": "compra3",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (11) .text-\\[0\\.65rem\\] | .font-normal"
+  ]
+ },
+ {
+  "w": 1440,
+  "consoleErrors": [
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+  ]
+ }
+]

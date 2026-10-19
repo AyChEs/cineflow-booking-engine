@@ -28,12 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Redirecció per rol: clients van al seu tauler, la resta al dashboard general
-        $destination = Auth::user()->rol === 'cliente'
-            ? route('cliente.dashboard', absolute: false)
-            : route('dashboard', absolute: false);
-
-        return redirect()->intended($destination);
+        // Todos entran por /dashboard; esa ruta manda a cada rol a su panel.
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

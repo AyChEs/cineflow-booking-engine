@@ -40,7 +40,7 @@
                             {{ $sesion->pelicula->titulo ?? '—' }}
                         </p>
                         <p style="color:var(--color-text-secondary);font-size:0.8rem;margin:0;">
-                            <i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>{{ $sesion->sala->cine->nombre ?? '' }} · {{ $sesion->sala->nombre ?? '' }}
+                            <x-icon name="map-pin" class="h-4 w-4 mr-1" />{{ $sesion->sala->cine->nombre ?? '' }} · {{ $sesion->sala->nombre ?? '' }}
                         </p>
                     </div>
                     <span style="background:var(--color-accent-bright);color:#fff;font-weight:900;font-size:1rem;padding:0.4rem 0.75rem;border-radius:8px;white-space:nowrap;margin-left:0.75rem;">
@@ -73,7 +73,7 @@
     </div>
     @empty
     <div style="text-align:center;padding:6rem 2rem;color:var(--color-text-secondary);">
-        <i class="fas fa-calendar-times" style="font-size:3rem;opacity:0.2;display:block;margin-bottom:1rem;"></i>
+        <x-icon name="calendar-x" class="h-12 w-12 opacity-20 block mb-4" />
         No showtimes scheduled at this time.
     </div>
     @endforelse

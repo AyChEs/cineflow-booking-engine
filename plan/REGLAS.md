@@ -51,6 +51,7 @@ Léelo entero antes de empezar cualquier sesión. Si una skill choca con esto, m
    cd /tmp && mkdir -p capt && cd capt && [ -d node_modules/playwright ] || (npm init -y >/dev/null && npm i playwright@1.56 @axe-core/playwright >/dev/null && npx playwright install chromium)
    node /RUTA/AL/REPO/plan/herramientas/capturas.mjs NN http://localhost:8000 '[{"id":"cartelera","url":"/peliculas"}]' '{"url":"/login","user":"#email","pass":"#password","submit":"button[type=submit]"}'
    ```
+   Para los pasos de compra (local): `node /RUTA/AL/REPO/plan/herramientas/compra.mjs NN http://localhost:8000 SESION_ID` (paso 1, paso 2, dos butacas elegidas y paso 3; al terminar suelta los bloqueos). En otra máquina, `CAPT_OUT` cambia la carpeta de salida y `PLAYWRIGHT_BROWSERS_PATH` la de los navegadores.
    Copia `/tmp/capt/out/NN/` a `plan/capturas/NN/`. El `report.json` no puede tener violaciones `serious` ni `critical` en las pantallas tocadas, ni `hscroll: true`.
 
 ## Avisos a Ayman

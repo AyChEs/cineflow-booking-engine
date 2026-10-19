@@ -23,8 +23,9 @@ Después de la revisión, Opus solo revisa el resultado final.
 
 | NN | Sesión | Modelo | Depende de | Estado |
 |---|---|---|---|---|
-| 00 | Entorno local y CI en cada PR | Flash | | hecha (PR #1 abierto, sin fusionar: 3 pruebas preexistentes en rojo) |
-| 01 | Auditoría (solo informe) | Flash | 00 | pendiente |
+| 00 | Entorno local y CI en cada PR | Flash | | hecha (PR #1, fusionado con 3 pruebas preexistentes en rojo, ya en `main`) |
+| 00b | Pruebas de la línea base en verde | | 00 | hecha (PR #2) |
+| 01 | Auditoría (solo informe) | Flash | 00, 00b | pendiente |
 | 02 | Tokens de diseño y layout base | GLM | 01 | pendiente |
 | 03 | Cartelera y ficha de película | GLM | 02 | pendiente |
 | 04 | Selector de butacas accesible | GLM | 02 | pendiente |

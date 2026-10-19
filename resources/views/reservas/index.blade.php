@@ -13,13 +13,13 @@
             </p>
         </div>
         <a href="{{ route('reservas.create') }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus mr-1.5"></i> New Booking
+            <x-icon name="plus" class="h-4 w-4 mr-1.5" /> New Booking
         </a>
     </div>
 
     @if(session('success'))
         <div class="alert alert-success flex items-center gap-3 mb-6">
-            <i class="fas fa-check-circle flex-shrink-0"></i>
+            <x-icon name="check-circle" class="h-4 w-4 flex-shrink-0" />
             <span>{{ session('success') }}</span>
         </div>
     @endif
@@ -82,7 +82,7 @@
                 @empty
                 <tr>
                     <td colspan="8" class="text-center py-10 text-[color:var(--color-text-secondary)]">
-                        <i class="fas fa-ticket-alt text-3xl opacity-20 block mb-2"></i>
+                        <x-icon name="ticket" class="h-8 w-8 opacity-20 block mb-2" />
                         No bookings registered.
                     </td>
                 </tr>

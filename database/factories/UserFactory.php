@@ -27,12 +27,23 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'apellidos' => fake()->lastName(),
             'telefono' => fake()->optional()->phoneNumber(),
-            'rol' => fake()->randomElement(['cliente', 'admin', 'taquilla']),
+            // Rol fijo: un rol al azar hacía que las pruebas pasaran o fallaran según la tirada.
+            'rol' => 'cliente',
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => ['rol' => 'admin']);
+    }
+
+    public function taquilla(): static
+    {
+        return $this->state(fn (array $attributes) => ['rol' => 'taquilla']);
     }
 
     /**

@@ -1,0 +1,70 @@
+[
+ {
+  "url": "/",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/login",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/register",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/forgot-password",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/profile",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 390,
+  "consoleErrors": []
+ },
+ {
+  "url": "/",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/login",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/register",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/forgot-password",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/profile",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 1440,
+  "consoleErrors": []
+ }
+]

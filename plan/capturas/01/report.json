@@ -1,0 +1,207 @@
+[
+ {
+  "url": "/",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (8)"
+  ]
+ },
+ {
+  "url": "/peliculas",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)",
+   "critical label (2)",
+   "critical select-name (2)"
+  ]
+ },
+ {
+  "url": "/peliculas/1",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)",
+   "serious color-contrast (41)"
+  ]
+ },
+ {
+  "url": "/cines",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)",
+   "serious link-name (3)"
+  ]
+ },
+ {
+  "url": "/cines/1",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)"
+  ]
+ },
+ {
+  "url": "/login",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)"
+  ]
+ },
+ {
+  "url": "/register",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)"
+  ]
+ },
+ {
+  "url": "/mis-reservas",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)"
+  ]
+ },
+ {
+  "url": "/dashboard/client",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)"
+  ]
+ },
+ {
+  "url": "/profile",
+  "w": 390,
+  "hscroll": true,
+  "violations": [
+   "critical button-name (1)",
+   "serious color-contrast (2)"
+  ]
+ },
+ {
+  "url": "/admin/peliculas",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)"
+  ]
+ },
+ {
+  "w": 390,
+  "consoleErrors": [
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+  ]
+ },
+ {
+  "url": "/",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (4)"
+  ]
+ },
+ {
+  "url": "/peliculas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "critical label (2)",
+   "critical select-name (1)"
+  ]
+ },
+ {
+  "url": "/peliculas/1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (41)"
+  ]
+ },
+ {
+  "url": "/cines",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious link-name (3)"
+  ]
+ },
+ {
+  "url": "/cines/1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/login",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/register",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/mis-reservas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious aria-prohibited-attr (1)",
+   "serious color-contrast (11)"
+  ]
+ },
+ {
+  "url": "/dashboard/client",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (5)"
+  ]
+ },
+ {
+  "url": "/profile",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/admin/peliculas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (8)"
+  ]
+ },
+ {
+  "w": 1440,
+  "consoleErrors": [
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+  ]
+ }
+]

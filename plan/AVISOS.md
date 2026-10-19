@@ -7,3 +7,9 @@ Aquí las sesiones dejan solo lo que necesita una decisión o una acción tuya. 
 - Opciones: 1) arreglar las tres pruebas en una sesión propia antes de la 05 (la 05 añade más pruebas y las superpondría a un flujo roto); 2) dejarlo como está y apilar sesiones encima de un CI rojo.
 - Recomiendo: 1, porque el test de carrera fallando toca lo que afirma el portafolio (la confirmación con `lockForUpdate` y 3 intentos) y es justo el flujo que la sesión 05 va a rehacer con Stripe.
 - Queda bloqueado: fusionar cualquier PR con la verificación en verde mientras estas tres pruebas sigan fallando (las reglas lo prohíben). El PR de la sesión 00 queda abierto sin fusionar.
+
+## 2026-10-19 · Sesión 00b · Resuelto: las tres pruebas de la línea base
+- Qué pasa: resuelto, solo informativo. Comprobado que fallaban ya en `main`; el PR #1 se fusionó anotándolo y la sesión 00b (`plan/sesiones/00b-pruebas-base.md`) arregla la causa raíz sin tocar ninguna prueba. Había una cuarta intermitente (`AuthenticationTest`, por el rol al azar de la factoría).
+- Opciones: ninguna pendiente.
+- Recomiendo: si quieres que la demo de Render muestre el enlace de recuperación en pantalla, pon `AUTH_DEMO_RESET_LINK=true` solo sabiendo que cualquiera podría cambiar la contraseña de cualquier cuenta. Por defecto queda apagado en producción.
+- Queda bloqueado: nada.
