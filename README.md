@@ -18,7 +18,7 @@
 
 CineFlow is a production-grade cinema booking engine built with **Laravel 12**. It solves the hardest problem in any ticketing system: **stopping two people from buying the same seat at the same time**. It does this by combining real-time temporary seat locks with pessimistic database-level locking inside atomic transactions.
 
-> Live demo: _(pending deployment — see [Deployment](#deployment))_
+> Live demo: https://cineflow-ufe0.onrender.com/
 
 ## Key features
 
