@@ -3,157 +3,101 @@
 @section('title', $pelicula->titulo)
 
 @section('content')
-<div class="container max-w-5xl py-10">
+@php
+    $hoy = now()->toDateString();
+    $manana = now()->addDay()->toDateString();
+    $porDia = $pelicula->sesiones->groupBy(fn ($s) => $s->fecha_hora->toDateString());
+    $nombreDia = fn (string $dia) => match ($dia) {
+        $hoy => 'Hoy',
+        $manana => 'Mañana',
+        default => ucfirst(\Carbon\Carbon::parse($dia)->locale('es')->isoFormat('dddd D [de] MMMM')),
+    };
+@endphp
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-12">
 
-    {{-- Back --}}
     <a href="{{ route('peliculas.index') }}{{ $cineId ? '?cine_id='.$cineId : '' }}"
-       class="inline-flex items-center gap-2 text-[color:var(--color-text-secondary)] hover:text-[color:var(--color-accent-bright)] text-sm font-semibold transition-colors mb-8">
-        <x-icon name="arrow-left" class="h-3 w-3" /> Back to Now Showing
+       class="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-texto-2 no-underline hover:text-texto">
+        <x-icon name="arrow-left" class="h-4 w-4" />Volver a la cartelera
     </a>
 
-    {{-- Capçalera: poster + info --}}
-    <div class="grid gap-8 items-start mb-10" style="grid-template-columns: 200px 1fr;">
+    <div class="grid items-start gap-8 md:grid-cols-[18rem,1fr] md:gap-12">
+        <img src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
+             fetchpriority="high" decoding="async"
+             class="mx-auto aspect-[2/3] w-48 rounded-card border border-sala-700 bg-sala-850 object-cover sm:w-60 md:w-full">
 
-        {{-- Poster --}}
-        <div class="aspect-[2/3] bg-gradient-to-br from-sala-900 to-black rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-            <img src="{{ $pelicula->poster_url }}"
-                 alt="Poster for {{ $pelicula->titulo }}"
-                 class="w-full h-full object-cover block">
-        </div>
+        <div class="min-w-0">
+            <h1 class="display break-words text-[2.25rem] text-texto md:text-[3rem]">{{ $pelicula->titulo }}</h1>
 
-        {{-- Info --}}
-        <div>
-            <h1 class="text-4xl font-black leading-tight mb-3">{{ $pelicula->titulo }}</h1>
-
-            {{-- Badges: rating + categories + duration --}}
-            <div class="flex flex-wrap gap-2 mb-4">
-                @if($pelicula->classificacio_edad)
-                    <span class="px-3 py-1 rounded text-xs font-black uppercase tracking-wider
-                                 bg-carmin-600 text-white">
-                        {{ $pelicula->classificacio_edad }}
-                    </span>
+            <dl class="mt-6 grid grid-cols-[auto,1fr] gap-x-6 gap-y-2 text-sm">
+                @if ($pelicula->duracion_min)
+                    <dt class="text-texto-2">Duración</dt>
+                    <dd class="cifras text-texto">{{ $pelicula->duracion_min }} min</dd>
                 @endif
-                @foreach($pelicula->categorias as $cat)
-                    <span class="px-3 py-1 rounded text-xs font-semibold
-                                 bg-sala-900 text-texto-2 border border-white/10">
-                        {{ $cat->nombre }}
-                    </span>
-                @endforeach
-                @if($pelicula->duracion_min)
-                    <span class="px-3 py-1 rounded text-xs font-semibold
-                                 bg-sala-900 text-texto-2 border border-white/10">
-                        <x-icon name="clock" class="h-4 w-4 mr-1 opacity-60" />{{ $pelicula->duracion_min }} min
-                    </span>
+                @if ($pelicula->classificacio_edad)
+                    <dt class="text-texto-2">Clasificación</dt>
+                    <dd class="text-texto">{{ $pelicula->classificacio_edad === 'TP' ? 'Todos los públicos' : $pelicula->classificacio_edad }}</dd>
                 @endif
-            </div>
+                @if ($pelicula->categorias->isNotEmpty())
+                    <dt class="text-texto-2">Géneros</dt>
+                    <dd class="text-texto">{{ $pelicula->categorias->pluck('nombre')->join(', ') }}</dd>
+                @endif
+                @if ($pelicula->rating)
+                    <dt class="text-texto-2">Valoración</dt>
+                    <dd class="cifras text-texto">{{ number_format($pelicula->rating, 1, ',', '') }} / 5</dd>
+                @endif
+            </dl>
 
-            @if($pelicula->sinopsis)
-                <p class="text-[color:var(--color-text-secondary)] leading-relaxed text-sm max-w-xl mb-4">
-                    {{ $pelicula->sinopsis }}
-                </p>
+            @if ($pelicula->sinopsis)
+                <p class="mt-6 max-w-prose text-base leading-relaxed text-texto-2">{{ $pelicula->sinopsis }}</p>
             @endif
 
-            @if($pelicula->trailer_url)
-                <a href="{{ $pelicula->trailer_url }}" target="_blank" rel="noopener"
-                   class="inline-flex items-center gap-2 text-carmin-400 font-bold text-sm hover:opacity-80 transition-opacity mb-5">
-                    <x-icon name="play" class="h-4 w-4" /> Watch Trailer
-                </a>
-            @endif
-
-            {{-- Acciones admin --}}
-            @auth @if(auth()->user()->isAdmin())
-                <div class="flex gap-3 mt-6">
-                    <a href="{{ route('peliculas.edit', $pelicula->id) }}" class="btn btn-primary btn-sm">
-                        <x-icon name="pencil" class="h-4 w-4 mr-1" /> Edit
+            <div class="mt-6 flex flex-wrap gap-3">
+                @if ($pelicula->trailer_url)
+                    <a href="{{ $pelicula->trailer_url }}" target="_blank" rel="noopener" class="btn btn-secondary">
+                        <x-icon name="play" class="h-4 w-4" />Ver tráiler<span class="sr-only"> (se abre en otra pestaña)</span>
                     </a>
-                    <form action="{{ route('peliculas.destroy', $pelicula->id) }}" method="POST"
-                          onsubmit="return confirm('Delete this movie and its screenings?')">
-                        @csrf @method('DELETE')
-                        <button type="submit"
-                                class="btn btn-secondary btn-sm border-red-500/50 text-red-400 hover:bg-red-500/10">
-                            <x-icon name="trash" class="h-4 w-4 mr-1" /> Delete
-                        </button>
-                    </form>
-                </div>
-            @endif @endauth
+                @endif
+                @auth
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('peliculas.edit', $pelicula->id) }}" class="btn btn-secondary">
+                            <x-icon name="pencil" class="h-4 w-4" />Editar
+                        </a>
+                        <form action="{{ route('peliculas.destroy', $pelicula->id) }}" method="POST"
+                              onsubmit="return confirm('¿Borrar esta película y sus sesiones?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger"><x-icon name="trash" class="h-4 w-4" />Borrar</button>
+                        </form>
+                    @endif
+                @endauth
+            </div>
         </div>
     </div>
 
-    {{-- Sessions disponibles --}}
-    <div>
-        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--color-text-secondary)] mb-5">
-            <x-icon name="calendar" class="h-4 w-4 mr-2 text-carmin-400" />Available Screenings
-        </h2>
+    <section class="mt-14" aria-labelledby="sesiones">
+        <h2 id="sesiones" class="display mb-6 text-3xl text-texto">Sesiones</h2>
 
-        @php
-            $today    = now()->toDateString();
-            $tomorrow = now()->addDay()->toDateString();
-        @endphp
-
-        @forelse($pelicula->sesiones->groupBy(fn($s) => $s->fecha_hora->format('Y-m-d')) as $dia => $sessions)
-            <div class="mb-8">
-
-                {{-- Day label with relative indicator (Today / Tomorrow / day name) --}}
-                <h3 class="flex items-center gap-2.5 mb-4">
-                    @if($dia === $today)
-                        <span class="bg-carmin-600 text-white text-[0.6rem] font-black px-2.5 py-1
-                                     rounded uppercase tracking-widest">
-                            Today
-                        </span>
-                    @elseif($dia === $tomorrow)
-                        <span class="bg-white/10 text-white text-[0.6rem] font-black px-2.5 py-1
-                                     rounded uppercase tracking-widest border border-white/20">
-                            Tomorrow
-                        </span>
-                    @else
-                        <span class="text-xs font-bold uppercase tracking-widest text-[color:var(--color-text-secondary)]">
-                            {{ \Carbon\Carbon::parse($dia)->locale('en')->isoFormat('dddd, MMMM D') }}
-                        </span>
-                    @endif
-                </h3>
-
-                {{-- Showtime cards: large time + highlighted price + buy button --}}
-                <div class="flex flex-wrap gap-3">
-                    @foreach($sessions as $sesion)
-                        <div class="bg-sala-900 border border-white/10 rounded-xl p-4 min-w-[200px]
-                                    hover:border-carmin-400/50 hover:bg-white/[0.03] transition-all duration-200">
-
-                            {{-- Hora grande en acento rojo --}}
-                            <div class="text-2xl font-black text-carmin-400 leading-none mb-1">
-                                {{ $sesion->fecha_hora->format('H:i') }}
-                            </div>
-
-                            <div class="text-xs text-texto-2 mb-3 leading-snug">
-                                {{ $sesion->sala->cine->nombre }}
-                                <span class="opacity-30 mx-1">–</span>
-                                {{ $sesion->sala->nombre }}
-                            </div>
-
-                            {{-- Precio prominente --}}
-                            <div class="flex items-end justify-between mb-3">
-                                <span class="text-xl font-black text-white leading-none">
-                                    {{ number_format($sesion->preu_base, 2) }}€
-                                </span>
-                                <span class="text-[0.6rem] text-texto-2 opacity-60 mb-0.5">
-                                    / ticket
-                                </span>
-                            </div>
-
-                            <a href="{{ route('compra.step1', ['sesion_id' => $sesion->id]) }}"
-                               class="btn btn-primary btn-sm block text-center">
-                                <x-icon name="ticket" class="h-4 w-4 mr-1.5" />Buy Tickets
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
+        @forelse ($porDia as $dia => $sesionesDia)
+            <section class="mb-8" aria-labelledby="dia-{{ $dia }}">
+                <h3 id="dia-{{ $dia }}" class="mb-4 text-lg font-semibold text-texto">{{ $nombreDia($dia) }}</h3>
+                @foreach ($sesionesDia->groupBy(fn ($s) => $s->sala->cine->nombre) as $nombreCine => $sesionesCine)
+                    <div class="mb-4">
+                        <p class="mb-2 flex items-center gap-1.5 text-sm text-texto-2">
+                            <x-icon name="map-pin" class="h-4 w-4 shrink-0" />{{ $nombreCine }}
+                        </p>
+                        <ul class="flex flex-wrap gap-3">
+                            @foreach ($sesionesCine as $sesion)
+                                <li><x-showtime :sesion="$sesion" /></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endforeach
+            </section>
         @empty
-            <div class="bg-sala-900 border border-white/10 rounded-xl p-8 text-center text-texto-2">
-                <x-icon name="calendar-x" class="h-8 w-8 opacity-20 block mb-3" />
-                This movie has no screenings scheduled.
+            <div class="rounded-card border border-sala-700 bg-sala-900 px-6 py-10 text-center">
+                <p class="font-semibold text-texto">No hay sesiones programadas</p>
+                <a href="{{ route('peliculas.index') }}" class="btn btn-secondary mt-5">Ver la cartelera</a>
             </div>
         @endforelse
-    </div>
-
+    </section>
 </div>
 @endsection
