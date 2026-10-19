@@ -29,6 +29,7 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 02 | Tokens de diseño y layout base | GLM | 01 | hecha (PR #4) |
 | 03 | Cartelera y ficha de película | GLM | 02 | pendiente |
 | 04 | Selector de butacas accesible | GLM | 02 | pendiente |
+| 04b | Bloqueos de invitados | | 00b | hecha (PR #7) |
 | 05 | Stripe Checkout con webhook | Pro | 00 | pendiente |
 | 06 | Accesibilidad global, rendimiento y textos | GLM | 03, 04, 05 | pendiente |
 | 07 | Revisión final | Revisión | 06 | pendiente |

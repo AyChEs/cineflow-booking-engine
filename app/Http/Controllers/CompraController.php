@@ -109,8 +109,7 @@ class CompraController extends Controller
 
         $lockedSeats = SeatLock::where('sesion_id', $sesion->id)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->pluck('butaca')
             ->all();
 
@@ -187,8 +186,7 @@ class CompraController extends Controller
             $locked = SeatLock::where('sesion_id', $sesionId)
                 ->where('butaca', $butaca)
                 ->where('expires_at', '>=', now())
-                ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-                ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+                ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
                 ->exists();
             if ($locked) {
                 return back()->with('error', "La butaca $butaca la tiene otra persona ahora mismo. Elige otra.");
@@ -477,6 +475,18 @@ class CompraController extends Controller
         return redirect()->route('peliculas.index');
     }
 
+    /**
+     * Bloqueos que no son de quien pregunta. Un bloqueo de invitado tiene
+     * user_id nulo: con «user_id != X» SQL no lo cuenta (NULL no compara), así
+     * que se incluye a mano. Igual con session_token para los invitados.
+     */
+    private function deOtros($query, ?int $userId, string $token)
+    {
+        return $userId
+            ? $query->whereNull('user_id')->orWhere('user_id', '!=', $userId)
+            : $query->whereNull('session_token')->orWhere('session_token', '!=', $token);
+    }
+
     // Libera los bloqueos de butacas del usuario actual
     private function releaseLocks(): void
     {
@@ -505,8 +515,7 @@ class CompraController extends Controller
 
         $locked = SeatLock::where('sesion_id', $sesionId)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->pluck('butaca')->all();
 
         $mine = SeatLock::where('sesion_id', $sesionId)
@@ -547,8 +556,7 @@ class CompraController extends Controller
         $otherLock = SeatLock::where('sesion_id', $sesionId)
             ->where('butaca', $butaca)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->exists();
         if ($otherLock) {
             return response()->json(['ok' => false, 'reason' => 'locked']);
