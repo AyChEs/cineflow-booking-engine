@@ -22,6 +22,9 @@
             @if (session('status'))
                 <div style="background: rgba(40,167,69,0.15); border: 1px solid rgba(40,167,69,0.4); color: #6fcf97; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.875rem;">
                     {{ session('status') }}
+                    @if (session('reset_link'))
+                        <a href="{{ session('reset_link') }}" style="display: block; margin-top: 0.5rem; color: inherit; text-decoration: underline; font-weight: 600;">Elegir una contraseña nueva</a>
+                    @endif
                 </div>
             @endif
 
