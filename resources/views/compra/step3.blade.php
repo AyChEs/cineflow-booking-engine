@@ -43,7 +43,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-lg btn-brillo mt-6 w-full sm:w-auto">
-                    <x-icon name="lock" class="h-5 w-5" />Pagar <span class="cifras">{{ $total }}</span> con Stripe
+                    <x-icon name="lock" class="h-5 w-5" /><span>Pagar <span class="cifras">{{ $total }}</span> con Stripe</span>
                 </button>
             @else
                 <fieldset class="mt-4">
@@ -75,7 +75,7 @@
                         <x-campo name="num_targeta" label="Número de tarjeta" inputmode="numeric" autocomplete="cc-number" maxlength="23" ayuda="Prueba con 4242 4242 4242 4242." />
                         <x-campo name="titular_targeta" label="Titular" autocomplete="cc-name" />
                         <div class="grid grid-cols-2 gap-x-4">
-                            <x-campo name="expiry_targeta" label="Caducidad (MM/AA)" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="12/29" />
+                            <x-campo name="expiry_targeta" label="Caducidad (MM/AA)" inputmode="numeric" autocomplete="cc-exp" maxlength="5" />
                             <x-campo name="cvv_targeta" label="CVC" inputmode="numeric" autocomplete="cc-csc" maxlength="4" />
                         </div>
                         @auth
@@ -93,7 +93,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-lg btn-brillo mt-4 w-full sm:w-auto">
-                    <x-icon name="lock" class="h-5 w-5" />Pagar <span class="cifras">{{ $total }}</span>
+                    <x-icon name="lock" class="h-5 w-5" /><span>Pagar <span class="cifras">{{ $total }}</span></span>
                 </button>
             @endif
         </form>
