@@ -8,15 +8,19 @@ import assert from 'node:assert/strict';
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 const BASE = process.env.BASE ?? 'http://localhost:8000';
-const SESION = process.env.SESION;
-if (!SESION) {
-    console.error('Falta SESION: el id de una sesión futura.');
-    process.exit(2);
-}
 
 const browser = await chromium.launch();
 const page = await (await browser.newContext({ locale: 'es-ES' })).newPage();
 const paso = (m) => console.log(`ok · ${m}`);
+
+// Sin SESION, usa la primera sesión de la primera película de la cartelera.
+let SESION = process.env.SESION;
+if (!SESION) {
+    await page.goto(`${BASE}/peliculas`);
+    await Promise.all([page.waitForURL(/\/peliculas\/\d+/), page.locator('article h3 a').first().click()]);
+    const href = await page.locator('a[href*="comprar?sesion_id="]').first().getAttribute('href');
+    SESION = new URL(href, BASE).searchParams.get('sesion_id');
+}
 
 try {
     // Paso 1: dos entradas de adulto con el teclado.

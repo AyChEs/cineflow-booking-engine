@@ -1,11 +1,11 @@
 @extends('layout')
 
-@section('title', 'Edit Screening Room')
+@section('title', 'Editar la sala')
 
 @section('content')
 <div class="container" style="max-width: 600px; padding-top: 3rem;">
     <div style="background: var(--color-bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem;">
-        <h1 class="page-title" style="margin-bottom: 1.5rem;">EDIT SCREENING ROOM</h1>
+        <h1 class="page-title" style="margin-bottom: 1.5rem;">Editar la sala</h1>
 
         @if ($errors->any())
             <div class="alert alert-error" style="margin-bottom: 1.5rem;">
@@ -22,28 +22,28 @@
             @method('PUT')
 
             <div class="form-group">
-                <label for="nombre" class="form-label">Screening Room Name</label>
+                <label for="nombre" class="form-label">Nombre de la sala</label>
                 <input type="text" id="nombre" name="nombre" class="form-input"
                        value="{{ old('nombre', $sala->nombre) }}" required>
                 @error('nombre')<p class="form-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="form-group">
-                <label for="capacidad" class="form-label">Capacity (Seats)</label>
+                <label for="capacidad" class="form-label">Capacidad (butacas)</label>
                 <input type="number" id="capacidad" name="capacidad" class="form-input"
                        value="{{ old('capacidad', $sala->capacidad) }}" required min="1">
                 @error('capacidad')<p class="form-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="form-group">
-                <label for="disposicion_butacas" class="form-label">Seat Layout</label>
+                <label for="disposicion_butacas" class="form-label">Disposición de butacas</label>
                 <textarea id="disposicion_butacas" name="disposicion_butacas" class="form-textarea"
                           required style="height: 100px;">{{ old('disposicion_butacas', $sala->disposicion_butacas) }}</textarea>
                 @error('disposicion_butacas')<p class="form-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="form-group">
-                <label for="fk_cine_id" class="form-label">Cinema (optional)</label>
+                <label for="fk_cine_id" class="form-label">Cine (opcional)</label>
                 <select id="fk_cine_id" name="fk_cine_id" class="form-select">
                     <option value="">-- No cinema assigned --</option>
                     @foreach($cines as $cine)
@@ -56,8 +56,8 @@
             </div>
 
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button type="submit" class="btn btn-primary">Update Screening Room</button>
-                <a href="{{ route('salas.index') }}" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-primary">Guardar la sala</button>
+                <a href="{{ route('salas.index') }}" class="btn btn-secondary">Volver</a>
             </div>
         </form>
     </div>

@@ -8,7 +8,7 @@
     {{-- Breadcrumb / back --}}
     <a href="{{ route('peliculas.external.index') }}"
        class="inline-flex items-center gap-2 text-carmin-400 font-bold text-sm mb-8 hover:opacity-80 transition-opacity">
-        <x-icon name="arrow-left" class="h-4 w-4" /> Back to API Listings
+        <x-icon name="arrow-left" class="h-4 w-4" /> Volver al catálogo de TMDB
     </a>
 
     {{-- Movie layout: poster + info --}}
@@ -16,7 +16,7 @@
 
         {{-- Poster --}}
         <div class="aspect-[2/3] bg-sala-900 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-            <img src="{{ $movie['image_url'] ?: 'https://placehold.co/600x900/1a1a1a/d4183d?text=No+Image' }}"
+            <img src="{{ $movie['image_url'] ?: asset('img/sin-poster.svg') }}"
                  alt="Poster for {{ $movie['title'] }}"
                  class="w-full h-full object-cover block">
         </div>
@@ -55,7 +55,7 @@
 
             {{-- Sinopsis --}}
             <div class="mb-8">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-[color:var(--color-text-secondary)] mb-3">Synopsis</h2>
+                <h2 class="text-xs font-bold uppercase tracking-widest text-[color:var(--color-text-secondary)] mb-3">Sinopsis</h2>
                 <p class="text-[color:var(--color-text-secondary)] leading-relaxed text-[0.95rem] max-w-2xl">
                     {{ $movie['description'] ?: 'No description available.' }}
                 </p>
@@ -69,7 +69,7 @@
                         <p class="font-semibold">{{ $movie['id'] }}</p>
                     </div>
                     <div>
-                        <p class="text-xs uppercase tracking-widest text-texto-2 mb-0.5">Rating</p>
+                        <p class="text-xs uppercase tracking-widest text-texto-2 mb-0.5">Valoración</p>
                         <p class="font-semibold">
                             <span class="text-yellow-400">★</span>
                             {{ number_format((float) ($movie['stars'] ?? 0), 1) }} / 5
@@ -91,7 +91,7 @@
                         <form method="POST" action="{{ route('admin.peliculas.external.sync-local') }}">
                             @csrf
                             <button type="submit" class="btn btn-secondary btn-sm">
-                                <x-icon name="refresh" class="h-4 w-4 mr-1" /> Sync to Local
+                                <x-icon name="refresh" class="h-4 w-4 mr-1" /> Añadir a la cartelera
                             </button>
                         </form>
                     @endif

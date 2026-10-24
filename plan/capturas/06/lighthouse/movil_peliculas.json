@@ -1,0 +1,11 @@
+{
+ "url": "http://localhost:8000/peliculas",
+ "scores": {
+  "performance": 0.95,
+  "accessibility": 1,
+  "best-practices": 1,
+  "seo": 0.92
+ },
+ "LCP": "2.5\u00a0s",
+ "CLS": "0"
+}

@@ -10,23 +10,23 @@ class GeneratePosterPlaceholders extends Command
     protected $signature = 'posters:generate-placeholders';
     protected $description = 'Generar posters placeholder en SVG para todas las películas';
 
-    // Paleta de colores por género
+    // Paleta por género: tonos apagados de sala oscura (sin naranjas ni degradados morados).
     private $genreColors = [
-        'Acción' => ['#FF6B6B', '#C92A2A'],
-        'Aventura' => ['#4ECDC4', '#1ABC9C'],
-        'Comedia' => ['#FFE66D', '#FFC93C'],
-        'Drama' => ['#95A5A6', '#5D6D7B'],
-        'Terror' => '#2C3E50',
-        'Suspense' => ['#34495E', '#2C3E50'],
-        'Romance' => ['#FF69B4', '#FF1493'],
-        'Ciencia Ficción' => ['#9B59B6', '#8E44AD'],
-        'Animación' => ['#FF85C0', '#FF6BA6'],
-        'Fantasía' => ['#F39C12', '#E67E22'],
-        'Documental' => ['#3498DB', '#2980B9'],
-        'Musical' => ['#E91E63', '#C2185B'],
-        'Crimen' => ['#1C1C1C', '#4A4A4A'],
-        'Histórica' => ['#8B4513', '#A0522D'],
-        'Bélica' => ['#555555', '#888888'],
+        'Acción' => ['#7A2333', '#2A1418'],
+        'Aventura' => ['#2F5D5A', '#142625'],
+        'Comedia' => ['#6B6233', '#2A2716'],
+        'Drama' => ['#4A4652', '#1E1C22'],
+        'Terror' => ['#2B2830', '#0E0D10'],
+        'Suspense' => ['#33404F', '#14181E'],
+        'Romance' => ['#6E2D45', '#28141C'],
+        'Ciencia Ficción' => ['#2D4F66', '#121F28'],
+        'Animación' => ['#3F6B4A', '#18291D'],
+        'Fantasía' => ['#4B5E2F', '#1D2414'],
+        'Documental' => ['#3C5566', '#172128'],
+        'Musical' => ['#6A2A4E', '#27121D'],
+        'Crimen' => ['#2A2A2E', '#101012'],
+        'Histórica' => ['#4A4F5A', '#1C1E22'],
+        'Bélica' => ['#46483F', '#1B1C18'],
     ];
 
     public function handle()
@@ -39,7 +39,7 @@ class GeneratePosterPlaceholders extends Command
             try {
                 // Obtener género principal
                 $genero = $pelicula->categorias->first()?->nombre ?? 'Película';
-                $colors = $this->genreColors[$genero] ?? ['#667EEA', '#764BA2'];
+                $colors = $this->genreColors[$genero] ?? ['#3A3641', '#18161C'];
 
                 if (is_string($colors)) {
                     $colors = [$colors, '#333333'];

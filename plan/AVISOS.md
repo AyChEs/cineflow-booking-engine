@@ -24,3 +24,9 @@ Aquí las sesiones dejan solo lo que necesita una decisión o una acción tuya. 
   4. Prueba: compra una entrada y paga con `4242 4242 4242 4242`, cualquier fecha futura y cualquier CVC; la página «Confirmando tu pago…» debe llevarte a la entrada. Luego empieza otra compra, pulsa «Volver» en Stripe y comprueba que las butacas vuelven a estar libres.
   5. En local: `stripe listen --forward-to localhost:8000/stripe/webhook` da el `whsec_…` para tu `.env`.
 - Queda bloqueado: solo la prueba real de punta a punta con Stripe.
+
+## 2026-10-24 · Sesión 06 · Formularios del panel de administración (opcional)
+- Qué pasa: los formularios de alta y edición del panel (películas, cines, salas, sesiones, usuarios y reservas) ya se leen bien en oscuro, están en español y axe no da violaciones, pero sus errores no llevan `aria-invalid`/`aria-describedby` ni mueven el foco al primero, como sí hacen los de la parte pública. Varios son de Ismael (sesiones) y Danna (salas).
+- Opciones: 1) pasarlos al componente `x-campo` en una sesión propia; 2) dejarlos así: solo los usa el personal.
+- Recomiendo: 2 por ahora, porque el caso del portafolio es la compra; 1 si el panel se va a enseñar.
+- Queda bloqueado: nada.

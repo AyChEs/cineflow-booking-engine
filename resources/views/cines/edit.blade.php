@@ -1,11 +1,11 @@
 @extends('layout')
 
-@section('title', 'Edit Cinema')
+@section('title', 'Editar el cine')
 
 @section('content')
 <div class="container" style="max-width: 600px; padding-top: 3rem;">
     <div style="background: var(--color-bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem;">
-        <h1 class="page-title" style="margin-bottom: 1.5rem;">EDIT CINEMA</h1>
+        <h1 class="page-title" style="margin-bottom: 1.5rem;">Editar el cine</h1>
 
         @if ($errors->any())
             <div class="alert alert-error" style="margin-bottom: 1.5rem;">
@@ -22,7 +22,7 @@
             @method('PUT')
 
             <div class="form-group">
-                <label for="nombre" class="form-label">Cinema Name</label>
+                <label for="nombre" class="form-label">Nombre del cine</label>
                 <input type="text" id="nombre" name="nombre" class="form-input"
                        value="{{ old('nombre', $cine->nombre) }}" required>
                 @error('nombre')<p class="form-error">{{ $message }}</p>@enderror
@@ -50,8 +50,8 @@
             </div>
 
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button type="submit" class="btn btn-primary">Update Cinema</button>
-                <a href="{{ route('cines.index') }}" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-primary">Guardar el cine</button>
+                <a href="{{ route('cines.index') }}" class="btn btn-secondary">Volver</a>
             </div>
         </form>
     </div>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0E0D10">
+    <meta name="description" content="@yield('description', 'CineFlow: cartelera, sesiones y compra de entradas con selección de butaca.')">
     <title>@hasSection('title')@yield('title') · CineFlow @else CineFlow · Taquilla de cine @endif</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')

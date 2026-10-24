@@ -31,3 +31,8 @@ if (mapa || caja) {
         if (moduloMapa) controlMapa = moduloMapa.iniciarMapa(mapa, cuenta);
     });
 }
+
+// Escáner de entradas de la taquilla: carga la librería solo en esa página.
+if (document.getElementById('reader')) {
+    import('./escaner');
+}

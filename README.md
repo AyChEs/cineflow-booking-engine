@@ -8,7 +8,7 @@
   <img alt="PHP" src="https://img.shields.io/badge/PHP-8.4-777BB4?logo=php&logoColor=white">
   <img alt="Laravel" src="https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white">
   <img alt="Stripe" src="https://img.shields.io/badge/Stripe-Checkout-635BFF?logo=stripe&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-73%20passing-brightgreen">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-74%20passing-brightgreen">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-blue">
 </p>
 
@@ -38,7 +38,7 @@ CineFlow is a production-grade cinema booking engine built with **Laravel 12**. 
 | Frontend | Blade, Tailwind CSS, Vite, JavaScript (AJAX seat polling) |
 | Database | SQLite (default) / MySQL |
 | Infra | Multi-stage Docker, Render / Railway / Fly.io |
-| Tests | PHPUnit (73 tests, including concurrency, race-condition and webhook tests) |
+| Tests | PHPUnit (74 tests, including concurrency, race-condition and webhook tests) |
 
 ## Concurrency architecture
 
@@ -116,13 +116,31 @@ php artisan serve
 
 Pay with `4242 4242 4242 4242`, any future date and any CVC. In production, create the webhook endpoint in the Stripe dashboard pointing to `/stripe/webhook` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed` and `checkout.session.expired`.
 
+## Screenshots
+
+| Home | Seat map | Ticket |
+|---|---|---|
+| ![Home](plan/capturas/06/portada-1440.png) | ![Seat map](plan/capturas/04/paso2-1440.png) | ![Ticket](plan/capturas/06/confirmacion-1440.png) |
+
+## Accessibility
+
+The interface targets **WCAG 2.2 AA** and is in Spanish.
+
+- **Seat map as an accessible grid.** `role="grid"` with one toggle button per seat and a roving tabindex: arrow keys move, Home/End go to the ends of the row, Ctrl+Home/End to the first and last seat, Space or Enter selects or releases. Sold and held seats can be focused (so their state can be read) but not pressed.
+- **States with shape, icon and text, not only colour.** Free (outline and number), yours (filled, ✓ and number), held by someone else (hatched, dashed border, padlock), sold (grey, ✕). Each seat's accessible name says it: "Fila F, butaca 7, retenida por otra persona".
+- **Announced changes.** A polite live region says "Butaca F7 seleccionada. 1 de 2.", warns when someone else has just taken a seat, and the background polling updates the map without stealing focus or announcing every change.
+- **Announced lock countdown.** The 8-minute hold is shown second by second, but screen readers only hear it at 5, 2 and 1 minutes and at 30 seconds; when it ends, the map reloads and focus moves to the message.
+- **Forms**: visible labels, `aria-invalid` + `aria-describedby` on errors and focus on the first one; skip link, one `<h1>` per page, focus ring on everything, `prefers-reduced-motion` respected.
+
+`tests/browser/a11y.spec.mjs` runs axe on 13 screens (home to ticket, including the three purchase steps) at 390 and 1440 px and fails on any serious or critical violation; `tests/browser/seat-map.spec.mjs` drives the seat map with the keyboard only. Both run in CI (`a11y` job).
+
 ## Tests
 
 ```bash
 php artisan test
 ```
 
-Runs 73 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
+Runs 74 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
 
 ## Deployment
 

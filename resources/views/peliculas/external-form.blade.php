@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="container" style="max-width:860px;padding-top:2.25rem;padding-bottom:4rem;">
-    <a href="{{ route('peliculas.external.index') }}" style="display:inline-flex;align-items:center;gap:0.5rem;color:var(--color-accent-bright);text-decoration:none;font-weight:600;margin-bottom:1.5rem;">&larr; Back to API Listings</a>
+    <a href="{{ route('peliculas.external.index') }}" style="display:inline-flex;align-items:center;gap:0.5rem;color:var(--color-accent-bright);text-decoration:none;font-weight:600;margin-bottom:1.5rem;">&larr; Volver al catálogo de TMDB</a>
 
     <div style="background:var(--color-bg-secondary);border:1px solid var(--border-subtle);border-radius:12px;padding:1.5rem;">
-        <h1 class="page-title" style="font-size:1.5rem;margin-bottom:1rem;">{{ $mode === 'edit' ? 'EDIT API MOVIE' : 'NEW API MOVIE' }}</h1>
+        <h1 class="page-title" style="font-size:1.5rem;margin-bottom:1rem;">{{ $mode === 'edit' ? 'Editar película de TMDB' : 'Nueva película de TMDB' }}</h1>
 
         @if(session('error'))
-            <div class="alert" style="border:1px solid #dc2626;color:#dc2626;background:rgba(220,38,38,0.08);margin-bottom:1rem;">{{ session('error') }}</div>
+            <div class="alert" style="border:1px solid #FF7A85;color:#FF7A85;background:rgba(220,38,38,0.08);margin-bottom:1rem;">{{ session('error') }}</div>
         @endif
 
         <form method="POST" action="{{ $mode === 'edit' ? route('admin.peliculas.external.update', $movie['id']) : route('admin.peliculas.external.store') }}">
@@ -20,7 +20,7 @@
             @endif
 
             <div class="form-group">
-                <label for="title" class="form-label">Title *</label>
+                <label for="title" class="form-label">Título *</label>
                 <input id="title" name="title" class="form-input" required value="{{ old('title', $movie['title'] ?? '') }}">
                 @error('title')<p class="form-error">{{ $message }}</p>@enderror
             </div>
@@ -43,7 +43,7 @@
                     @error('genre')<p class="form-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="form-group">
-                    <label for="stars" class="form-label">Rating (0-5)</label>
+                    <label for="stars" class="form-label">Valoración (0 a 5)</label>
                     <input id="stars" name="stars" type="number" step="0.1" min="0" max="5" class="form-input" value="{{ old('stars', $movie['stars'] ?? '') }}">
                     @error('stars')<p class="form-error">{{ $message }}</p>@enderror
                 </div>
@@ -56,7 +56,7 @@
             </div>
 
             <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1rem;">
-                <a href="{{ route('peliculas.external.index') }}" class="btn btn-secondary">Cancel</a>
+                <a href="{{ route('peliculas.external.index') }}" class="btn btn-secondary">Cancelar</a>
                 <button type="submit" class="btn btn-primary">{{ $mode === 'edit' ? 'Save API Changes' : 'Create in API' }}</button>
             </div>
         </form>

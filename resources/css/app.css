@@ -389,6 +389,8 @@
 /* Utilidades heredadas (las vistas antiguas las usan con estos valores) */
 .flex-between {
     display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     justify-content: space-between;
     align-items: center;
 }

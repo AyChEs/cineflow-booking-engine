@@ -1,11 +1,11 @@
 @extends('layout')
 
-@section('title', 'Make a Booking')
+@section('title', 'Hacer una reserva')
 
 @section('content')
 <div class="container" style="max-width: 820px; padding-top: 3rem; padding-bottom: 3rem;">
 
-    <h1 class="page-title" style="margin-bottom: 2rem;">MAKE A BOOKING</h1>
+    <h1 class="page-title" style="margin-bottom: 2rem;">Hacer una reserva</h1>
 
     @if ($errors->any())
         <div class="alert alert-error" style="margin-bottom: 1.5rem;">
@@ -20,10 +20,10 @@
 
         {{-- Step 1: Showtime selection --}}
         <div style="background: var(--color-bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h2 style="color: var(--color-accent); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">① Select the Showtime</h2>
+            <h2 style="color: var(--color-accent); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">① Elige la sesión</h2>
 
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="fk_sesion_id" class="form-label">Available showtime</label>
+                <label for="fk_sesion_id" class="form-label">Sesión disponible</label>
                 <select id="fk_sesion_id" name="fk_sesion_id" class="form-select" required onchange="onSessionChange(this.value)">
                     <option value="">-- Choose a showtime --</option>
                     @foreach($sesiones as $sesion)
@@ -41,7 +41,7 @@
 
         {{-- Step 2: Ticket type --}}
         <div style="background: var(--color-bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h2 style="color: var(--color-accent); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">② Ticket Type</h2>
+            <h2 style="color: var(--color-accent); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">② Tipo de entrada</h2>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem;" id="tipusGrid">
                 @php
@@ -68,17 +68,17 @@
 
         {{-- Step 3: Seat selector --}}
         <div style="background: var(--color-bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;" id="seatSection">
-            <h2 style="color: var(--color-accent); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">③ Select Your Seats</h2>
+            <h2 style="color: var(--color-accent); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem;">③ Elige tus butacas</h2>
 
             <div id="seatPlaceholder" style="color: var(--color-text-secondary); text-align: center; padding: 2rem;">
-                Select a showtime to see available seats.
+                Elige una sesión para ver las butacas libres.
             </div>
 
             <div id="seatGrid" style="display: none;">
                 {{-- Screen --}}
                 <div style="text-align: center; margin-bottom: 1.5rem;">
                     <div style="display: inline-block; background: linear-gradient(to bottom, var(--color-accent), transparent); width: 60%; height: 6px; border-radius: 4px;"></div>
-                    <p style="color: var(--color-text-secondary); font-size: 0.75rem; letter-spacing: 0.15em; margin-top: 0.4rem;">SCREEN</p>
+                    <p style="color: var(--color-text-secondary); font-size: 0.75rem; letter-spacing: 0.15em; margin-top: 0.4rem;">Pantalla</p>
                 </div>
 
                 {{-- Seat buttons --}}
@@ -86,9 +86,9 @@
 
                 {{-- Legend --}}
                 <div style="display: flex; gap: 1.5rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--color-text-secondary);">
-                    <span><span style="display:inline-block;width:14px;height:14px;background:var(--color-bg-elevated);border:1px solid var(--border-subtle);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Available</span>
-                    <span><span style="display:inline-block;width:14px;height:14px;background:var(--color-accent);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Selected</span>
-                    <span><span style="display:inline-block;width:14px;height:14px;background:#444;border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Taken</span>
+                    <span><span style="display:inline-block;width:14px;height:14px;background:var(--color-bg-elevated);border:1px solid var(--border-subtle);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Libre</span>
+                    <span><span style="display:inline-block;width:14px;height:14px;background:var(--color-accent);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Elegida</span>
+                    <span><span style="display:inline-block;width:14px;height:14px;background:#444;border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Ocupada</span>
                 </div>
             </div>
 
@@ -114,7 +114,7 @@
                     <td id="summaryDiscount" style="text-align: right; font-weight: 600;">—</td>
                 </tr>
                 <tr style="border-top: 1px solid var(--border-subtle);">
-                    <td style="padding: 0.6rem 0; font-size: 1.1rem; font-weight: 700; color: var(--color-accent);">TOTAL DUE</td>
+                    <td style="padding: 0.6rem 0; font-size: 1.1rem; font-weight: 700; color: var(--color-accent);">Total</td>
                     <td id="summaryTotal" style="text-align: right; font-size: 1.1rem; font-weight: 700; color: var(--color-accent);">0,00 €</td>
                 </tr>
             </table>
@@ -126,9 +126,9 @@
         <div style="display: flex; gap: 1rem;">
             <button type="submit" class="btn btn-primary" id="submitBtn" disabled
                     style="opacity: 0.5; cursor: not-allowed;">
-                Confirm Booking
+                Confirmar la reserva
             </button>
-            <a href="{{ route('reservas.mis') }}" class="btn btn-secondary">Cancel</a>
+            <a href="{{ route('reservas.mis') }}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>
