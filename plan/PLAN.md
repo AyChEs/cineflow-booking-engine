@@ -32,7 +32,7 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 04b | Bloqueos de invitados | | 00b | hecha (PR #7) |
 | 05 | Stripe Checkout con webhook | Pro | 00 | hecha (PR #8) |
 | 06 | Accesibilidad global, rendimiento y textos | GLM | 03, 04, 05 | hecha (PR #9) |
-| 07 | Revisión final | Revisión | 06 | pendiente |
+| 07 | Revisión final | Revisión | 06 | hecha (PR #10); el PR a `main` lo abre Ayman |
 
 ## Orden y paralelo
 
