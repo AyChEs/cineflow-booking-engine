@@ -1,0 +1,98 @@
+[
+ {
+  "id": "home",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "cartelera",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "login",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "pelicula",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "compra1",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "butacas",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "pago",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "entrada",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "home",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "cartelera",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "login",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "pelicula",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "compra1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "butacas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "pago",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "id": "entrada",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ }
+]
