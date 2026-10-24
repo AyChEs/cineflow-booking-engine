@@ -30,3 +30,10 @@ Aquí las sesiones dejan solo lo que necesita una decisión o una acción tuya. 
 - Opciones: 1) pasarlos al componente `x-campo` en una sesión propia; 2) dejarlos así: solo los usa el personal.
 - Recomiendo: 2 por ahora, porque el caso del portafolio es la compra; 1 si el panel se va a enseñar.
 - Queda bloqueado: nada.
+
+## 2026-10-24 · Sesión 07 · Frente CineFlow terminado
+- Qué pasa: las sesiones 00 a 07 (más 00b y 04b) están fusionadas en `plan/mejoras` con el CI en verde (`tests` y `a11y`). Revisión en `plan/REVISION.md`, resumen para el caso en `plan/PARA-EL-PORTAFOLIO.md`, capturas en `plan/capturas/final/`. Por tu indicación no se ha abierto el PR `plan/mejoras → main`.
+- Opciones: 1) abrir y fusionar tú el PR `plan/mejoras → main` («Tema de sala, butacas accesibles y pago con Stripe Checkout»); 2) revisarlo antes en local con `migrate:fresh --seed`.
+- Recomiendo: 2 y luego 1. Al fusionar en `main`, Render desplegará: antes pon las claves de Stripe (aviso de la sesión 05) o la demo seguirá con el pago simulado. Las migraciones nuevas (`checkout_pagos`, `stripe_eventos`) se aplican con el `migrate` del arranque.
+- Queda bloqueado: nada del plan; solo la prueba real con Stripe.
+- Ramas: no he podido borrar las ramas `mejora/*` fusionadas desde este entorno (el proxy rechaza el borrado). Puedes borrarlas en GitHub.

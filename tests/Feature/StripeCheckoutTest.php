@@ -374,4 +374,40 @@ class StripeCheckoutTest extends TestCase
 
         $this->call('POST', '/stripe/webhook', [], [], [], ['CONTENT_TYPE' => 'application/json'], '{}')->assertStatus(400);
     }
+
+    public function test_volver_a_pagar_no_suelta_las_butacas_ni_un_instante(): void
+    {
+        $pago = $this->pagar();
+        // Ninguna consulta debe borrar los bloqueos de A1, A2 o A3 al volver a pagar.
+        $borradas = [];
+        \Illuminate\Support\Facades\DB::listen(function ($q) use (&$borradas) {
+            if (str_starts_with(strtolower($q->sql), 'delete from "seat_locks"')) {
+                $borradas = array_merge($borradas, array_intersect(['A1', 'A2', 'A3'], $q->bindings));
+            }
+        });
+
+        $this->post(route('compra.stripe.checkout'), ['nom' => 'Ana', 'email' => 'ana@example.com'])->assertStatus(303);
+
+        $this->assertSame(CheckoutPago::CADUCADO, $pago->fresh()->estado);
+        $this->assertSame([], $borradas);
+        $this->assertSame(3, SeatLock::where('user_id', $this->user->id)->count());
+    }
+
+    public function test_sin_payment_intent_no_marca_reembolsado_y_stripe_reintenta(): void
+    {
+        $pago = $this->pagar();
+        $otra = Reserva::create(['fk_usuario_id' => $this->otro->id, 'fk_sesion_id' => $this->sesion->id, 'estat' => 'pagat', 'total_pagat' => 9.99]);
+        ReservaSeat::create(['reserva_id' => $otra->id, 'sesion_id' => $this->sesion->id, 'butaca' => 'A1']);
+
+        $this->withoutExceptionHandling();
+        try {
+            $this->webhook('checkout.session.completed', $pago, ['payment_intent' => null], 'evt_sin_pi');
+            $this->fail('Debía lanzar una excepción');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('sin payment_intent', $e->getMessage());
+        }
+
+        $this->assertSame(CheckoutPago::ABIERTO, $pago->fresh()->estado);
+        $this->assertSame(0, StripeEvento::where('event_id', 'evt_sin_pi')->count());
+    }
 }
