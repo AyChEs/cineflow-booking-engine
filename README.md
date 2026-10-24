@@ -8,7 +8,7 @@
   <img alt="PHP" src="https://img.shields.io/badge/PHP-8.4-777BB4?logo=php&logoColor=white">
   <img alt="Laravel" src="https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white">
   <img alt="Stripe" src="https://img.shields.io/badge/Stripe-Checkout-635BFF?logo=stripe&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-74%20passing-brightgreen">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-76%20passing-brightgreen">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-blue">
 </p>
 
@@ -38,7 +38,7 @@ CineFlow is a production-grade cinema booking engine built with **Laravel 12**. 
 | Frontend | Blade, Tailwind CSS, Vite, JavaScript (AJAX seat polling) |
 | Database | SQLite (default) / MySQL |
 | Infra | Multi-stage Docker, Render / Railway / Fly.io |
-| Tests | PHPUnit (74 tests, including concurrency, race-condition and webhook tests) |
+| Tests | PHPUnit (76 tests, including concurrency, race-condition and webhook tests) |
 
 ## Concurrency architecture
 
@@ -140,7 +140,7 @@ The interface targets **WCAG 2.2 AA** and is in Spanish.
 php artisan test
 ```
 
-Runs 74 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
+Runs 76 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
 
 ## Deployment
 
