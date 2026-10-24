@@ -54,7 +54,7 @@ class CheckoutService
             ->when($userId, fn ($q) => $q->where('user_id', $userId))
             ->when(! $userId, fn ($q) => $q->whereNull('user_id')->where('session_token', $sessionToken))
             ->pluck('id')
-            ->each(fn (int $id) => $this->cancelar($id));
+            ->each(fn (int $id) => $this->cancelar($id, $butacas));
 
         $this->comprobarButacas($sesion->id, $butacas, $userId, $sessionToken);
 
@@ -132,9 +132,11 @@ class CheckoutService
             );
         } catch (SeatAlreadyReservedException $e) {
             // Otra compra se llevó la butaca un instante antes: se devuelve el dinero.
-            if ($paymentIntent) {
-                $this->pasarela->reembolsar($paymentIntent, "reembolso-{$pago->id}");
+            // Sin payment_intent no se puede reembolsar: error y Stripe reintenta el evento.
+            if (! $paymentIntent) {
+                throw new \RuntimeException("Pago {$pago->id} cobrado sin payment_intent: no se puede reembolsar.");
             }
+            $this->pasarela->reembolsar($paymentIntent, "reembolso-{$pago->id}");
             $pago->update(['estado' => CheckoutPago::REEMBOLSADO]);
             $this->liberarButacas($pago);
             Log::channel('audit')->warning('Pago reembolsado: butaca ya vendida', [
@@ -169,10 +171,16 @@ class CheckoutService
         $this->liberarButacas($pago);
     }
 
-    /** La persona cancela en Stripe, o vuelve a pagar: expira la sesión y libera las butacas. */
-    public function cancelar(int $pagoId): void
+    /**
+     * La persona cancela en Stripe, o vuelve a pagar: expira la sesión y libera
+     * las butacas. Al volver a pagar se conservan las que pasan al pago nuevo,
+     * para que nadie pueda cogerlas en el instante entre soltar y volver a bloquear.
+     *
+     * @param  string[]  $conservar
+     */
+    public function cancelar(int $pagoId, array $conservar = []): void
     {
-        DB::transaction(function () use ($pagoId) {
+        DB::transaction(function () use ($pagoId, $conservar) {
             $pago = CheckoutPago::lockForUpdate()->find($pagoId);
             if (! $pago || ! $pago->estaAbierto()) {
                 return;
@@ -188,7 +196,7 @@ class CheckoutService
             }
 
             $pago->update(['estado' => CheckoutPago::CADUCADO]);
-            $this->liberarButacas($pago);
+            $this->liberarButacas($pago, $conservar);
         });
     }
 
@@ -206,11 +214,15 @@ class CheckoutService
         return $ids->count();
     }
 
-    /** Borra los bloqueos de las butacas de este pago (solo los de quien lo inició). */
-    private function liberarButacas(CheckoutPago $pago): void
+    /**
+     * Borra los bloqueos de las butacas de este pago (solo los de quien lo inició).
+     *
+     * @param  string[]  $conservar
+     */
+    private function liberarButacas(CheckoutPago $pago, array $conservar = []): void
     {
         SeatLock::where('sesion_id', $pago->sesion_id)
-            ->whereIn('butaca', $pago->butacas)
+            ->whereIn('butaca', array_values(array_diff($pago->butacas, $conservar)))
             ->when($pago->user_id, fn ($q) => $q->where('user_id', $pago->user_id))
             ->when(! $pago->user_id, fn ($q) => $q->where('session_token', $pago->session_token))
             ->delete();
