@@ -1,19 +1,19 @@
 @extends('layout')
 
-@section('title', 'Bookings')
+@section('title', 'Reservas')
 
 @section('content')
 <div class="container">
 
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="page-title mb-1">BOOKINGS</h1>
+            <h1 class="page-title mb-1">Reservas</h1>
             <p class="text-[color:var(--color-text-secondary)] text-sm">
                 <span class="text-[color:var(--color-text-primary)] font-bold">{{ $reservas->count() }}</span> total bookings
             </p>
         </div>
         <a href="{{ route('reservas.create') }}" class="btn btn-primary btn-sm">
-            <x-icon name="plus" class="h-4 w-4 mr-1.5" /> New Booking
+            <x-icon name="plus" class="h-4 w-4 mr-1.5" /> Nueva reserva
         </a>
     </div>
 
@@ -29,13 +29,13 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>Showtime</th>
-                    <th>Seats</th>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Sesión</th>
+                    <th>Butacas</th>
                     <th>Total</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,7 +48,7 @@
                     <td class="text-[color:var(--color-text-secondary)] text-sm">{{ $reserva->usuario->email }}</td>
                     <td class="text-[color:var(--color-text-secondary)]">#{{ $reserva->sesion?->id ?? '—' }}</td>
                     <td class="text-sm">{{ $reserva->butaques_seleccionades }}</td>
-                    <td class="font-semibold">€{{ number_format($reserva->total_pagat, 2) }}</td>
+                    <td class="font-semibold">{{ number_format($reserva->total_pagat, 2, ',', '.') }} €</td>
                     <td>
                         {{-- Status badge with Tailwind colors --}}
                         @php
@@ -65,15 +65,15 @@
                     </td>
                     <td>
                         <div class="table-actions">
-                            <a href="{{ route('reservas.show', $reserva) }}" class="table-link">View</a>
+                            <a href="{{ route('reservas.show', $reserva) }}" class="table-link">Ver</a>
                             <a href="{{ route('reservas.edit', $reserva) }}"
-                               class="table-link" style="color: var(--color-accent-bright);">Edit</a>
+                               class="table-link" style="color: var(--color-accent-bright);">Editar</a>
                             <form action="{{ route('reservas.destroy', $reserva) }}" method="POST"
-                                  class="inline" onsubmit="return confirm('Delete this booking?')">
+                                  class="inline" onsubmit="return confirm('¿Borrar esta reserva?')">
                                 @csrf @method('DELETE')
                                 <button type="submit"
                                         class="table-link bg-transparent border-none cursor-pointer text-red-400 hover:text-red-300">
-                                    Delete
+                                    Borrar
                                 </button>
                             </form>
                         </div>

@@ -1,19 +1,19 @@
 @extends('layout')
 
-@section('title', 'Users')
+@section('title', 'Usuarios')
 
 @section('content')
 <div class="container">
 
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="page-title mb-1">USERS</h1>
+            <h1 class="page-title mb-1">Usuarios</h1>
             <p class="text-[color:var(--color-text-secondary)] text-sm">
                 <span class="text-[color:var(--color-text-primary)] font-bold">{{ $usuarios->count() }}</span> registered users
             </p>
         </div>
         <a href="{{ route('usuarios.create') }}" class="btn btn-primary btn-sm">
-            <x-icon name="plus" class="h-4 w-4 mr-1.5" /> Add User
+            <x-icon name="plus" class="h-4 w-4 mr-1.5" /> Añadir usuario
         </a>
     </div>
 
@@ -22,12 +22,12 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th>Actions</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,13 +52,13 @@
                     </td>
                     <td>
                         <div class="table-actions">
-                            <a href="{{ route('usuarios.edit', $user) }}" class="table-link">Edit</a>
+                            <a href="{{ route('usuarios.edit', $user) }}" class="table-link">Editar</a>
                             <form action="{{ route('usuarios.destroy', $user) }}" method="POST"
-                                  class="inline" onsubmit="return confirm('Delete this user?');">
+                                  class="inline" onsubmit="return confirm('¿Borrar este usuario?');">
                                 @csrf @method('DELETE')
                                 <button type="submit"
                                         class="table-link bg-transparent border-none cursor-pointer text-red-400 hover:text-red-300">
-                                    Delete
+                                    Borrar
                                 </button>
                             </form>
                         </div>

@@ -1,12 +1,12 @@
 @extends('layout')
 
-@section('title', 'Screening Rooms')
+@section('title', 'Salas')
 
 @section('content')
 <div class="container">
     <div class="flex-between mb-2">
-        <h1 class="page-title">SCREENING ROOMS</h1>
-        <a href="{{ route('salas.create') }}" class="btn btn-primary">+ New Screening Room</a>
+        <h1 class="page-title">Salas</h1>
+        <a href="{{ route('salas.create') }}" class="btn btn-primary">+ Nueva sala</a>
     </div>
 
     @if(session('success'))
@@ -17,11 +17,11 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Cinema</th>
-                <th>Capacity</th>
-                <th>Layout</th>
-                <th>Actions</th>
+                <th>Nombre</th>
+                <th>Cine</th>
+                <th>Capacidad</th>
+                <th>Disposición</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -33,11 +33,11 @@
                 <td>{{ $sala->capacidad }}</td>
                 <td>{{ $sala->disposicion_butacas }}</td>
                 <td class="table-actions">
-                    <a href="{{ route('salas.show', $sala) }}" class="table-link">View</a>
-                    <a href="{{ route('salas.edit', $sala) }}" class="table-link" style="color: var(--color-accent-bright);">Edit</a>
-                    <form action="{{ route('salas.destroy', $sala) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this screening room?')">
+                    <a href="{{ route('salas.show', $sala) }}" class="table-link">Ver</a>
+                    <a href="{{ route('salas.edit', $sala) }}" class="table-link" style="color: var(--color-accent-bright);">Editar</a>
+                    <form action="{{ route('salas.destroy', $sala) }}" method="POST" style="display:inline" onsubmit="return confirm('¿Borrar esta sala?')">
                         @csrf @method('DELETE')
-                        <button type="submit" class="table-link" style="background:none;border:none;cursor:pointer;color:#e74c3c;">Delete</button>
+                        <button type="submit" class="table-link" style="background:none;border:none;cursor:pointer;color:#FF7A85;">Borrar</button>
                     </form>
                 </td>
             </tr>
