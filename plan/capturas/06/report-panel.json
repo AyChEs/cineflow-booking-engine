@@ -1,0 +1,322 @@
+[
+ {
+  "url": "/dashboard",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/admin/peliculas",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/admin/cines",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/peliculas/create",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/peliculas/1/edit",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/cines/create",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/cines/1/edit",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas/create",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas/1",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas/1/edit",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/sesiones/create",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/sesiones/153",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/sesiones/153/edit",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios/create",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios/1",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios/1/edit",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas/create",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas/1",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas/1/edit",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/taquilla/escaner",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/admin/peliculas/external",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/dashboard/client",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/mis-reservas",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 390,
+  "consoleErrors": []
+ },
+ {
+  "url": "/dashboard",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/admin/peliculas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/admin/cines",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/peliculas/create",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/peliculas/1/edit",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/cines/create",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/cines/1/edit",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas/create",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas/1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/salas/1/edit",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/sesiones/create",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/sesiones/153",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/sesiones/153/edit",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios/create",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios/1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/usuarios/1/edit",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas/create",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas/1",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/reservas/1/edit",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/taquilla/escaner",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/admin/peliculas/external",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/dashboard/client",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/mis-reservas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 1440,
+  "consoleErrors": []
+ }
+]
