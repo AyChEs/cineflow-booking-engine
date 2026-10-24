@@ -2,7 +2,7 @@
 @props(['pelicula', 'nivel' => 'h3', 'prioridad' => false])
 <article {{ $attributes->merge(['class' => 'group relative flex flex-col gap-3']) }}>
     <div class="overflow-hidden rounded-card border border-sala-700 bg-sala-850">
-        <img src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}"
+        <img src="{{ str_replace('/t/p/w500/', '/t/p/w342/', $pelicula->poster_url) }}" alt="Póster de {{ $pelicula->titulo }}"
              width="300" height="450"
              @if ($prioridad) fetchpriority="high" @else loading="lazy" @endif decoding="async"
              class="aspect-[2/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]">
