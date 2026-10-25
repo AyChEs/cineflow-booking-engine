@@ -1,377 +1,159 @@
 @extends('layout')
 
-@section('title', 'Cinema Premium')
+@section('mov', 'portada')
 
 @section('content')
-
-{{-- ======================================================
-     Hero Section — Most popular movie at the Spanish box office
-     If $tmdbHero has data (movie not in the local DB),
-     we show its poster as background and its info.
-     ====================================================== --}}
 @php
-    $heroTitle    = $destacada?->titulo    ?? ($tmdbHero['title']       ?? 'CINEMA PREMIUM');
-    $heroSynopsis = $destacada?->sinopsis  ?? ($tmdbHero['description'] ?? "Live the unique cinema experience");
-    $heroPoster   = $destacada?->poster_url ?? ($tmdbHero['image_url']  ?? '');
-    $heroLink     = $destacada ? route('peliculas.show', $destacada) : route('peliculas.index');
-    $heroTrailer  = $destacada?->trailer_url ?? null;
+    $tituloDestacada = $destacada?->titulo ?? ($tmdbHero['title'] ?? null);
+    $sinopsis = $destacada?->sinopsis ?? ($tmdbHero['description'] ?? null);
+    $fondo = $destacada?->fondo_url ?? ($tmdbHero['image_url'] ?? null);
+    // Sin fondo propio (ni backdrop de TMDB ni fondo del cartel sustituto) el hero usa la sala de la marca, no el póster ampliado.
+    $usaSala = $tituloDestacada && ($destacada ? ! $destacada->tiene_fondo : ! $fondo);
+    $enlace = $destacada ? route('peliculas.show', $destacada) : route('peliculas.index');
+    $resto = $destacada ? $peliculas->reject(fn ($p) => $p->id === $destacada->id)->values() : $peliculas;
 @endphp
 
-<section class="hero-cinematic" id="heroCinematic">
+@if ($usaSala)
+    @push('precarga')
+        <link rel="preload" as="image" type="image/avif" imagesrcset="{{ collect(config('marca.fotos.sala.anchos'))->map(fn ($w) => asset("img/marca/fotos/sala-{$w}.avif")." {$w}w")->join(', ') }}" imagesizes="100vw" fetchpriority="high">
+    @endpush
+@elseif ($fondo)
+    @push('precarga')
+        <link rel="preconnect" href="https://image.tmdb.org">
+        <link rel="preload" as="image" href="{{ $fondo }}" @if ($destacada?->fondo_srcset) imagesrcset="{{ $destacada->fondo_srcset }}" imagesizes="100vw" @endif fetchpriority="high">
+    @endpush
+@endif
 
-    {{-- depth-0: poster a pantalla completa (parallax) --}}
-    <div class="hc-layer hc-poster" data-depth="0" data-parallax="0.15" aria-hidden="true"
-         @if($heroPoster) style="background-image: url('{{ $heroPoster }}');" @endif></div>
+@unless ($tituloDestacada)
+    <h1 class="sr-only">{{ config('app.name') }}, cartelera y entradas</h1>
+@endunless
 
-    {{-- depth-1: readability gradient + atmospheric light blobs --}}
-    <div class="hc-layer hc-scrim" data-depth="1" aria-hidden="true"></div>
-    <div class="hc-glow hc-glow-a" data-depth="1" data-parallax="0.30" aria-hidden="true"></div>
-    <div class="hc-glow hc-glow-b" data-depth="1" data-parallax="0.30" aria-hidden="true"></div>
-
-    {{-- depth-5: film grain --}}
-    <div class="hc-grain" data-depth="5" aria-hidden="true"></div>
-
-    {{-- depth-4: contenido --}}
-    <div class="hero-content">
-        <span class="hc-badge hc-enter hc-enter-1">Now Showing</span>
-        <h1 class="hero-title hc-enter hc-enter-2" id="heroTitle">{{ strtoupper($heroTitle) }}</h1>
-        <p class="hero-subtitle hc-enter hc-enter-3" id="heroSubtitle">{{ Str::limit($heroSynopsis, 160) }}</p>
-
-        <div id="heroTags" class="flex flex-wrap gap-2 mb-6 hc-enter hc-enter-3">
-            @if($destacada)
-                @foreach($destacada->categorias->take(3) as $cat)
-                    <span class="px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest
-                                 bg-cinema-accent/20 text-cinema-accent border border-cinema-accent/40">
-                        {{ $cat->nombre }}
-                    </span>
-                @endforeach
-                @if($destacada->duracion_min)
-                    <span class="px-4 py-1 rounded-full text-xs font-semibold
-                                 bg-white/5 text-cinema-muted border border-white/10">
-                        {{ $destacada->duracion_min }} min
-                    </span>
-                @endif
-            @elseif($tmdbHero ?? null)
-                @foreach(array_slice(explode(',', $tmdbHero['genre'] ?? ''), 0, 3) as $g)
-                    @if(trim($g))
-                        <span class="px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest
-                                     bg-cinema-accent/20 text-cinema-accent border border-cinema-accent/40">
-                            {{ trim($g) }}
-                        </span>
-                    @endif
-                @endforeach
-                @if($tmdbHero['year'] ?? null)
-                    <span class="px-4 py-1 rounded-full text-xs font-semibold
-                                 bg-white/5 text-cinema-muted border border-white/10">
-                        {{ $tmdbHero['year'] }}
-                    </span>
-                @endif
-                @if($tmdbHero['stars'] ?? null)
-                    <span class="px-4 py-1 rounded-full text-xs font-semibold
-                                 bg-yellow-400/10 text-yellow-400 border border-yellow-400/20">
-                        <i class="fas fa-star mr-1"></i>{{ number_format($tmdbHero['stars'], 1) }}/5
-                    </span>
-                @endif
-            @endif
-        </div>
-
-        <div class="hero-buttons hc-enter hc-enter-4" id="heroButtons">
-            <a href="{{ $heroLink }}" class="btn btn-primary btn-lg btn-shine">
-                <i class="fas fa-ticket-alt mr-2"></i>Buy Tickets
-            </a>
-            @if($heroTrailer)
-                <a href="{{ $heroTrailer }}" target="_blank" rel="noopener" class="btn btn-secondary btn-lg">
-                    <i class="fas fa-play mr-2"></i>Watch Trailer
-                </a>
-            @endif
-        </div>
-    </div>
-
-    <div class="hc-scroll-cue" aria-hidden="true">
-        <span>Discover</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-</section>
-
-{{-- ======================================================
-     Now Showing Section — Carousel
-     ====================================================== --}}
-<section class="container reveal" style="padding-top:3rem;padding-bottom:1rem;">
-    <div class="section-header">
-        <div>
-            <h2 class="section-title section-title-accent">NOW SHOWING</h2>
-            <p class="text-[color:var(--color-text-secondary)] text-sm mt-1">The best movies now showing</p>
-        </div>
-        <div class="flex gap-2">
-            <a href="{{ route('peliculas.index') }}" class="btn btn-secondary btn-sm">See all →</a>
-            @auth
-                @if(auth()->user()->isAdmin())
-                    <a href="{{ route('peliculas.external.index') }}" class="btn btn-secondary btn-sm"
-                       title="TMDB catalog — admin only">
-                        <i class="fas fa-satellite-dish mr-1"></i>TMDB
-                    </a>
-                @endif
-            @endauth
-        </div>
-    </div>
-
-    {{-- Carousel --}}
-    <style>
-    .carousel-wrapper {
-        position: relative;
-    }
-    .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        width: 2.75rem;
-        height: 2.75rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid rgba(255,255,255,0.15);
-        background: rgba(0,0,0,0.75);
-        color: white;
-        font-size: 1.25rem;
-        cursor: pointer;
-        transition: background 0.2s, opacity 0.2s;
-        backdrop-filter: blur(4px);
-    }
-    .carousel-btn:hover { background: var(--color-accent-bright); }
-    .carousel-btn.prev { left: 0; }
-    .carousel-btn.next { right: 0; }
-    .carousel-btn[disabled] { opacity: 0.25; cursor: default; pointer-events: none; }
-
-    .carousel-viewport {
-        overflow: hidden;
-        margin: 0 3rem; /* space for the buttons */
-    }
-    @media (max-width: 640px) {
-        .carousel-viewport { margin: 0 2.5rem; }
-        .carousel-btn { width: 2.25rem; height: 2.25rem; font-size: 1rem; }
-    }
-
-    #carouselTrack {
-        display: flex;
-        transition: transform 0.4s ease;
-        will-change: transform;
-    }
-
-    /* Cada card ocupa exactamente 1/visible items del viewport */
-    .card-movie-carousel {
-        flex-shrink: 0;
-        /* ancho se calcula en JS via CSS custom property */
-    }
-    </style>
-
-    <div class="carousel-wrapper">
-        <button id="carouselPrev" class="carousel-btn prev" onclick="moveCarousel(-1)" aria-label="Previous" disabled>&#8249;</button>
-
-        <div class="carousel-viewport" id="carouselViewport">
-            <div id="carouselTrack">
-                @forelse($peliculas as $pelicula)
-                    <div class="card-movie card-movie-carousel">
-                        <div class="card-movie-poster">
-                            <img src="{{ $pelicula->poster_url }}"
-                                 alt="Poster de {{ $pelicula->titulo }}"
-                                 loading="lazy">
-
-                            <div class="card-movie-overlay">
-                                <div class="text-center px-4 w-full">
-                                    <a href="{{ route('peliculas.show', $pelicula) }}"
-                                       class="btn btn-primary btn-sm" style="width:100%;display:block;">View</a>
-                                </div>
-                            </div>
-
-                            @if($pelicula->categorias->first())
-                                <div class="card-movie-badge">{{ $pelicula->categorias->first()->nombre }}</div>
-                            @endif
-                        </div>
-
-                        <div class="card-movie-body">
-                            <div class="card-movie-title">{{ $pelicula->titulo }}</div>
-                            <div class="card-movie-meta">
-                                @if($pelicula->rating)
-                                    <span class="cm-rating"><i class="fas fa-star"></i>{{ number_format($pelicula->rating, 1) }}</span>
-                                    <span class="cm-sep">·</span>
-                                @endif
-                                <span>{{ $pelicula->duracion_min ?? '?' }} min</span>
-                                <span class="cm-sep">·</span>
-                                <span>{{ $pelicula->classificacio_edad ?? 'TP' }}</span>
-                            </div>
-                        </div>
+{{-- ── Portada y cartelera: en escritorio, una sola escena fijada (el hero se encoge hasta ser el primer fotograma de la tira) ── --}}
+<section class="escena" aria-label="Portada y cartelera">
+    <div class="escena-pista" data-escena>
+        <div class="film" data-film>
+            @if ($tituloDestacada)
+            <article class="frame-hero" data-hero aria-labelledby="destacada">
+                @if ($usaSala)
+                    <div class="hero-media hero-media--sala" data-hero-media aria-hidden="true">
+                        <x-marca.imagen nombre="sala" sizes="100vw" :prioridad="true" />
                     </div>
-                @empty
-                    <p class="text-[color:var(--color-text-secondary)]">No movies available.</p>
-                @endforelse
+                @elseif ($fondo)
+                    <div class="hero-media" data-hero-media aria-hidden="true">
+                        <img src="{{ $fondo }}" @if ($destacada?->fondo_srcset) srcset="{{ $destacada->fondo_srcset }}" sizes="100vw" @endif alt="" width="1280" height="720" fetchpriority="high" decoding="async">
+                    </div>
+                @endif
+                <div class="hero-tinte" aria-hidden="true"></div>
+                <div class="hero-rojo" aria-hidden="true"></div>
+                <div class="hero-haz" aria-hidden="true">
+                    <x-marca.imagen nombre="haz" sizes="100vw" class="hero-haz-img" data-haz />
+                </div>
+                <div class="hero-grano" aria-hidden="true"></div>
+
+                <div class="hero-contenido" data-hero-contenido>
+                    <div class="hero-bombillas" aria-hidden="true"></div>
+                    <p class="hero-etiqueta" data-hero-detalle>En cartelera</p>
+                    <h1 id="destacada" class="hero-titulo" data-titulo>{{ $tituloDestacada }}</h1>
+
+                    @if ($destacada)
+                        <p class="hero-meta cifras" data-hero-detalle>
+                            @if ($destacada->duracion_min)<span>{{ $destacada->duracion_min }} min</span>@endif
+                            @foreach ($destacada->categorias->take(3) as $categoria)
+                                <span class="hero-genero">{{ $categoria->nombre }}</span>
+                            @endforeach
+                        </p>
+                    @endif
+                    @if ($sinopsis)
+                        <p class="hero-sinopsis" data-hero-detalle>{{ $sinopsis }}</p>
+                    @endif
+
+                    <div class="hero-acciones" data-hero-detalle>
+                        <a href="{{ $enlace }}" class="btn btn-primary btn-lg btn-brillo" data-magnetico>
+                            <x-icon name="ticket" class="h-5 w-5" />Ver sesiones
+                        </a>
+                        @if ($destacada?->trailer_url)
+                            <a href="{{ $destacada->trailer_url }}" target="_blank" rel="noopener" class="btn btn-secondary btn-lg hero-trailer">
+                                <x-icon name="play" class="h-5 w-5" />Ver tráiler<span class="sr-only"> (se abre en otra pestaña)</span>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Una vez encogido, todo el fotograma lleva a la ficha --}}
+                <a href="{{ $enlace }}" class="hero-fotograma-enlace" data-hero-enlace tabindex="-1" aria-hidden="true"></a>
+
+                <div class="hero-banda hero-banda--sup" aria-hidden="true"></div>
+                <div class="hero-banda hero-banda--inf" aria-hidden="true"></div>
+            </article>
+            @endif
+
+            <div class="film-banda" data-film-banda aria-hidden="true"></div>
+
+            <div class="tira" data-tira>
+                @if ($resto->isEmpty() && ! $tituloDestacada)
+                    <p class="px-4 text-texto-2">Ahora mismo no hay películas en cartelera.</p>
+                @else
+                    <ul class="tira-lista" aria-labelledby="en-cartelera">
+                        @foreach ($resto as $pelicula)
+                            <li><x-movie-card :pelicula="$pelicula" variante="tira" nivel="h2" /></li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         </div>
 
-        <button id="carouselNext" class="carousel-btn next" onclick="moveCarousel(1)" aria-label="Next">&#8250;</button>
+        <div class="tira-cabecera" data-tira-cabecera>
+            <h2 id="en-cartelera" class="display text-4xl text-texto md:text-5xl">En cartelera</h2>
+            <a href="{{ route('peliculas.index') }}" class="btn btn-secondary btn-sm" data-magnetico>
+                Toda la cartelera<x-icon name="arrow-right" class="h-4 w-4" />
+            </a>
+        </div>
+        <div class="film-progreso" data-film-progreso aria-hidden="true"><i></i></div>
     </div>
-
-    <div id="carouselDots" class="flex justify-center gap-2 mt-5"></div>
-
-    <script>
-    (function(){
-        const track    = document.getElementById('carouselTrack');
-        const viewport = document.getElementById('carouselViewport');
-        const dotsEl   = document.getElementById('carouselDots');
-        const btnPrev  = document.getElementById('carouselPrev');
-        const btnNext  = document.getElementById('carouselNext');
-        const cards    = Array.from(track.children);
-        const total    = cards.length;
-        let current    = 0;
-
-        function visibleCount() {
-            const w = window.innerWidth;
-            if (w < 480) return 2;
-            if (w < 768) return 3;
-            if (w < 1024) return 4;
-            return 5;
-        }
-
-        function maxIndex() { return Math.max(0, total - visibleCount()); }
-
-        function setCardWidths() {
-            const vis  = visibleCount();
-            const gap  = vis > 2 ? 16 : 12; // px — gap entre cards
-            const vw   = viewport.clientWidth;
-            const cardW = (vw - gap * (vis - 1)) / vis;
-            cards.forEach(c => {
-                c.style.width     = cardW + 'px';
-                c.style.marginRight = gap + 'px';
-            });
-            // remove margin from the last card so it doesn't overflow
-            if (cards[total - 1]) cards[total - 1].style.marginRight = '0';
-        }
-
-        function buildDots() {
-            dotsEl.innerHTML = '';
-            const pages = maxIndex() + 1;
-            if (pages <= 1) return;
-            for (let i = 0; i < pages; i++) {
-                const d = document.createElement('button');
-                d.style.cssText = `width:8px;height:8px;border-radius:50%;border:none;padding:0;cursor:pointer;
-                    transition:background .2s,transform .2s;
-                    background:${i === current ? 'var(--color-accent-bright)' : 'rgba(255,255,255,0.25)'};
-                    transform:${i === current ? 'scale(1.35)' : 'scale(1)'};`;
-                d.onclick = () => goto(i);
-                dotsEl.appendChild(d);
-            }
-        }
-
-        function goto(idx) {
-            current = Math.max(0, Math.min(idx, maxIndex()));
-            // calcula offset sumando anchos reales de cards + margins
-            let offset = 0;
-            for (let i = 0; i < current; i++) {
-                const c = cards[i];
-                offset += c.offsetWidth + parseInt(c.style.marginRight || 0);
-            }
-            track.style.transform = `translateX(-${offset}px)`;
-            btnPrev.disabled = current === 0;
-            btnNext.disabled = current >= maxIndex();
-            buildDots();
-        }
-
-        function init() {
-            setCardWidths();
-            current = Math.min(current, maxIndex());
-            goto(current);
-        }
-
-        window.moveCarousel = (dir) => goto(current + dir);
-        window.addEventListener('resize', init);
-        init();
-    }());
-    </script>
 </section>
 
-{{-- ======================================================
-     Cinemas Section
-     ====================================================== --}}
-<section class="container reveal" style="padding-top:2rem;padding-bottom:4rem;">
-    <div class="section-header">
-        <div>
-            <h2 class="section-title section-title-accent">OUR CINEMAS</h2>
-            <p class="text-[color:var(--color-text-secondary)] text-sm mt-1">Find the cinema closest to you</p>
+@include('portada._compra')
+
+{{-- ── El nombre, a todo el ancho: se rellena con el scroll y los pósteres lo cruzan ── --}}
+<section class="nombre-gigante" data-nombre aria-labelledby="lema">
+    <div class="nombre-fondo" aria-hidden="true"><x-marca.imagen nombre="sala" sizes="100vw" /></div>
+    <h2 id="lema" class="nombre-lema display">{{ config('marca.lema') }}</h2>
+    <div class="nombre-lienzo" aria-hidden="true">
+        <x-marca.nombre-ancho class="nombre-trazo-capa" />
+        <div class="nombre-ventana" data-nombre-ventana>
+            <x-marca.nombre-ancho :relleno="true" class="nombre-relleno-capa" data-nombre-relleno />
         </div>
-        <a href="{{ route('cines.index') }}" class="btn btn-secondary btn-sm">See all →</a>
+        @foreach ($resto->take(3) as $i => $pelicula)
+            <img src="{{ str_replace('/t/p/w500/', '/t/p/w342/', $pelicula->poster_url) }}" alt="" width="300" height="450" loading="lazy" fetchpriority="low" decoding="async"
+                 class="cruce cruce--{{ $i + 1 }}" data-cruce="{{ $i + 1 }}"
+                 onerror="this.onerror=null;this.src='{{ $pelicula->cartel_respaldo_url }}'">
+        @endforeach
     </div>
+</section>
 
-    <div class="cines-grid reveal-stagger">
-        @forelse($cines as $cine)
-            <div class="card-cine">
-                <a href="{{ route('cines.show', $cine) }}"
-                   class="absolute inset-0 z-10 block" aria-label="{{ $cine->nombre }}"></a>
-
-                <div class="w-full h-full flex items-center justify-center"
-                     style="background: linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);">
-                    <i class="fas fa-film text-white/5 text-8xl"></i>
-                </div>
-
-                <div class="card-cine-overlay z-[2]">
-                    <h3 class="card-cine-title">{{ $cine->nombre }}</h3>
-                    <p class="card-cine-ciudad">{{ $cine->ciudad }}</p>
-                    <p class="text-white/50 text-xs mt-1">
-                        {{ $cine->salas_count }} {{ $cine->salas_count == 1 ? 'screen' : 'screens' }}
+@if ($cines->isNotEmpty())
+<section class="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 md:py-20" aria-labelledby="nuestros-cines">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <h2 id="nuestros-cines" class="display text-4xl text-texto md:text-5xl">Cines</h2>
+        <a href="{{ route('cines.index') }}" class="btn btn-secondary btn-sm">
+            Todos los cines<x-icon name="arrow-right" class="h-4 w-4" />
+        </a>
+    </div>
+    <ul class="divide-y divide-sala-700 rounded-card border border-sala-700 bg-sala-900">
+        @foreach ($cines as $cine)
+            <li class="relative flex flex-wrap items-center justify-between gap-2 px-4 py-4 hover:bg-sala-850 sm:px-6">
+                <div>
+                    <h3 class="font-semibold text-texto">
+                        <a href="{{ route('cines.show', $cine) }}" class="no-underline after:absolute after:inset-0 after:content-['']">{{ $cine->nombre }}</a>
+                    </h3>
+                    <p class="flex items-center gap-1.5 text-sm text-texto-2">
+                        <x-icon name="map-pin" class="h-4 w-4 shrink-0" />{{ $cine->ciudad }}
                     </p>
                 </div>
-            </div>
-        @empty
-            <p class="text-[color:var(--color-text-secondary)] col-span-full">No cinemas registered.</p>
-        @endforelse
-    </div>
+                <p class="cifras text-sm text-texto-2">{{ $cine->salas_count }} {{ $cine->salas_count === 1 ? 'sala' : 'salas' }}</p>
+            </li>
+        @endforeach
+    </ul>
 </section>
-
-{{-- ======================================================
-     Motion engine — hero parallax + scroll reveals.
-     Only transform/opacity (GPU). Fully disabled if the
-     user has requested reduced-motion.
-     ====================================================== --}}
-<script>
-(function(){
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) return;
-
-    const coarse = window.matchMedia('(pointer: coarse)').matches;
-
-    /* Hero parallax (disabled on touch for performance) */
-    const parallaxEls = Array.from(document.querySelectorAll('[data-parallax]'));
-    if (parallaxEls.length && !coarse) {
-        let ticking = false;
-        const onScroll = () => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => {
-                const y = window.scrollY;
-                for (const el of parallaxEls) {
-                    const speed = parseFloat(el.dataset.parallax) || 0.15;
-                    el.style.transform = (el.classList.contains('hc-poster') ? 'scale(1.12) ' : '')
-                        + `translate3d(0, ${y * speed}px, 0)`;
-                }
-                ticking = false;
-            });
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
-    }
-
-    /* Scroll reveals (IntersectionObserver) */
-    const revealEls = document.querySelectorAll('.reveal, .reveal-stagger, .section-title-accent');
-    const io = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-            if (e.isIntersecting) {
-                e.target.classList.add('is-visible');
-                io.unobserve(e.target);
-            }
-        }
-    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
-    revealEls.forEach(el => io.observe(el));
-}());
-</script>
-
+@endif
 @endsection

@@ -1,11 +1,11 @@
 @extends('layout')
 
-@section('title', 'Edit User')
+@section('title', 'Editar el usuario')
 
 @section('content')
 <div class="container" style="max-width: 600px; padding-top: 3rem;">
     <div style="background: var(--color-bg-secondary); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem;">
-        <h1 class="page-title" style="margin-bottom: 1.5rem;">EDIT USER</h1>
+        <h1 class="page-title" style="margin-bottom: 1.5rem;">Editar el usuario</h1>
 
         @if ($errors->any())
             <div class="alert alert-error" style="margin-bottom: 1.5rem;">
@@ -24,8 +24,8 @@
             @include('usuarios._form', ['user' => $usuario])
 
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button type="submit" class="btn btn-primary">Update</button>
-                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>

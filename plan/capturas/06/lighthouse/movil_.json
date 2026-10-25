@@ -1,0 +1,11 @@
+{
+ "url": "http://localhost:8000/",
+ "scores": {
+  "performance": 0.94,
+  "accessibility": 1,
+  "best-practices": 1,
+  "seo": 0.92
+ },
+ "LCP": "2.6\u00a0s",
+ "CLS": "0.002"
+}

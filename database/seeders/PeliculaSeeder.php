@@ -24,6 +24,7 @@ class PeliculaSeeder extends Seeder
                 'classificacio_edad' => 'PG-13',
                 'trailer_url'        => 'https://www.youtube.com/watch?v=Way9Dexny3w',
                 'poster_path'        => '/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
+                'fondo_path'         => '/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg',
                 'categorias'         => [3, 2, 14], // CienciaFicción, Aventura, Histórica
             ],
             [
@@ -33,6 +34,7 @@ class PeliculaSeeder extends Seeder
                 'classificacio_edad' => 'R',
                 'trailer_url'        => 'https://www.youtube.com/watch?v=uYPbbksJxIg',
                 'poster_path'        => '/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+                'fondo_path'         => '/rLb2cwF3Pazuxaj0sRXQ037tGI1.jpg',
                 'categorias'         => [14, 5, 15], // Histórica, Drama, Bélica
             ],
             [
@@ -42,6 +44,7 @@ class PeliculaSeeder extends Seeder
                 'classificacio_edad' => 'R',
                 'trailer_url'        => 'https://www.youtube.com/watch?v=YGMECb-QgDA',
                 'poster_path'        => '/b33nnKl1GSFbao4l3fZDDqsMx0F.jpg',
+                'fondo_path'         => '/9SSEUrSqhljBMzRe4aBTh17rUaC.jpg',
                 'categorias'         => [6, 3], // Terror, CienciaFicción
             ],
             [
@@ -51,6 +54,7 @@ class PeliculaSeeder extends Seeder
                 'classificacio_edad' => 'PG',
                 'trailer_url'        => 'https://www.youtube.com/watch?v=LEjhY15eCx0',
                 'poster_path'        => '/vpnVM9B6NMmQpWeZvzLvDESb2QE.jpg',
+                'fondo_path'         => '/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg',
                 'categorias'         => [9, 4, 5], // Animación, Comedia, Drama
             ],
             [
@@ -69,6 +73,7 @@ class PeliculaSeeder extends Seeder
                 'classificacio_edad' => 'R',
                 'trailer_url'        => 'https://www.youtube.com/watch?v=luaBVPHGGwc',
                 'poster_path'        => '/2cxhvwyEwRlysAmRH4iodkvo0z5.jpg',
+                'fondo_path'         => '/euYIwmwkmz95mnXvufEmbL6ovhZ.jpg',
                 'categorias'         => [1, 14, 5], // Acción, Histórica, Drama
             ],
             [
@@ -78,6 +83,7 @@ class PeliculaSeeder extends Seeder
                 'classificacio_edad' => 'PG',
                 'trailer_url'        => 'https://www.youtube.com/watch?v=6COmYeLsz4c',
                 'poster_path'        => '/c5Tqxeo1UpBvnAc3csUm7j3hlQl.jpg',
+                'fondo_path'         => '/uKb22E0nlzr914bA9KyA5CVCOlV.jpg',
                 'categorias'         => [12, 11, 8], // Musical, Fantasía, Romance
             ],
             [

@@ -1,46 +1,44 @@
 @extends('layout')
 
-@section('title', 'Our Cinemas')
+@section('mov', 'sitio')
+
+@section('title', 'Cines')
 
 @section('content')
-<div class="container" style="padding-top:2.5rem;padding-bottom:4rem;">
-
-    <div class="flex-between mb-2" style="align-items:flex-end;">
-        <div>
-            <h1 class="page-title">OUR CINEMAS</h1>
-            <p style="color:var(--color-text-secondary);font-size:0.9rem;margin-top:0.25rem;">{{ $cines->count() }} {{ $cines->count() == 1 ? 'cinema' : 'cinemas' }} nationwide</p>
-        </div>
-
+<header class="cines-cabecera">
+    {{-- El vestíbulo de noche es la imagen más grande de la página: carga ya y con prioridad --}}
+    <x-marca.imagen nombre="vestibulo" sizes="100vw" class="cines-cabecera-img" :prioridad="true" />
+    <div class="cines-cabecera-texto mx-auto max-w-7xl px-4 sm:px-6">
+        <h1 class="display text-4xl text-texto md:text-5xl">Cines</h1>
+        <p class="cifras mt-2 text-texto-2">{{ $cines->count() }} {{ $cines->count() === 1 ? 'cine' : 'cines' }}</p>
     </div>
+</header>
 
-    @if(session('success'))
-        <div class="alert alert-success mb-2">{{ session('success') }}</div>
+<div class="mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 md:pb-14">
+
+    @if (session('success'))
+        <div class="alert alert-success mt-6" role="status"><x-icon name="check-circle" class="mt-0.5 h-4 w-4 shrink-0" />{{ session('success') }}</div>
     @endif
 
-    <div class="cines-grid">
-        @forelse($cines as $cine)
-        <div class="card-cine">
-            <a href="{{ route('cines.show', $cine) }}" style="display:block;position:absolute;inset:0;z-index:1;text-decoration:none;"></a>
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;">
-                <i class="fas fa-film" style="color:rgba(255,255,255,0.05);font-size:5rem;"></i>
-            </div>
-            <div class="card-cine-overlay" style="z-index:2;">
-                <h3 class="card-cine-title">{{ $cine->nombre }}</h3>
-                <p class="card-cine-ciudad">{{ $cine->ciudad }}, {{ $cine->provincia }}</p>
-                <div style="display:flex;gap:1rem;margin-top:0.5rem;">
-                    <span style="color:rgba(255,255,255,0.5);font-size:0.8rem;"><i class="fas fa-door-open" style="margin-right:4px;"></i>{{ $cine->salas_count }} {{ $cine->salas_count == 1 ? 'screen' : 'screens' }}</span>
-                    <span style="color:rgba(255,255,255,0.5);font-size:0.8rem;"><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>{{ Str::limit($cine->direccion_completa, 28) }}</span>
-                </div>
-
-            </div>
-        </div>
-        @empty
-        <div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--color-text-secondary);">
-            <i class="fas fa-building" style="font-size:3rem;opacity:0.2;display:block;margin-bottom:1rem;"></i>
-            No cinemas registered yet.
-        </div>
-        @endforelse
-    </div>
-
+    @if ($cines->isEmpty())
+        <p class="mt-10 text-texto-2">Todavía no hay cines.</p>
+    @else
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach ($cines as $cine)
+                <li>
+                    <article class="relative flex h-full flex-col gap-3 rounded-card border border-sala-700 bg-sala-900 p-6 transition-colors hover:border-carmin-400 hover:bg-sala-850">
+                        <h2 class="display text-2xl text-texto">
+                            <a href="{{ route('cines.show', $cine) }}" class="no-underline after:absolute after:inset-0 after:rounded-card after:content-['']">{{ $cine->nombre }}</a>
+                        </h2>
+                        <p class="flex items-start gap-1.5 text-sm text-texto-2">
+                            <x-icon name="map-pin" class="mt-0.5 h-4 w-4 shrink-0" />
+                            <span>{{ $cine->direccion_completa }}<br>{{ $cine->ciudad }}@if ($cine->provincia && $cine->provincia !== $cine->ciudad), {{ $cine->provincia }}@endif</span>
+                        </p>
+                        <p class="cifras mt-auto text-sm text-texto">{{ $cine->salas_count }} {{ $cine->salas_count === 1 ? 'sala' : 'salas' }}</p>
+                    </article>
+                </li>
+            @endforeach
+        </ul>
+    @endif
 </div>
 @endsection

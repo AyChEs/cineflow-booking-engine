@@ -3,39 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\SeatAlreadyReservedException;
-use App\Mail\EntradaConfirmada;
 use App\Models\Reserva;
 use App\Models\ReservaSeat;
 use App\Models\SeatLock;
 use App\Models\Sesion;
+use App\Services\EnvioEntrada;
 use App\Services\PurchaseService;
 use App\Services\StripeService;
 use App\Services\TicketService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class CompraController extends Controller
 {
     // Tipos de entrada disponibles con su descuento aplicado sobre el precio base
     const TIPUS = [
-        'adult'   => ['label' => 'Adult',          'desc' => '',                         'factor' => 1.00],
-        'reduit'  => ['label' => 'Reduced',        'desc' => 'Under 14 / Youth card',     'factor' => 0.80],
-        'familia' => ['label' => 'Family',         'desc' => 'Price per person',          'factor' => 0.82],
-        'jubilat' => ['label' => 'Senior +65',     'desc' => '',                          'factor' => 0.70],
+        'adult'   => ['label' => 'Adulto',      'nombre' => 'de adulto',      'desc' => '',                              'factor' => 1.00],
+        'reduit'  => ['label' => 'Reducida',    'nombre' => 'reducida',       'desc' => 'Menores de 14 y carné joven',  'factor' => 0.80],
+        'familia' => ['label' => 'Familiar',    'nombre' => 'familiar',       'desc' => 'Precio por persona',            'factor' => 0.82],
+        'jubilat' => ['label' => 'Mayor de 65', 'nombre' => 'de mayor de 65', 'desc' => '',                              'factor' => 0.70],
     ];
+
+    /**
+     * Precio de una entrada de un tipo, en céntimos. Es la única fórmula de
+     * precio: la usan el total del paso 1 y las líneas de Stripe Checkout, así
+     * que lo mostrado y lo cobrado coinciden siempre.
+     */
+    public static function precioCentimos(float $preuBase, string $tipus): int
+    {
+        return (int) round($preuBase * self::TIPUS[$tipus]['factor'] * 100);
+    }
 
     // Paso 1: el usuario elige cuántas entradas de cada tipo quiere
     public function step1(Request $request)
     {
         $sesionId = $request->query('sesion_id');
         if (! $sesionId) {
-            return redirect()->route('peliculas.index')->with('error', 'Please select a session first.');
+            return redirect()->route('peliculas.index')->with('error', 'Elige primero una sesión.');
         }
 
         $sesion = Sesion::with('pelicula', 'sala.cine')->findOrFail($sesionId);
         if ($sesion->fecha_hora->isPast()) {
-            return redirect()->route('peliculas.index')->with('error', 'This session has already passed.');
+            return redirect()->route('peliculas.index')->with('error', 'Esa sesión ya ha pasado.');
         }
 
         // Siempre empezamos desde cero: limpiamos bloqueos y datos de compra anteriores
@@ -65,14 +73,14 @@ class CompraController extends Controller
             $qty = max(0, $qty);
             $entrades[$key] = $qty;
             $numEntrades += $qty;
-            $total += round($sesion->preu_base * $info['factor'] * $qty, 2);
+            $total += self::precioCentimos((float) $sesion->preu_base, $key) * $qty;
         }
 
         if ($numEntrades < 1) {
-            return back()->with('error', 'Select at least 1 ticket.')->withInput();
+            return back()->with('error', 'Elige al menos una entrada.')->withInput();
         }
         if ($numEntrades > 10) {
-            return back()->with('error', 'Maximum 10 tickets per transaction.')->withInput();
+            return back()->with('error', 'Puedes comprar 10 entradas como máximo.')->withInput();
         }
 
         session([
@@ -80,7 +88,7 @@ class CompraController extends Controller
                 'sesion_id'    => $sesion->id,
                 'entrades'     => $entrades,
                 'num_entrades' => $numEntrades,
-                'total'        => round($total, 2),
+                'total'        => round($total / 100, 2),
                 'butaques'     => [],
             ],
         ]);
@@ -109,8 +117,7 @@ class CompraController extends Controller
 
         $lockedSeats = SeatLock::where('sesion_id', $sesion->id)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->pluck('butaca')
             ->all();
 
@@ -126,7 +133,15 @@ class CompraController extends Controller
         $sala = $sesion->sala;
         $layout = $this->computeLayout($sala->capacidad, $sala->disposicion_butacas);
 
+        // Caducidad del primer bloqueo propio: la cuenta atrás de la vista.
+        $expiresAt = SeatLock::where('sesion_id', $sesion->id)
+            ->where('expires_at', '>=', now())
+            ->when($myUserId, fn($q) => $q->where('user_id', $myUserId))
+            ->when(! $myUserId, fn($q) => $q->where('session_token', $myToken))
+            ->min('expires_at');
+
         return view('compra.step2', [
+            'expiresAt'   => $expiresAt ? \Illuminate\Support\Carbon::parse($expiresAt) : null,
             'sesion'      => $sesion,
             'compra'      => $compra,
             'layout'      => $layout,
@@ -153,7 +168,7 @@ class CompraController extends Controller
 
         if (count($butaques) !== $compra['num_entrades']) {
             return back()->with('error', sprintf(
-                'You must select exactly %d seats (%d selected).',
+                'Tienes que elegir %d butacas (has elegido %d).',
                 $compra['num_entrades'],
                 count($butaques)
             ));
@@ -172,18 +187,17 @@ class CompraController extends Controller
                 ->where('butaca', $butaca)
                 ->exists();
             if ($taken) {
-                return back()->with('error', "Seat $butaca is already reserved. Please select again.");
+                return back()->with('error', "La butaca $butaca ya está vendida. Elige otra.");
             }
 
             // Comprueba si otro usuario la tiene bloqueada temporalmente
             $locked = SeatLock::where('sesion_id', $sesionId)
                 ->where('butaca', $butaca)
                 ->where('expires_at', '>=', now())
-                ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-                ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+                ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
                 ->exists();
             if ($locked) {
-                return back()->with('error', "Seat $butaca is currently being selected by another user. Please select again.");
+                return back()->with('error', "La butaca $butaca la tiene otra persona ahora mismo. Elige otra.");
             }
         }
 
@@ -224,7 +238,16 @@ class CompraController extends Controller
 
         $stripeEnabled = app(StripeService::class)->isEnabled();
 
+        // Caducidad del primer bloqueo propio: la cuenta atrás del resumen.
+        $expiresAt = SeatLock::where('sesion_id', $sesion->id)
+            ->whereIn('butaca', $compra['butaques'])
+            ->where('expires_at', '>=', now())
+            ->when(auth()->id(), fn($q) => $q->where('user_id', auth()->id()))
+            ->when(! auth()->id(), fn($q) => $q->where('session_token', session()->getId()))
+            ->min('expires_at');
+
         return view('compra.step3', [
+            'expiresAt'     => $expiresAt ? \Illuminate\Support\Carbon::parse($expiresAt) : null,
             'sesion'        => $sesion,
             'compra'        => $compra,
             'tipus'         => self::TIPUS,
@@ -235,47 +258,6 @@ class CompraController extends Controller
         ]);
     }
 
-    /**
-     * Crea un PaymentIntent para el carrito actual y devuelve su client_secret.
-     * Lo consume el Payment Element embebido para cobrar sin salir del sitio.
-     */
-    public function stripeIntent(Request $request)
-    {
-        $compra = session('compra');
-        if (! $compra || empty($compra['butaques'])) {
-            return response()->json(['error' => 'Your purchase session has expired.'], 422);
-        }
-
-        $stripe = app(StripeService::class);
-        if (! $stripe->isEnabled()) {
-            return response()->json(['error' => 'Card payment is not available.'], 422);
-        }
-
-        $validated = $request->validate([
-            'nom'   => 'required|string|max:100',
-            'email' => 'required|email|max:150',
-        ]);
-
-        // Guardamos los datos del comprador para la pantalla de confirmación.
-        session(['compra_buyer' => ['nom' => $validated['nom'], 'email' => $validated['email']]]);
-
-        $sesion = Sesion::with('pelicula')->findOrFail($compra['sesion_id']);
-
-        try {
-            $intent = $stripe->createPaymentIntent(
-                (float) $compra['total'],
-                (int) $compra['num_entrades'],
-                $validated['email'],
-                'CineFlow · ' . ($sesion->pelicula->titulo ?? 'Cinema session'),
-                (int) $sesion->id,
-            );
-        } catch (\Throwable $e) {
-            return response()->json(['error' => 'Could not start the payment. Please try again.'], 500);
-        }
-
-        return response()->json(['clientSecret' => $intent->client_secret]);
-    }
-
     public function step3Store(Request $request)
     {
         $compra = session('compra');
@@ -283,26 +265,34 @@ class CompraController extends Controller
             return redirect()->route('peliculas.index');
         }
 
-        // Con Stripe activo el pago se cobra de forma embebida (Payment Element)
-        // vía AJAX antes de llegar aquí, por lo que este endpoint solo atiende el
-        // flujo de tarjeta simulada (cuando Stripe no está configurado).
+        // Con Stripe activo no se acepta el pago simulado: sería reservar sin pagar.
+        if (app(StripeService::class)->isEnabled()) {
+            return redirect()->route('compra.step3');
+        }
+
+        // Con Stripe activo se paga en Stripe Checkout (PagoController) y la reserva
+        // la confirma el webhook, por lo que este endpoint solo atiende el pago
+        // simulado (cuando Stripe no está configurado): tarjeta o Bizum.
         $rules = [
             'nom'    => 'required|string|max:100',
             'email'  => 'required|email|max:150',
-            'metode' => 'required|in:targeta',
+            'metode' => 'required|in:targeta,bizum',
         ];
 
-        if ($request->input('card_mode') !== 'saved') {
+        if ($request->input('metode') === 'bizum') {
+            // Bizum va asociado a un móvil español: 9 cifras que empiezan por 6 o 7.
+            $rules['telefon_bizum'] = ['required', 'regex:/^[67]\d{8}$/'];
+        } elseif ($request->input('card_mode') !== 'saved') {
             // Validamos formato y también la firma de Luhn para detectar números inventados
             $rules['num_targeta']     = ['required', 'string', 'max:25', function ($attr, $value, $fail) {
                 if (!$this->isValidCardNumber($value)) {
-                    $fail('The card number is not valid.');
+                    $fail('El número de tarjeta no es válido.');
                 }
             }];
             $rules['titular_targeta'] = 'required|string|max:100';
             $rules['expiry_targeta']  = ['required', 'regex:/^\d{2}\/\d{2}$/', function ($attr, $value, $fail) {
                 if (!$this->isFutureExpiry($value)) {
-                    $fail('The card has expired.');
+                    $fail('La tarjeta ha caducado.');
                 }
             }];
             $rules['cvv_targeta']     = 'required|digits_between:3,4';
@@ -314,7 +304,8 @@ class CompraController extends Controller
         session(['compra_buyer' => ['nom' => $request->nom, 'email' => $request->email]]);
 
         // Si el usuario quiere guardar la tarjeta, almacenamos los últimos 4 dígitos enmascarados
-        if (auth()->id() && $request->input('card_mode') !== 'saved'
+        if (auth()->id() && $request->input('metode') === 'targeta'
+            && $request->input('card_mode') !== 'saved'
             && $request->boolean('guardar_targeta')) {
             $cardDigits = preg_replace('/\D/', '', $request->input('num_targeta', ''));
             if (strlen($cardDigits) >= 4) {
@@ -327,38 +318,8 @@ class CompraController extends Controller
     }
 
     /**
-     * Vuelta tras confirmar el pago con Stripe: verificamos el PaymentIntent y
-     * confirmamos la reserva. Se usa tanto en el flujo inline (tarjeta) como en
-     * el redirect que Stripe hace para métodos que lo requieren.
-     */
-    public function stripeReturn(Request $request)
-    {
-        $compra = session('compra');
-        if (! $compra || empty($compra['butaques'])) {
-            return redirect()->route('peliculas.index');
-        }
-
-        $intentId = $request->query('payment_intent');
-        if (! $intentId) {
-            return redirect()->route('compra.step3')->with('error', 'Payment confirmation was not received.');
-        }
-
-        try {
-            $intent = app(StripeService::class)->retrievePaymentIntent($intentId);
-        } catch (\Throwable $e) {
-            return redirect()->route('compra.step3')->with('error', 'Could not verify the payment with Stripe.');
-        }
-
-        if (($intent->status ?? null) !== 'succeeded') {
-            return redirect()->route('compra.step3')->with('error', 'The payment was not completed. Please try again.');
-        }
-
-        return $this->finalizeReservation($compra);
-    }
-
-    /**
      * Crea la reserva de forma atómica y prepara la pantalla de confirmación.
-     * Punto único de salida usado tanto por el pago simulado como por Stripe.
+     * Solo para el pago simulado; con Stripe la reserva la crea el webhook.
      */
     private function finalizeReservation(array $compra): \Illuminate\Http\RedirectResponse
     {
@@ -396,9 +357,7 @@ class CompraController extends Controller
 
         // Enviamos la entrada por email con el QR. Un fallo de correo no debe
         // romper la compra: la reserva ya está confirmada.
-        if (! empty($buyer['email'])) {
-            $this->enviarEntrada($reserva, $buyer['nom'], $buyer['email'], $compra);
-        }
+        app(EnvioEntrada::class)->enviar($reserva, $buyer['nom'], (string) $buyer['email'], $compra['butaques'], (float) $compra['total']);
 
         // Guardamos los datos de confirmación para mostrarlos en la pantalla de éxito
         session([
@@ -414,26 +373,6 @@ class CompraController extends Controller
         session()->forget(['compra', 'compra_buyer']);
 
         return redirect()->route('compra.confirmacio');
-    }
-
-    private function enviarEntrada(Reserva $reserva, string $nombre, string $email, array $compra): void
-    {
-        try {
-            $reserva->load('sesion.pelicula', 'sesion.sala.cine');
-
-            Mail::to($email)->send(new EntradaConfirmada(
-                $reserva,
-                $nombre,
-                app(TicketService::class)->qrPng($reserva),
-                $compra['butaques'],
-                (float) $compra['total'],
-            ));
-        } catch (\Throwable $e) {
-            Log::warning('No se pudo enviar el email de la entrada', [
-                'reserva_id' => $reserva->id,
-                'error'      => $e->getMessage(),
-            ]);
-        }
     }
 
     public function confirmacio(Request $request)
@@ -465,6 +404,18 @@ class CompraController extends Controller
         return redirect()->route('peliculas.index');
     }
 
+    /**
+     * Bloqueos que no son de quien pregunta. Un bloqueo de invitado tiene
+     * user_id nulo: con «user_id != X» SQL no lo cuenta (NULL no compara), así
+     * que se incluye a mano. Igual con session_token para los invitados.
+     */
+    private function deOtros($query, ?int $userId, string $token)
+    {
+        return $userId
+            ? $query->whereNull('user_id')->orWhere('user_id', '!=', $userId)
+            : $query->whereNull('session_token')->orWhere('session_token', '!=', $token);
+    }
+
     // Libera los bloqueos de butacas del usuario actual
     private function releaseLocks(): void
     {
@@ -493,8 +444,7 @@ class CompraController extends Controller
 
         $locked = SeatLock::where('sesion_id', $sesionId)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->pluck('butaca')->all();
 
         $mine = SeatLock::where('sesion_id', $sesionId)
@@ -535,8 +485,7 @@ class CompraController extends Controller
         $otherLock = SeatLock::where('sesion_id', $sesionId)
             ->where('butaca', $butaca)
             ->where('expires_at', '>=', now())
-            ->when($myUserId, fn($q) => $q->where('user_id', '!=', $myUserId))
-            ->when(! $myUserId, fn($q) => $q->where('session_token', '!=', $myToken))
+            ->where(fn($q) => $this->deOtros($q, $myUserId, $myToken))
             ->exists();
         if ($otherLock) {
             return response()->json(['ok' => false, 'reason' => 'locked']);
@@ -576,6 +525,23 @@ class CompraController extends Controller
 
     private function computeLayout(int $capacidad, string $disposicion): array
     {
+        // Formato «FxC» (filas × columnas), el que usan SalaSeeder y ReservaSeeder.
+        if (preg_match('/^\s*(\d+)\s*x\s*(\d+)\s*$/i', $disposicion, $m) && (int) $m[1] > 0 && (int) $m[2] > 0) {
+            $rows = (int) $m[1];
+            $seatsPerRow = (int) $m[2];
+            $lastRowSeats = $capacidad - ($rows - 1) * $seatsPerRow;
+            if ($lastRowSeats < 1 || $lastRowSeats > $seatsPerRow) {
+                $lastRowSeats = $seatsPerRow;
+            }
+
+            return [
+                'rows'         => $rows,
+                'seatsPerRow'  => $seatsPerRow,
+                'lastRowSeats' => $lastRowSeats,
+                'total'        => ($rows - 1) * $seatsPerRow + $lastRowSeats,
+            ];
+        }
+
         $seatsPerRow = match (strtolower($disposicion)) {
             'vip'     => 8,
             'premium' => 12,

@@ -1,71 +1,51 @@
 @extends('layout')
-@section('title', 'Sign In')
+@section('title', 'Entrar')
 @section('content')
 
 <div class="auth-container">
+    <div class="auth-fondo" aria-hidden="true">
+        <x-marca.imagen nombre="sala" sizes="100vw" />
+    </div>
     <div class="auth-card">
+        <h1 class="auth-title">Entrar</h1>
+        <p class="auth-subtitle">Accede para ver tus entradas.</p>
 
-        <h1 class="auth-title">SIGN IN</h1>
-        <p class="auth-subtitle">Welcome back to CineFlow</p>
+        <x-auth-session-status :status="session('status')" />
 
-        @if (session('status'))
-            <div class="alert alert-success">{{ session('status') }}</div>
-        @endif
-
-        <form method="POST" action="{{ route('login') }}" class="auth-form">
+        <form method="POST" action="{{ route('login') }}" class="auth-form" novalidate>
             @csrf
 
-            <div class="form-group">
-                <label for="email" class="form-label">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}"
-                       class="form-input" required autofocus autocomplete="username"
-                       placeholder="name@example.com">
-                @error('email')
-                    <p class="form-error">{{ $message }}</p>
-                @enderror
-            </div>
+            <x-campo name="email" label="Correo electrónico" type="email" required autofocus autocomplete="username" />
+            <x-campo name="password" label="Contraseña" type="password" required autocomplete="current-password" />
 
-            <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <input id="password" type="password" name="password"
-                       class="form-input" required autocomplete="current-password"
-                       placeholder="••••••••">
-                @error('password')
-                    <p class="form-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+                <label for="remember_me" class="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm text-texto-2">
                     <input type="checkbox" name="remember" id="remember_me"
-                           style="accent-color: var(--color-accent-bright); width:1rem; height:1rem;">
-                    <span style="font-size:0.875rem; color:var(--color-text-secondary);">Remember me</span>
+                           class="h-5 w-5 rounded border-libre bg-sala-900 text-carmin-600 focus:ring-foco focus:ring-offset-sala-900">
+                    Recordarme
                 </label>
 
                 @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" class="auth-link" style="font-size:0.8rem;">
-                        Forgot your password?
-                    </a>
+                    <a href="{{ route('password.request') }}" class="auth-link text-sm">¿Has olvidado la contraseña?</a>
                 @endif
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full">
-                <i class="fas fa-sign-in-alt" style="margin-right:0.5rem;"></i>Sign In
-            </button>
+            <button type="submit" class="btn btn-primary btn-full btn-lg">Entrar</button>
         </form>
 
         <div class="auth-footer">
-            <p>Don't have an account?</p>
-            <a href="{{ route('register') }}" class="auth-link">Create new account →</a>
+            <p>¿No tienes cuenta?</p>
+            <a href="{{ route('register') }}" class="auth-link">Crear una cuenta</a>
         </div>
 
-        <div style="margin-top:1.5rem; padding:0.75rem 1rem; border-radius:var(--radius-md, 10px); background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle);">
-            <p style="font-size:0.7rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--color-text-secondary); font-weight:700; margin:0 0 0.5rem;">Demo accounts</p>
-            <p style="font-size:0.8rem; margin:0.15rem 0;">Admin &middot; <code>admin@cineflow.test</code> &middot; <code>admin1234</code></p>
-            <p style="font-size:0.8rem; margin:0.15rem 0;">Box office &middot; <code>taquilla@cineflow.test</code> &middot; <code>taquilla1234</code></p>
-            <p style="font-size:0.8rem; margin:0.15rem 0;">Customer &middot; <code>cliente@cineflow.test</code> &middot; <code>cliente1234</code></p>
-        </div>
-
+        <section class="mt-6 rounded-control border border-sala-700 p-4 text-sm" aria-labelledby="demo-cuentas">
+            <h2 id="demo-cuentas" class="mb-2 font-semibold text-texto">Cuentas de la demo</h2>
+            <dl class="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 text-texto-2">
+                <dt>Administración</dt><dd><code class="text-texto">admin@cineflow.test</code> · <code class="text-texto">admin1234</code></dd>
+                <dt>Taquilla</dt><dd><code class="text-texto">taquilla@cineflow.test</code> · <code class="text-texto">taquilla1234</code></dd>
+                <dt>Cliente</dt><dd><code class="text-texto">cliente@cineflow.test</code> · <code class="text-texto">cliente1234</code></dd>
+            </dl>
+        </section>
     </div>
 </div>
 

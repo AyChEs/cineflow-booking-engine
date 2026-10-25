@@ -1,50 +1,26 @@
-{{-- Progress bar for the purchase flow —
-Uses the project's dark design system (not the previous white background).
-Completed steps show a checkmark, the active step is bold with a red accent. --}}
-<div
-    style="background: var(--color-bg-secondary); border-bottom: 1px solid var(--border-subtle); padding: 0.6rem 2rem;">
-    <div style="max-width: 700px; margin: 0 auto; display: flex; align-items: center; gap: 0;">
-
-        <div style="display: flex; flex: 1; align-items: stretch; gap: 0;">
-            @foreach([1 => 'Tickets', 2 => 'Seats', 3 => 'Payment'] as $n => $label)
-                <div
-                    style="flex: 1; display: flex; flex-direction: column; align-items: center;
-                            padding: 0.4rem 0.25rem;
-                            border-bottom: 3px solid {{ $step >= $n ? 'var(--color-accent-bright)' : 'var(--border-subtle)' }};">
-
-                    @if($step > $n)
-                        {{-- Completed step: show green check --}}
-                        <span style="width: 1.1rem; height: 1.1rem; background: #16a34a; border-radius: 50%;
-                                         display: flex; align-items: center; justify-content: center;
-                                         font-size: 0.55rem; color: white; margin-bottom: 0.15rem; flex-shrink: 0;">
-                            <i class="fas fa-check"></i>
+{{-- Progreso de la compra: Entradas, Butacas, Pago. --}}
+<div class="border-b border-sala-700 bg-sala-900">
+    <div class="mx-auto flex max-w-5xl items-center gap-4 px-4 py-3 sm:px-6">
+        <nav aria-label="Pasos de la compra" class="flex-1">
+            <ol class="grid grid-cols-3 gap-2 text-sm">
+                @foreach ([1 => 'Entradas', 2 => 'Butacas', 3 => 'Pago'] as $n => $nombre)
+                    <li class="flex items-center gap-2 border-b-2 pb-2 {{ $step >= $n ? 'border-carmin-400' : 'border-sala-700' }}"
+                        @if ($step === $n) aria-current="step" @endif>
+                        <span class="cifras flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold
+                                     {{ $step > $n ? 'border-ok text-ok' : ($step === $n ? 'border-carmin-400 text-texto' : 'border-sala-700 text-texto-2') }}">
+                            @if ($step > $n)
+                                <x-icon name="check" class="h-3.5 w-3.5" /><span class="sr-only">Hecho:</span>
+                            @else
+                                {{ $n }}
+                            @endif
                         </span>
-                    @else
-                        <span style="font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
-                                         color: {{ $step >= $n ? 'var(--color-text-secondary)' : 'rgba(255,255,255,0.2)' }};
-                                         margin-bottom: 0.1rem;">
-                            Step {{ $n }}
-                        </span>
-                    @endif
-
-                    <span style="font-size: 0.8rem;
-                                 font-weight: {{ $step === $n ? '900' : '400' }};
-                                 color: {{ $step >= $n ? 'var(--color-text-primary)' : 'rgba(255,255,255,0.2)' }};">
-                        {{ $label }}
-                    </span>
-                </div>
-            @endforeach
-        </div>
-
-        {{-- Cancel purchase button --}}
-        <a href="{{ route('compra.cancel') }}" title="Cancel purchase" style="margin-left: 1.5rem; flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%;
-                  display: flex; align-items: center; justify-content: center;
-                  background: var(--color-bg-primary); color: var(--color-text-secondary);
-                  border: 1px solid var(--border-subtle); text-decoration: none;
-                  transition: border-color 0.2s, color 0.2s;"
-            onmouseover="this.style.borderColor='var(--color-accent-bright)';this.style.color='var(--color-accent-bright)'"
-            onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--color-text-secondary)'">
-            <i class="fas fa-times" style="font-size: 0.7rem;"></i>
+                        <span class="{{ $step === $n ? 'font-semibold text-texto' : 'text-texto-2' }}">{{ $nombre }}</span>
+                    </li>
+                @endforeach
+            </ol>
+        </nav>
+        <a href="{{ route('compra.cancel') }}" class="btn btn-secondary btn-sm shrink-0">
+            <x-icon name="close" class="h-4 w-4" /><span class="hidden sm:inline">Cancelar</span><span class="sr-only sm:hidden">Cancelar la compra</span>
         </a>
     </div>
 </div>

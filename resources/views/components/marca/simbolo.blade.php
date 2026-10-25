@@ -1,0 +1,5 @@
+{{-- Símbolo de la marca (docs/MARCA.md): una butaca cuyo respaldo es una entrada, con sus muescas y su línea de corte. No depende del nombre. --}}
+@props(['titulo' => null])
+<svg viewBox="0 0 64 64" {{ $attributes->merge(['class' => 'marca-simbolo']) }} @if ($titulo) role="img" aria-label="{{ $titulo }}" @else aria-hidden="true" focusable="false" @endif>
+    <path fill="currentColor" fill-rule="evenodd" d="M28 6H36A13 13 0 0 1 49 19V19.5A4.5 4.5 0 0 0 49 28.5V37A3 3 0 0 1 46 40H18A3 3 0 0 1 15 37V28.5A4.5 4.5 0 0 0 15 19.5V19A13 13 0 0 1 28 6ZM20.20 24a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0ZM26.87 24a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0ZM33.53 24a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0ZM40.20 24a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0 -3.6 0ZM5 29A3 3 0 0 1 11 29V44H53V29A3 3 0 0 1 59 29V53A5 5 0 0 1 54 58H10A5 5 0 0 1 5 53Z"/>
+</svg>

@@ -1,27 +1,18 @@
 @extends('layout')
 
-@section('title', '403 – Access Denied')
+@section('title', 'Acceso denegado')
 
 @section('content')
-<div style="max-width: 600px; margin: 80px auto; text-align: center; padding: 40px; border: 1px solid #f5c6cb; background: #fff3f3; border-radius: 8px;">
-    <h1 style="font-size: 72px; margin: 0; color: #dc3545;">403</h1>
-    <h2 style="color: #721c24;">Access Denied</h2>
-    <p style="color: #555; margin: 20px 0;">
-        You do not have permission to access this section.
-        You need the <strong>admin</strong> role to continue.
-    </p>
-    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
-        <a href="{{ url('/') }}" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 3px;">
-            Home
-        </a>
+<div class="mx-auto max-w-xl px-4 py-16 text-center sm:py-24">
+    <p class="display cifras text-6xl text-carmin-400">403</p>
+    <h1 class="display mt-2 text-3xl text-texto">No tienes acceso a esta página</h1>
+    <p class="mt-4 text-texto-2">Esta sección es solo para el personal del cine.</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="{{ url('/') }}" class="btn btn-primary">Ir a la portada</a>
         @auth
-        <a href="{{ route('dashboard') }}" style="padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 3px;">
-            Dashboard
-        </a>
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary">Mi panel</a>
         @else
-        <a href="{{ route('login') }}" style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 3px;">
-            Log In
-        </a>
+            <a href="{{ route('login') }}" class="btn btn-secondary">Entrar</a>
         @endauth
     </div>
 </div>

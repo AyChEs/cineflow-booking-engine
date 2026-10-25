@@ -1,14 +1,14 @@
 @extends('layout')
 
-@section('title', 'Showtimes')
+@section('title', 'Sesiones')
 
 @section('content')
 <div class="container" style="padding-top:2.5rem;padding-bottom:4rem;">
 
     <div style="margin-bottom:2rem;">
-        <h1 class="page-title">SHOWTIMES</h1>
+        <h1 class="page-title">Sesiones</h1>
         <p style="color:var(--color-text-secondary);font-size:0.9rem;margin-top:0.25rem;">
-            All scheduled showtimes
+            Todas las sesiones programadas
         </p>
     </div>
 
@@ -40,7 +40,7 @@
                             {{ $sesion->pelicula->titulo ?? '—' }}
                         </p>
                         <p style="color:var(--color-text-secondary);font-size:0.8rem;margin:0;">
-                            <i class="fas fa-map-marker-alt" style="margin-right:4px;"></i>{{ $sesion->sala->cine->nombre ?? '' }} · {{ $sesion->sala->nombre ?? '' }}
+                            <x-icon name="map-pin" class="h-4 w-4 mr-1" />{{ $sesion->sala->cine->nombre ?? '' }} · {{ $sesion->sala->nombre ?? '' }}
                         </p>
                     </div>
                     <span style="background:var(--color-accent-bright);color:#fff;font-weight:900;font-size:1rem;padding:0.4rem 0.75rem;border-radius:8px;white-space:nowrap;margin-left:0.75rem;">
@@ -50,7 +50,7 @@
 
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border-subtle)22;">
                     <span style="font-size:0.85rem;font-weight:700;color:var(--color-accent-bright);">
-                        €{{ number_format($sesion->preu_base, 2) }}
+                        {{ number_format($sesion->preu_base, 2, ',', '.') }} €
                     </span>
                     <div style="display:flex;gap:0.5rem;">
                         <a href="{{ route('sesiones.show', $sesion) }}" class="btn btn-secondary" style="padding:0.3rem 0.75rem;font-size:0.75rem;">
@@ -73,8 +73,8 @@
     </div>
     @empty
     <div style="text-align:center;padding:6rem 2rem;color:var(--color-text-secondary);">
-        <i class="fas fa-calendar-times" style="font-size:3rem;opacity:0.2;display:block;margin-bottom:1rem;"></i>
-        No showtimes scheduled at this time.
+        <x-icon name="calendar-x" class="h-12 w-12 opacity-20 block mb-4" />
+        No hay sesiones programadas.
     </div>
     @endforelse
 

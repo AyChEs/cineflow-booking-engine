@@ -9,6 +9,8 @@ use App\Http\Controllers\PeliculaController;
 use App\Http\Controllers\CineController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PagoController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +46,8 @@ Route::get('/sesiones/{id}', [SesionController::class, 'show'])
     ->whereNumber('id')
     ->name('sesiones.show');
 Route::get('/cines', [CineController::class, 'index'])->name('cines.index');
+// Sistema de marca (docs/MARCA.md)
+Route::view('/marca', 'marca')->name('marca');
 Route::get('/cines/{id}', [CineController::class, 'show'])
     ->whereNumber('id')
     ->name('cines.show');
@@ -57,9 +61,18 @@ Route::get('/comprar/butaques',    [CompraController::class, 'step2'])->name('co
 Route::post('/comprar/butaques',   [CompraController::class, 'step2Store'])->name('compra.step2.store');
 Route::get('/comprar/pagament',    [CompraController::class, 'step3'])->name('compra.step3');
 Route::post('/comprar/pagament',   [CompraController::class, 'step3Store'])->name('compra.step3.store');
-Route::post('/comprar/stripe/intent', [CompraController::class, 'stripeIntent'])->name('compra.stripe.intent');
-Route::get('/comprar/stripe/return', [CompraController::class, 'stripeReturn'])->name('compra.stripe.return');
+// Pago con Stripe Checkout: ninguna de estas rutas confirma la reserva (lo hace el webhook)
+Route::post('/comprar/stripe/checkout', [PagoController::class, 'checkout'])->name('compra.stripe.checkout');
+Route::get('/comprar/stripe/return',    [PagoController::class, 'vuelta'])->name('compra.stripe.return');
+Route::get('/comprar/stripe/cancel',    [PagoController::class, 'cancelar'])->name('compra.stripe.cancel');
+Route::get('/comprar/estado/{checkoutPago}', [PagoController::class, 'estado'])
+    ->whereNumber('checkoutPago')
+    ->middleware('throttle:60,1')
+    ->name('compra.estado');
 Route::get('/comprar/confirmacio', [CompraController::class, 'confirmacio'])->name('compra.confirmacio');
+
+// Webhook de Stripe: firma verificada en el controlador; fuera de CSRF (bootstrap/app.php)
+Route::post('/stripe/webhook', StripeWebhookController::class)->name('stripe.webhook');
 
 // QR de entrada — imagen pública (firmada), validación restringida a personal
 Route::get('/entrada/qr/{payload}', [TicketController::class, 'qr'])
@@ -137,6 +150,11 @@ Route::middleware(['auth', 'verified', 'canManage'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', function () {
+        // Los clientes tienen su propio panel; el resto de roles, el general.
+        if (auth()->user()->rol === 'cliente') {
+            return redirect()->route('cliente.dashboard');
+        }
+
         return view('auth.dashboard');
     })->name('dashboard');
 

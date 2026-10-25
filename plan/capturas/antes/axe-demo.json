@@ -1,0 +1,96 @@
+[
+ {
+  "url": "/",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (8)"
+  ]
+ },
+ {
+  "url": "/peliculas",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)",
+   "critical label (2)",
+   "critical select-name (2)"
+  ]
+ },
+ {
+  "url": "/peliculas/19",
+  "w": 390,
+  "hscroll": true,
+  "violations": [
+   "critical button-name (1)",
+   "serious color-contrast (70)"
+  ]
+ },
+ {
+  "url": "/comprar?sesion_id=1262",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)",
+   "serious color-contrast (10)",
+   "critical label (4)"
+  ]
+ },
+ {
+  "url": "/login",
+  "w": 390,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (1)"
+  ]
+ },
+ {
+  "w": 390,
+  "consoleErrors": []
+ },
+ {
+  "url": "/",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "critical button-name (4)"
+  ]
+ },
+ {
+  "url": "/peliculas",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (21)",
+   "critical label (2)",
+   "critical select-name (1)"
+  ]
+ },
+ {
+  "url": "/peliculas/19",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (70)"
+  ]
+ },
+ {
+  "url": "/comprar?sesion_id=1262",
+  "w": 1440,
+  "hscroll": false,
+  "violations": [
+   "serious color-contrast (10)",
+   "critical label (4)"
+  ]
+ },
+ {
+  "url": "/login",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 1440,
+  "consoleErrors": []
+ }
+]
