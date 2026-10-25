@@ -70,6 +70,7 @@
     background: var(--celuloide);
 }
 .hero-media { position: absolute; inset: -5% 0; z-index: -4; }
+.hero-media picture { display: contents; }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 30%; }
 /* Oscurece a la izquierda (donde va el texto) y abajo (donde se funde con la sala) */
 .hero-tinte {
@@ -83,22 +84,31 @@
 /* Entonado: el color de la película se tiñe de rojo telón para que la portada sea de la marca */
 .hero-rojo { position: absolute; inset: 0; z-index: -2; background: #C41A3D; mix-blend-mode: multiply; opacity: .5; }
 
-/* Haz de proyector: un cono de luz que barre la escena */
+/* Haz de proyector: la imagen del haz (config marca.fotos.haz) como capa «screen». Su foco queda en el 62 % del ancho
+   y el barrido gira la imagen sobre ese foco (GSAP, movimiento/haz.js). Quieto con movimiento reducido. */
 .hero-haz { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
-.hero-haz::before {
-    content: '';
+.hero-haz picture,
+.ficha-fondo picture { display: contents; }
+.hero-haz-img {
+    --haz-ancho: max(100%, 64rem);
     position: absolute;
-    top: -12%;
-    left: 66%;
-    width: 130%;
-    height: 170%;
-    transform-origin: 50% 0;
-    transform: translateX(-50%) rotate(-24deg);
-    /* cono de luz con bordes suaves y que se apaga hacia abajo */
-    background: conic-gradient(from 163deg at 50% 0, transparent 0deg, rgb(255 246 230 / .13) 6deg, rgb(255 246 230 / .30) 17deg, rgb(255 246 230 / .13) 28deg, transparent 34deg);
-    -webkit-mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / .55) 55%, transparent 92%);
-    mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / .55) 55%, transparent 92%);
+    top: -3%;
+    left: calc(62% - var(--haz-ancho) * .018);
+    width: var(--haz-ancho);
+    height: auto;
+    max-width: none;
+    transform-origin: 1.8% 5.3%;
+    transform: rotate(-2deg);
+    mix-blend-mode: screen;
+    opacity: .8;
+    -webkit-mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / .7) 60%, transparent 96%);
+    mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / .7) 60%, transparent 96%);
 }
+/* La sala ya trae su propio haz: sin segunda capa, y menos rojo encima */
+.frame-hero:has(.hero-media--sala) .hero-haz { display: none; }
+.frame-hero:has(.hero-media--sala) .hero-rojo { opacity: .18; }
+/* La pantalla blanca de la sala se baja un poco para que el título y las etiquetas mantengan el contraste */
+.hero-media--sala img { opacity: .78; }
 
 /* Grano de película: ruido pequeño que salta de sitio (solo transform) */
 .hero-grano {
@@ -199,7 +209,6 @@
 
 @media (prefers-reduced-motion: no-preference) {
     .hero-grano { animation: grano 1s steps(1, end) infinite; }
-    .hero-haz::before { animation: haz 11s cubic-bezier(.45, 0, .55, 1) infinite alternate; }
     .hero-bombillas::before { animation: bombilla 1.2s steps(1, end) infinite; }
     .hero-bombillas::after { animation: bombilla 1.2s steps(1, end) infinite reverse; }
 }
@@ -215,7 +224,6 @@
     80% { transform: translate(4%, -9%); }
     90% { transform: translate(-5%, 2%); }
 }
-@keyframes haz { from { transform: translateX(-50%) rotate(-34deg); } to { transform: translateX(-50%) rotate(10deg); } }
 @keyframes bombilla { 0% { opacity: 1; } 50% { opacity: .2; } }
 
 /* ── Cartelera: tira de celuloide ── */
@@ -401,6 +409,12 @@
 .compra-marco-cabecera .cifras { color: theme('colors.texto.2'); font-weight: 400; }
 .mapa-svg { display: block; width: 100%; height: auto; }
 .compra-cuenta { display: inline-flex; align-items: center; gap: .35rem; padding: .15rem .65rem; border-radius: 999px; background: #EBD67C; color: #0E0D10 !important; font-weight: 700 !important; }
+/* Paso 2: la butaca de la marca, con el sitio y la cuenta atrás sobre un velo oscuro (texto a 15:1 como mínimo) */
+.compra-foto { position: relative; margin: 0 0 .8rem; height: 7.5rem; overflow: hidden; border-radius: 8px; background: theme('colors.sala.950'); }
+.compra-foto picture { display: contents; }
+.compra-foto-img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
+.compra-foto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgb(8 7 10 / .92) 0, rgb(8 7 10 / .55) 55%, rgb(8 7 10 / .15)); }
+.compra-foto-pie { position: absolute; z-index: 1; inset: auto 0 0 0; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .6rem .8rem; font-size: .9rem; font-weight: 600; color: #F2EEE6; }
 .compra-marco-pie { display: flex; flex-direction: column; gap: .5rem; margin-top: .6rem; font-size: .85rem; color: theme('colors.texto.2'); }
 .compra-barra { display: block; height: 4px; border-radius: 2px; background: theme('colors.sala.700'); overflow: hidden; }
 .compra-barra i { display: block; height: 100%; width: 100%; background: #EBD67C; transform-origin: 0 50%; }
@@ -504,6 +518,44 @@
     pointer-events: none;
     background: #C41A3D;
 }
-.ficha-fondo img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 25%; mix-blend-mode: multiply; opacity: .55; }
+.ficha-fondo img:not(.ficha-haz) { width: 100%; height: 100%; object-fit: cover; object-position: 60% 25%; mix-blend-mode: multiply; opacity: .55; }
+.ficha-haz {
+    --haz-ancho: max(70%, 52rem);
+    position: absolute;
+    z-index: 1;
+    top: -2%;
+    left: calc(88% - var(--haz-ancho) * .018);
+    width: var(--haz-ancho);
+    height: auto;
+    max-width: none;
+    transform-origin: 1.8% 5.3%;
+    transform: rotate(-2deg);
+    mix-blend-mode: screen;
+    opacity: .4;
+    -webkit-mask-image: linear-gradient(180deg, #000 0, transparent 90%);
+    mask-image: linear-gradient(180deg, #000 0, transparent 90%);
+}
 .ficha-fondo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #0E0D10 4%, rgb(14 13 16 / .72) 55%, rgb(14 13 16 / .9)); }
 main:has(.ficha-fondo) { position: relative; isolation: isolate; }
+
+/* ── Imágenes de marca como fondo (sesión 10): la sala tras el nombre y el vestíbulo en «Cines» ── */
+.nombre-gigante { isolation: isolate; }
+.nombre-fondo { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.nombre-fondo picture { display: contents; }
+.nombre-fondo img {
+    width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; opacity: .32;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 28%, #000 62%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 28%, #000 62%, transparent 100%);
+}
+
+.cines-cabecera { position: relative; isolation: isolate; display: flex; align-items: flex-end; min-height: clamp(13rem, 26vw, 21rem); overflow: hidden; background: theme('colors.sala.950'); }
+.cines-cabecera picture { display: contents; }
+.cines-cabecera-img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; }
+/* Velo: oscuro a la izquierda y abajo, donde va el texto, y se funde con el fondo de la página */
+.cines-cabecera::after {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background:
+        linear-gradient(0deg, rgb(14 13 16) 0, rgb(14 13 16 / .6) 34%, rgb(14 13 16 / 0) 78%),
+        linear-gradient(90deg, rgb(8 7 10 / .6) 0, rgb(8 7 10 / .25) 45%, rgb(8 7 10 / 0) 70%);
+}
+.cines-cabecera-texto { width: 100%; padding-top: 3rem; padding-bottom: 1.5rem; }

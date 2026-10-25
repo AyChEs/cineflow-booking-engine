@@ -3,6 +3,9 @@
 @section('content')
 
 <div class="auth-container">
+    <div class="auth-fondo" aria-hidden="true">
+        <x-marca.imagen nombre="sala" sizes="100vw" />
+    </div>
     <div class="auth-card">
         <h1 class="auth-title">Entrar</h1>
         <p class="auth-subtitle">Accede para ver tus entradas.</p>

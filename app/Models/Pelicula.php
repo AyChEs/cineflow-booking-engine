@@ -84,6 +84,21 @@ class Pelicula extends Model
         return str_replace('/t/p/w500/', '/t/p/w780/', $this->poster_url);
     }
 
+    /**
+     * ¿La película tiene un fondo propio? Un backdrop de TMDB o el fondo de su cartel sustituto.
+     * Si no, la portada y la ficha usan la sala de la marca (config('marca.fotos.sala')) en lugar de ampliar el póster.
+     */
+    public function getTieneFondoAttribute(): bool
+    {
+        if ($this->fondo_path) {
+            return true;
+        }
+
+        return $this->poster_path
+            && Str::startsWith($this->poster_path, 'carteles/')
+            && is_file(public_path(Str::replaceLast('.webp', '-fondo.webp', $this->poster_path)));
+    }
+
     /** srcset del fondo de TMDB (w780 y w1280) para no descargar la imagen grande en móvil; null si el fondo no es de TMDB. */
     public function getFondoSrcsetAttribute(): ?string
     {

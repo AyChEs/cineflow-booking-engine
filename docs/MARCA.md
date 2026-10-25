@@ -100,12 +100,26 @@ Motivo secundario: **el haz del proyector**, un cono de luz `texto` a muy baja o
 - Fondo de la portada y de la ficha: el backdrop de TMDB de la película destacada (`peliculas.fondo_path`), entonado con rojo telón. Sin él, el póster o el fondo del cartel sustituto.
 - Nunca fotos de stock ni personas.
 
+### Imágenes propias (sesión 10)
+
+Cuatro imágenes **generadas con IA por Ayman Charoui** para CineFlow. No son fotos de stock ni retratan a nadie. Viven en `public/img/marca/fotos/` en AVIF y WebP con varios anchos (`NOMBRE-ANCHO.avif`), se generan con `plan/herramientas/optimizar-imagenes.mjs` y se pintan con `<x-marca.imagen nombre="…" />` (`srcset`, `sizes`, `width` y `height`; las medidas están en `config/marca.php`). Los pósteres reales siguen mandando: ninguna imagen de marca se pone sobre ellos.
+
+| Imagen | Nombre | Dónde va | Cómo |
+|---|---|---|---|
+| Sala vacía con butacas rojas y pantalla blanca (16:9) | `sala` | Hero de la portada y fondo de la ficha cuando la película no tiene fondo propio (`Pelicula::tiene_fondo`); fondo de «Elige la butaca. El resto es cine.»; fondo de acceso y registro | Siempre oscurecida (opacidad de .3 a .8 y velos). En acceso y registro el formulario va en una tarjeta opaca, así que el contraste no depende de la foto |
+| Haz de proyector sobre negro (16:9) | `haz` | Portada y ficha de película | Capa `mix-blend-mode: screen`. GSAP la gira sobre su foco (`movimiento/haz.js`, 11 s, ida y vuelta) y la pausa fuera de pantalla. Con `prefers-reduced-motion` queda quieta. En el hero con la sala no se pinta: la sala ya trae el suyo |
+| Butaca roja bajo un foco (4:5) | `butaca` | «Cómo se compra», paso 2 («Tu butaca queda guardada 8 minutos») | Banda recortada sobre el mapa, con el sitio y la cuenta atrás sobre un velo oscuro |
+| Vestíbulo de noche con mostrador rojo y cajas de luz (16:9) | `vestibulo` | Cabecera de «Cines» | Es la imagen LCP de esa página: sin `loading="lazy"` y con `fetchpriority="high"` |
+
+- Solo la imagen del hero sin fondo propio (portada) y la cabecera de «Cines» cargan con prioridad; el resto es `loading="lazy"`.
+- Atribución: imágenes generadas con IA por Ayman Charoui.
+
 ## Movimiento
 
 Principios:
 
 1. **La luz se enciende, no aparece.** El título de la portada se enciende letra a letra como una marquesina, con una fila de bombillas que se turnan.
-2. **La sala se abre.** Dos bandas panorámicas se retiran al cargar la portada; un haz de proyector barre la escena y un grano de película la recorre.
+2. **La sala se abre.** Dos bandas panorámicas se retiran al cargar la portada; un haz de proyector (la imagen `haz`) barre la escena y un grano de película la recorre.
 3. **La cartelera pasa como película.** En escritorio, la portada y la cartelera son una sola escena fijada: el hero se encoge hasta ser el primer fotograma de una tira de celuloide con perforaciones y el scroll la hace avanzar. En móvil es un carrusel táctil con perforaciones.
 4. **Lo tuyo responde.** La butaca se hunde al pulsarla y al quedar elegida; la entrada sale como si se imprimiera.
 5. **El pago no se adorna.** En la compra solo hay microinteracciones de respuesta (la butaca se hunde). Nada de GSAP, Lenis ni transiciones de página.
@@ -117,6 +131,7 @@ Dónde vive cada cosa:
 | Estilos del movimiento (solo páginas públicas) | `resources/css/movimiento.css` |
 | Chunk de GSAP, ScrollTrigger, SplitText y Lenis | `resources/js/movimiento/` (se carga solo si el layout declara `@section('mov')`) |
 | Portada: hero y escena fijada | `portada.js` |
+| Haz de proyector (portada y ficha) | `haz.js` |
 | «Cómo se compra» en cuatro pasos | `compra.js` y `resources/views/portada/` |
 | Nombre en contorno que se rellena | `nombre.js` |
 | Inclinación 3D con foco, botones magnéticos, logotipo del pie | `micro.js` |

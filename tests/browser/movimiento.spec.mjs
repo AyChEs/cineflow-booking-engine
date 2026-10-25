@@ -136,6 +136,14 @@ try {
         ok(estado.titulo === 'visible', `reducido @${ancho}: el título se ve`);
         ok(estado.ventana === 'none', `reducido @${ancho}: el nombre ya está relleno`);
         ok(estado.grano === 'none', `reducido @${ancho}: el grano no se anima`);
+        // El haz de proyector (imagen con mix-blend-mode: screen) queda quieto y visible, sin transform de GSAP.
+        const haz1 = await page.evaluate(() => {
+            const i = document.querySelector('[data-haz]');
+            return { estilo: i.getAttribute('style'), transform: getComputedStyle(i).transform, opacidad: getComputedStyle(i).opacity, mezcla: getComputedStyle(i).mixBlendMode };
+        });
+        await page.waitForTimeout(900);
+        const haz2 = await page.evaluate(() => getComputedStyle(document.querySelector('[data-haz]')).transform);
+        ok(haz1.estilo === null && haz1.transform === haz2 && haz1.mezcla === 'screen' && Number(haz1.opacidad) > 0, `reducido @${ancho}: el haz queda quieto`);
         ok(await recorrer(page), `reducido @${ancho}: sin desplazamiento horizontal`);
         await ctx.close();
     }
