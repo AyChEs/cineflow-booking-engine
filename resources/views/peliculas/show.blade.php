@@ -21,7 +21,8 @@
     </a>
 
     <div class="grid items-start gap-8 md:grid-cols-[18rem,1fr] md:gap-12">
-        <img src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
+        <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+             src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
              fetchpriority="high" decoding="async"
              class="mx-auto aspect-[2/3] w-48 rounded-card border border-sala-700 bg-sala-850 object-cover sm:w-60 md:w-full">
 

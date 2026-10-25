@@ -49,7 +49,8 @@
         @forelse ($sesiones->groupBy('fk_pelicula_id') as $sesionesPeli)
             @php $pelicula = $sesionesPeli->first()->pelicula; @endphp
             <article class="mb-6 grid gap-5 rounded-card border border-sala-700 bg-sala-900 p-4 sm:grid-cols-[7rem,1fr] sm:p-6">
-                <img src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
+                <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+             src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
                      loading="lazy" decoding="async"
                      class="hidden aspect-[2/3] w-28 rounded-control border border-sala-700 object-cover sm:block">
                 <div class="min-w-0">

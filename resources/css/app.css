@@ -1,5 +1,23 @@
 @import '@fontsource-variable/archivo/wdth.css';
 
+/* Big Shoulders Display (OFL): títulos con carácter de cartelería. Solo latín, autoalojada. */
+@font-face {
+    font-family: 'Big Shoulders Display';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url('../fonts/big-shoulders-display-latin-wght.woff2') format('woff2-variations');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* La misma a peso 900 sin contornos solapados: para los rótulos en contorno (el trazo no cruza las letras). */
+@font-face {
+    font-family: 'Big Shoulders Contorno';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 900;
+    src: url('../fonts/big-shoulders-contorno-900.woff2') format('woff2');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,12 +67,12 @@
         font-variant-numeric: tabular-nums;
     }
 
-    /* Títulos de marquesina: Archivo condensada */
+    /* Títulos de cartelería: Big Shoulders Display */
     .display {
         font-family: theme('fontFamily.display');
-        font-stretch: 75%;
         font-weight: 800;
-        line-height: 1.1;
+        line-height: 1;
+        letter-spacing: -0.005em;
     }
 }
 
@@ -84,10 +102,29 @@
     @apply mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6;
 }
 .logo {
-    @apply display inline-flex items-baseline gap-1 text-2xl uppercase tracking-wide no-underline;
+    @apply inline-flex min-h-11 items-center no-underline;
 }
-.logo-cine { @apply text-carmin-400; }
-.logo-lumiere { @apply text-texto; }
+
+/* Logotipo (docs/MARCA.md): símbolo en rojo telón y nombre en Big Shoulders 900 */
+.marca-logo {
+    @apply inline-flex items-center text-texto;
+    gap: .38em;
+}
+.marca-logo-simbolo {
+    @apply shrink-0 text-carmin-500;
+    width: 1.12em;
+    height: 1.12em;
+}
+.marca-logo-nombre {
+    font-family: theme('fontFamily.display');
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .01em;
+    line-height: 1;
+    padding-top: .06em;
+}
+.marca-logo--md { font-size: 1.75rem; }
+.marca-logo--lg { font-size: 2.5rem; }
 
 .site-nav {
     @apply hidden items-center gap-1 md:flex;
@@ -123,12 +160,34 @@
     @apply text-carmin-400;
 }
 
-/* Pie */
+/* Pie: datos, enlaces y el nombre a todo el ancho en contorno */
 .site-footer {
-    @apply mt-20 border-t border-sala-700 text-sm text-texto-2;
+    @apply relative mt-20 overflow-hidden border-t border-sala-700 text-sm text-texto-2;
 }
 .site-footer a {
     @apply text-texto underline hover:text-carmin-400;
+}
+.pie-lema {
+    @apply display text-3xl text-texto sm:text-4xl;
+}
+.pie-nombre {
+    @apply block w-full select-none;
+    margin-top: clamp(1rem, 4vw, 3rem);
+    margin-bottom: -1.2%;
+}
+.pie-nombre text {
+    font-family: theme('fontFamily.contorno');
+    font-weight: 900;
+    text-transform: uppercase;
+}
+.pie-nombre .pie-nombre-trazo {
+    fill: none;
+    stroke: theme('colors.carmin.500');
+    stroke-width: 1.4;
+}
+.pie-nombre .pie-nombre-relleno {
+    fill: theme('colors.carmin.500');
+    clip-path: inset(0 100% 0 0);
 }
 
 /* Botones */
@@ -143,7 +202,7 @@
     box-shadow: none;
 }
 .btn-primary {
-    @apply bg-carmin-600 text-white hover:bg-carmin-700;
+    @apply bg-carmin-500 text-white hover:bg-carmin-600;
 }
 .btn-secondary {
     @apply border-sala-700 bg-transparent text-texto hover:bg-sala-850;
@@ -614,5 +673,58 @@
     .reveal-stagger > * {
         opacity: 1 !important;
         transform: none !important;
+    }
+}
+
+/* ── Motivo de marca: la perforación (docs/MARCA.md) ── */
+@layer components {
+    /* Entrada: muescas semicirculares a media altura en los dos costados */
+    .perforado {
+        --muesca: 12px;
+        -webkit-mask: radial-gradient(circle var(--muesca) at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+                      radial-gradient(circle var(--muesca) at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+        mask: radial-gradient(circle var(--muesca) at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+              radial-gradient(circle var(--muesca) at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+    }
+    .entrada-muestra {
+        @apply perforado relative flex flex-col justify-center bg-carmin-500;
+        min-height: 9rem;
+    }
+    .entrada-muestra::after {
+        content: '';
+        position: absolute;
+        left: 18px;
+        right: 18px;
+        top: 50%;
+        border-top: 2px dotted rgb(14 13 16 / .55);
+    }
+    .entrada-muestra > * { position: relative; z-index: 1; }
+    .entrada-muestra .text-texto-2 { color: #fff; }
+
+    /* Celuloide: perforaciones arriba y abajo */
+    .celuloide {
+        @apply relative overflow-hidden bg-[#08070A];
+        padding: 26px 0;
+        min-height: 9rem;
+    }
+    .celuloide::before,
+    .celuloide::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 10px;
+        background: repeating-linear-gradient(90deg, transparent 0 8px, rgb(242 238 230 / .55) 8px 20px, transparent 20px 28px);
+        -webkit-mask: linear-gradient(#000, #000);
+        border-radius: 2px;
+    }
+    .celuloide::before { top: 8px; }
+    .celuloide::after { bottom: 8px; }
+    .celuloide-cuadros {
+        @apply flex h-full gap-2 px-2;
+    }
+    .celuloide-cuadros span {
+        @apply flex-1 rounded-sm bg-sala-850;
+        min-height: 5.5rem;
     }
 }

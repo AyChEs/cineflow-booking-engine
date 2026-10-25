@@ -9,7 +9,8 @@
     <h2 id="resumen-titulo" class="mb-4 text-lg font-semibold text-texto">Tu compra</h2>
 
     <div class="flex gap-4">
-        <img src="{{ $sesion->pelicula->poster_url }}" alt="" width="300" height="450" decoding="async"
+        <img data-respaldo="{{ $sesion->pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+             src="{{ $sesion->pelicula->poster_url }}" alt="" width="300" height="450" decoding="async"
              class="aspect-[2/3] w-16 shrink-0 rounded-control border border-sala-700 object-cover">
         <dl class="min-w-0 text-sm">
             <dt class="sr-only">Película</dt>

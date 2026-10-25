@@ -12,16 +12,18 @@ export default {
 
     theme: {
         extend: {
-            // Archivo Variable autoalojada; el ancho condensado de los títulos va en .display (app.css).
+            // Archivo para la interfaz; Big Shoulders Display (cartelería) para títulos y marca (docs/MARCA.md).
             fontFamily: {
                 sans: ['"Archivo Variable"', ...defaultTheme.fontFamily.sans],
-                display: ['"Archivo Variable"', ...defaultTheme.fontFamily.sans],
+                display: ['"Big Shoulders Display"', '"Archivo Variable"', ...defaultTheme.fontFamily.sans],
+                contorno: ['"Big Shoulders Contorno"', '"Big Shoulders Display"', ...defaultTheme.fontFamily.sans],
             },
             // Tokens de plan/DISENO.md: sala oscura, carmín para actuar, marquesina solo para «lo tuyo».
             colors: {
                 sala: { 950: '#0E0D10', 900: '#18161C', 850: '#221F27', 700: '#3A3641' },
                 texto: { DEFAULT: '#F2EEE6', 2: '#A8A3AE' },
-                carmin: { 400: '#F0566B', 600: '#B3203A', 700: '#95182F' },
+                // 500 es el rojo telón de la marca (docs/MARCA.md): símbolo, botón principal y grandes rótulos.
+                carmin: { 400: '#F0566B', 500: '#E0284A', 600: '#B3203A', 700: '#95182F' },
                 marquesina: '#EBD67C',
                 foco: '#F5E6A8',
                 ocupada: '#57525F',
