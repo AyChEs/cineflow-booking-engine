@@ -132,7 +132,7 @@ The interface targets **WCAG 2.2 AA** and is in Spanish.
 - **Announced lock countdown.** The 8-minute hold is shown second by second, but screen readers only hear it at 5, 2 and 1 minutes and at 30 seconds; when it ends, the map reloads and focus moves to the message.
 - **Forms**: visible labels, `aria-invalid` + `aria-describedby` on errors and focus on the first one; skip link, one `<h1>` per page, focus ring on everything, `prefers-reduced-motion` respected.
 
-`tests/browser/a11y.spec.mjs` runs axe on 13 screens (home to ticket, including the three purchase steps) at 390 and 1440 px and fails on any serious or critical violation; `tests/browser/seat-map.spec.mjs` drives the seat map with the keyboard only. Both run in CI (`a11y` job).
+`tests/browser/a11y.spec.mjs` runs axe on 13 screens (home to ticket, including the three purchase steps) at 390 and 1440 px and fails on any serious or critical violation; `tests/browser/seat-map.spec.mjs` drives the seat map with the keyboard only. `tests/browser/movimiento.spec.mjs` checks the public pages' motion (no horizontal scroll, no layout shift, final state with reduced motion). The three run in CI (`a11y` job). Brand system: `docs/MARCA.md` and `/marca`.
 
 ## Tests
 
