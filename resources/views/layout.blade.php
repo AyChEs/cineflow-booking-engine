@@ -157,6 +157,8 @@
                     <li><a href="{{ route('peliculas.index') }}">Cartelera</a></li>
                     <li><a href="{{ route('cines.index') }}">Cines</a></li>
                     <li><a href="{{ route('marca') }}">Marca</a></li>
+                    <li><a href="{{ route('legal.aviso') }}">Aviso legal</a></li>
+                    <li><a href="{{ route('legal.privacidad') }}">Privacidad</a></li>
                 </ul>
             </nav>
             <div class="space-y-2">

@@ -41,6 +41,10 @@ Route::get('/peliculas', [PeliculaController::class, 'index'])->name('peliculas.
 Route::get('/peliculas/{id}', [PeliculaController::class, 'show'])
     ->whereNumber('id')
     ->name('peliculas.show');
+// Páginas legales (LSSI-CE, RGPD y LOPDGDD): aviso legal y política de privacidad.
+Route::view('/aviso-legal', 'legal.aviso')->name('legal.aviso');
+Route::view('/privacidad', 'legal.privacidad')->name('legal.privacidad');
+
 Route::get('/sesiones', fn() => redirect()->route('peliculas.index'))->name('sesiones.index');
 Route::get('/sesiones/{id}', [SesionController::class, 'show'])
     ->whereNumber('id')
