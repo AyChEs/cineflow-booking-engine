@@ -31,8 +31,12 @@
 @keyframes vt-entra { from { opacity: 0; transform: translateY(14px); } }
 
 /* ── Fotogramas: inclinación 3D y foco que sigue al cursor (se aplica a las tarjetas de película) ── */
-[data-inclinar] { perspective: 900px; }
-.frame-cuadro { position: relative; transform-style: preserve-3d; }
+/* La inclinación 3D y el foco son cosa del ratón: en táctil no hay perspectiva, ni capas 3D por póster, ni will-change */
+.frame-cuadro { position: relative; }
+@media (hover: hover) and (pointer: fine) {
+    [data-inclinar] { perspective: 900px; }
+    .frame-cuadro { transform-style: preserve-3d; }
+}
 .frame-foco {
     position: absolute;
     inset: 0;
@@ -40,7 +44,7 @@
     opacity: 0;
     background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 30%), rgb(255 246 230 / .34), transparent 62%);
 }
-@media (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
     .frame-cuadro {
         transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
         transition: transform 240ms cubic-bezier(.2, .8, .2, 1);
@@ -52,7 +56,7 @@
 }
 
 /* ── Botones magnéticos: el desplazamiento lo pone movimiento.js (transform) ── */
-[data-magnetico] { will-change: transform; }
+@media (hover: hover) and (pointer: fine) { [data-magnetico] { will-change: transform; } }
 
 /* ── Portada: hero de cine a sangre ── */
 .escena { position: relative; }
@@ -212,6 +216,12 @@
     .hero-bombillas::before { animation: bombilla 1.2s steps(1, end) infinite; }
     .hero-bombillas::after { animation: bombilla 1.2s steps(1, end) infinite reverse; }
 }
+/* Móvil y táctil (sesión 13): el grano se queda quieto (animar una capa del 180 % tira de la GPU) y el rojo telón del hero
+   se tiñe con un color plano en vez de una mezcla «multiply» sobre una imagen a sangre. */
+@media (max-width: 1023px), (hover: none) {
+    .hero-grano { animation: none; inset: 0; }
+    .hero-rojo { mix-blend-mode: normal; opacity: .3; }
+}
 @keyframes grano {
     0% { transform: translate(0, 0); }
     10% { transform: translate(-6%, 4%); }
@@ -236,7 +246,7 @@
     gap: 1rem;
     width: 100%;
     max-width: 80rem;
-    margin: 3.5rem auto 1.25rem;
+    margin: var(--esp-seccion) auto var(--esp-bloque);
     padding: 0 clamp(1rem, 4vw, 2rem);
 }
 .tira { order: 3; }
@@ -245,7 +255,7 @@
     gap: 1.1rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: x mandatory;
     scrollbar-width: none;
     padding: 2.6rem max(1rem, calc((100vw - 80rem) / 2 + 2rem));
     scroll-padding-inline: max(1rem, calc((100vw - 80rem) / 2 + 2rem));
@@ -369,16 +379,20 @@
 }
 
 /* ── Cómo se compra ── */
-.compra { position: relative; margin-top: 5rem; }
-.compra-pista {
+.compra { position: relative; margin-top: var(--esp-seccion); }
+/* .compra-pista es lo que GSAP fija: todo el ancho, sin márgenes automáticos (con ellos, al fijarse de golpe en escritorio
+   el texto saltaba al borde izquierdo). El contenido se centra en .compra-rejilla, con el ancho y el margen de la cabecera. */
+.compra-pista { width: 100%; }
+.compra-rejilla {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 2.5rem;
     width: 100%;
     max-width: 80rem;
     margin: 0 auto;
-    padding: 0 clamp(1rem, 4vw, 2rem);
+    padding: 0 1rem;
 }
+@media (min-width: 640px) { .compra-rejilla { padding: 0 1.5rem; } }
 .compra-pasos { margin-top: 2rem; display: grid; gap: 1.1rem; }
 .compra-paso { display: grid; grid-template-columns: 2.4rem 1fr; gap: .9rem; align-items: start; }
 .compra-paso-num {
@@ -453,13 +467,14 @@
 .entrada-qr { width: 5.6rem; height: 5.6rem; border-radius: 4px; }
 
 @media (min-width: 1024px) {
-    .compra-pista { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 4rem; }
+    .compra-rejilla { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 4rem; }
     .compra-texto { position: sticky; top: 6rem; }
     .compra-escena { grid-template-columns: 1fr; }
 }
 /* Escena fijada: las cuatro ilustraciones se apilan en la misma celda */
 @media (min-width: 1024px) {
-    .mov-escena .compra-pista { height: calc(100svh - var(--cabecera)); align-content: center; align-items: center; }
+    .mov-escena .compra-pista { display: flex; align-items: center; height: calc(100svh - var(--cabecera)); }
+    .mov-escena .compra-rejilla { align-items: center; }
     .mov-escena .compra-texto { position: static; }
     .mov-escena .compra-escena { display: grid; }
     .mov-escena .compra-vista { grid-area: 1 / 1; align-self: start; }
@@ -473,9 +488,51 @@
 @media (min-width: 640px) and (max-width: 1023px) {
     .compra-escena { grid-template-columns: 1fr 1fr; }
 }
+/* Móvil y táctil (sesión 13): las cuatro ilustraciones son un carrusel con scroll-snap en vez de cuatro tarjetas una debajo
+   de otra (ahorra más de 1000 px de scroll). La siguiente asoma a la derecha para que se vea que se desliza. */
+@media (max-width: 1023px), (pointer: coarse) {
+    .compra-escena {
+        display: flex;
+        align-items: flex-start;
+        gap: .9rem;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        margin-inline: -1rem;
+        padding-inline: 1rem;
+        scroll-padding-inline: 1rem;
+    }
+    .compra-escena::-webkit-scrollbar { display: none; }
+    .compra-escena > .compra-vista { flex: 0 0 min(86%, 26rem); scroll-snap-align: start; }
+}
+@media (max-width: 1023px) and (min-width: 640px) {
+    .compra-escena { margin-inline: -1.5rem; padding-inline: 1.5rem; scroll-padding-inline: 1.5rem; }
+}
+/* La entrada impresa cabe en la tarjeta del carrusel (280 a 416 px): el talón con el QR pasa debajo del cuerpo */
+@media (max-width: 1023px), (pointer: coarse) {
+    .entrada { grid-template-columns: minmax(0, 1fr); }
+    .entrada-cuerpo { padding: 1rem 1.1rem .9rem 1.5rem; gap: .5rem; }
+    .entrada-titulo { font-size: 2rem; }
+    .entrada-datos { gap: .3rem 1rem; }
+    .entrada-datos dd { font-size: 1.35rem; }
+    .entrada-talon { grid-auto-flow: column; justify-content: space-between; align-items: center; border-left: 0; border-top: 2px dotted rgb(14 13 16 / .55); padding: .8rem 1.5rem .8rem 1.5rem; }
+    .entrada-qr { width: 3.6rem; height: 3.6rem; }
+}
+
+/* Sesión 11: ilustración de Rive. Hasta que el runtime pinta, y si no llega a cargar, siguen las vistas HTML de los pasos 2 a 4.
+   Las vistas se ocultan con visibility (no con display) para que la escena no cambie de alto al llegar Rive. */
+.compra-vista--rive { align-self: center; }
+.compra-marco--rive { position: relative; padding: .75rem; }
+.compra-lienzo { display: block; width: 100%; aspect-ratio: 560 / 440; pointer-events: none; }
+.compra-cuenta--rive { position: absolute; left: 50%; bottom: 1.1rem; translate: -50% 0; opacity: 0; }
+@media (min-width: 1024px) {
+    .mov-escena .compra--rive .compra-vista:not([data-vista="0"]):not([data-vista-rive]) { visibility: hidden !important; }
+    .mov-escena .compra-vista--rive { grid-area: 1 / 1; }
+}
 
 /* ── El nombre a todo el ancho, con pósteres que lo cruzan ── */
-.nombre-gigante { position: relative; margin-top: 3rem; padding-bottom: 2rem; overflow: hidden; }
+.nombre-gigante { position: relative; margin-top: var(--esp-seccion); padding-bottom: var(--esp-bloque); overflow: hidden; }
 .nombre-lema {
     position: relative;
     z-index: 2;

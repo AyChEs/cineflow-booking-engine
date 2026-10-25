@@ -100,6 +100,8 @@ Card payments use **Stripe Checkout in test mode**; the reservation is confirmed
 
 Stripe is enabled only when **both** `STRIPE_SECRET` and `STRIPE_WEBHOOK_SECRET` are set; otherwise step 3 uses the built-in simulated payment (card with Luhn check, or Bizum), which confirms directly.
 
+**Test mode only, guaranteed.** If `STRIPE_KEY` or `STRIPE_SECRET` start with `pk_live_`, `sk_live_` or `rk_live_` and `STRIPE_PERMITIR_LIVE=true` is not set, Stripe is **disabled**: the keys are cleared from the config (so neither the webhook nor refunds can use them), step 3 uses the simulated payment and a clear `Stripe DESACTIVADO` warning goes to the log (at most once every 10 minutes). Real money is only possible by setting `STRIPE_PERMITIR_LIVE=true` on purpose. Covered by `tests/Feature/StripeSoloPruebasTest.php`.
+
 ```env
 STRIPE_KEY=pk_test_xxx
 STRIPE_SECRET=sk_test_xxx
@@ -134,13 +136,21 @@ The interface targets **WCAG 2.2 AA** and is in Spanish.
 
 `tests/browser/a11y.spec.mjs` runs axe on 13 screens (home to ticket, including the three purchase steps) at 390 and 1440 px and fails on any serious or critical violation; `tests/browser/seat-map.spec.mjs` drives the seat map with the keyboard only. `tests/browser/movimiento.spec.mjs` checks the public pages' motion (no horizontal scroll, no layout shift, final state with reduced motion). The three run in CI (`a11y` job). Brand system: `docs/MARCA.md` and `/marca`.
 
+## Legal pages and cookies
+
+`/aviso-legal` (legal notice: a final-project demo by Ayman Charoui Essamadi, Ismael Achamrouk and Danna Guevara, no commercial activity, fictitious cinemas and payments) and `/privacidad` (GDPR/LOPDGDD policy: controller, purpose, data stored, legal basis = consent, retention, processors, international transfers, rights and the AEPD) are linked from the footer and from the sign-up form, which has a mandatory «He leído la política de privacidad» checkbox validated on the server. Only two technical cookies exist (`cineflow-session`, `XSRF-TOKEN`), so there is no cookie banner; in production both are `Secure` and `SameSite=Lax`, and the session cookie is `HttpOnly`. Covered by `tests/Feature/LegalTest.php`.
+
+## Security headers
+
+Every web response goes through `App\Http\Middleware\CabecerasDeSeguridad` (settings in `config/seguridad.php`): a **Content-Security-Policy with a per-request nonce** (inline scripts carry `nonce="{{ Vite::cspNonce() }}"`; no inline event handlers; `'wasm-unsafe-eval'` for the Rive WebAssembly; `'unsafe-eval'` only on pages that use Alpine expressions), images only from the app, `data:`/`blob:` and TMDB, forms only to the app and Stripe Checkout (`checkout.stripe.com`), no iframes, `frame-ancestors 'none'`, plus `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy` (camera only in the box-office scanner), `Cross-Origin-Opener-Policy` and HSTS (only over HTTPS). `SECURITY_HEADERS=false` turns it off; `CSP_IMG_HOSTS` adds image origins. Covered by `tests/Feature/CabecerasDeSeguridadTest.php`.
+
 ## Tests
 
 ```bash
 php artisan test
 ```
 
-Runs 76 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
+Runs 122 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
 
 ## Deployment
 

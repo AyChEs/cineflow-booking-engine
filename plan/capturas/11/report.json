@@ -1,0 +1,34 @@
+[
+ {
+  "url": "/",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/marca",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 390,
+  "consoleErrors": []
+ },
+ {
+  "url": "/",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/marca",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 1440,
+  "consoleErrors": []
+ }
+]

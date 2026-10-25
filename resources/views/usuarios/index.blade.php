@@ -54,7 +54,7 @@
                         <div class="table-actions">
                             <a href="{{ route('usuarios.edit', $user) }}" class="table-link">Editar</a>
                             <form action="{{ route('usuarios.destroy', $user) }}" method="POST"
-                                  class="inline" onsubmit="return confirm('¿Borrar este usuario?');">
+                                  class="inline" data-confirmar="¿Borrar este usuario?">
                                 @csrf @method('DELETE')
                                 <button type="submit"
                                         class="table-link bg-transparent border-none cursor-pointer text-red-400 hover:text-red-300">

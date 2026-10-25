@@ -9,7 +9,7 @@
     $total = $peliculas->count();
     $resumen = $total === 1 ? '1 película' : "{$total} películas";
 @endphp
-<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14">
+<div class="mx-auto max-w-7xl px-4 py-pagina sm:px-6">
 
     <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -35,7 +35,7 @@
     @endif
 
     <form method="GET" action="{{ route('peliculas.index') }}" role="search" aria-label="Filtrar la cartelera"
-          class="mb-10 grid gap-4 rounded-card border border-sala-700 bg-sala-900 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-[2fr,1fr,1fr,1fr,1fr]">
+          class="mb-bloque grid gap-4 rounded-card border border-sala-700 bg-sala-900 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-[2fr,1fr,1fr,1fr,1fr]">
         <div>
             <label for="f-q" class="form-label">Buscar</label>
             <div class="relative">

@@ -16,8 +16,9 @@ export function iniciarPortada({ gsap, ScrollTrigger, SplitText }) {
         return escenaFijada({ gsap, ScrollTrigger, hero });
     });
 
-    // Resto: el hero se queda donde está y solo hace zoom y paralaje al salir.
-    mm.add('(max-width: 1023px), (pointer: coarse)', () => paralaje({ gsap, ScrollTrigger, hero }));
+    // Escritorio sin escena (movimiento reducido no llega aquí): zoom y paralaje al salir.
+    // Móvil y táctil: coreografía más corta y ligera, sin pins y sin suavizado del scroll.
+    mm.add('(max-width: 1023px), (pointer: coarse)', () => paralajeMovil({ gsap, ScrollTrigger, hero }));
 }
 
 function entradaDelHero({ gsap, SplitText, hero }) {
@@ -35,7 +36,9 @@ function entradaDelHero({ gsap, SplitText, hero }) {
     gsap.set(media, { scale: 1.16, transformOrigin: '60% 40%' });
     document.documentElement.classList.add('mov-listo');
 
+    // En móvil la entrada dura un 40 % menos: se ve antes el título y los botones.
     const tl = gsap.timeline({ delay: 0.15 });
+    if (window.matchMedia('(max-width: 1023px), (pointer: coarse)').matches) tl.timeScale(1.4);
     // La sala se abre: las dos bandas panorámicas se retiran.
     tl.to(sup, { yPercent: -100, duration: 1.15, ease: 'power3.inOut' }, 0.1)
       .to(inf, { yPercent: 100, duration: 1.15, ease: 'power3.inOut' }, 0.1)
@@ -64,6 +67,25 @@ function paralaje({ gsap, ScrollTrigger, hero }) {
      .to(contenido, { yPercent: -14, opacity: 0.2 }, 0)
      .to(haz, { yPercent: -12 }, 0);
     return () => t.scrollTrigger?.kill();
+}
+
+// Móvil y táctil: el hero no se agranda ni se desplaza de más (en una GPU de móvil, un zoom del 20 % con mezcla de capas tira
+// de los fotogramas). Solo un acercamiento suave de la imagen y el contenido que se desvanece al salir; el scroll manda
+// directamente (scrub: true), sin la inercia añadida del escritorio.
+function paralajeMovil({ gsap, ScrollTrigger, hero }) {
+    const media = hero.querySelector('[data-hero-media]');
+    const contenido = hero.querySelector('[data-hero-contenido]');
+    const t = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+    });
+    t.to(media, { scale: 1.08, yPercent: 3 }, 0)
+     .to(contenido, { yPercent: -8, opacity: 0.35 }, 0);
+    return () => {
+        t.scrollTrigger?.kill();
+        t.kill();
+        gsap.set([media, contenido], { clearProps: 'transform,opacity' });
+    };
 }
 
 function escenaFijada({ gsap, ScrollTrigger, hero }) {

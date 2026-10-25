@@ -36,3 +36,6 @@ Thumbs.db
 # Claude Code local config
 .claude/
 /public/carteles
+
+# Rive: salida local de la CLI (los .riv que se publican están en public/rive)
+/rive/*/build/

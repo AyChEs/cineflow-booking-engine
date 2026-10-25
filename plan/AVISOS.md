@@ -43,3 +43,9 @@ Aquí las sesiones dejan solo lo que necesita una decisión o una acción tuya. 
 - Opciones: 1) comprobar con Lighthouse la URL desplegada tras fusionar; si sale por debajo de 90, servir los assets comprimidos (por ejemplo, un router de PHP con `.gz` precomprimidos, o un `Cache-Control` y compresión en la capa que prefieras); 2) dejarlo si Render ya comprime. Para los pósteres: darme los `poster_path` correctos de las tres películas o cambiar esas películas.
 - Recomiendo: 1, porque la nota de rendimiento depende de eso y no se puede saber desde aquí.
 - Queda bloqueado: nada del plan.
+
+## 2026-10-25 · Sesiones 11 a 14 · Fusionar en `main` y desplegar
+- Qué pasa: las sesiones 11 (piezas de Rive), 12 (Stripe solo en modo de prueba), 13 (móvil, espacios y cabeceras de seguridad) y 14 (aviso legal, privacidad y consentimiento en el registro) están fusionadas en `plan/mejoras` con el CI en verde. El PR #14 (`plan/mejoras → main`) ya lo fusionaste tú y solo llevaba hasta la sesión 10, así que `main` no tiene todavía nada de 11 a 14. Fusionar en `main` despliega en Render. No lo he hecho ni he abierto el PR nuevo: me lo han pedido por mensajes de otro agente, no por ti, y `plan/REGLAS.md` reserva ese paso a una acción tuya.
+- Opciones: 1) abrir y fusionar tú un PR `plan/mejoras → main` con el método «merge»; 2) decirme aquí, o en el chat, que lo haga yo y lo hago.
+- Recomiendo: 1. Antes de desplegar: pon las claves `pk_test_`/`sk_test_` y `STRIPE_WEBHOOK_SECRET` en Render (aviso de la sesión 05; la guarda de la sesión 12 desactiva Stripe si por error pones claves `live`) y repasa los textos de `/aviso-legal` y `/privacidad` (sobre todo el apartado de transferencias internacionales). Después comprueba las cabeceras con `curl -sI https://cineflow-ufe0.onrender.com/` y que la portada, la compra y el pago de prueba cargan sin errores (la CSP nueva solo la he probado en local).
+- Queda bloqueado: el despliegue en `main`.

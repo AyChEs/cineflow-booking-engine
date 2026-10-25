@@ -1,0 +1,46 @@
+[
+ {
+  "url": "/aviso-legal",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/privacidad",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/register",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 390,
+  "consoleErrors": []
+ },
+ {
+  "url": "/aviso-legal",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/privacidad",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/register",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 1440,
+  "consoleErrors": []
+ }
+]

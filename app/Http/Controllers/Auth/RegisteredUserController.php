@@ -35,6 +35,10 @@ class RegisteredUserController extends Controller
             'email'     => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password'  => ['required', 'confirmed', Rules\Password::defaults()],
             'telefono'  => ['nullable', 'string', 'max:20'],
+            // RGPD: el consentimiento es la base legal del tratamiento (ver /privacidad), así que la casilla es obligatoria.
+            'privacidad' => ['accepted'],
+        ], [
+            'privacidad.accepted' => 'Marca «He leído la política de privacidad» para crear la cuenta.',
         ]);
 
         $user = User::create([

@@ -17,7 +17,10 @@
         <symbol id="bt-retenida" viewBox="0 0 28 28"><path d="M2 10a8 8 0 0 1 8-8h8a8 8 0 0 1 8 8v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" fill="#3A3641" stroke="#8C8794" stroke-width="2.2" stroke-dasharray="4 3"/><rect x="9" y="13" width="10" height="7" rx="1.5" fill="#E4E0EA"/><path d="M11 13v-2a3 3 0 0 1 6 0v2" fill="none" stroke="#E4E0EA" stroke-width="2"/></symbol>
     </svg>
 
+    {{-- .compra-pista es el elemento que GSAP fija: va a todo el ancho y sin márgenes automáticos (si los lleva, al fijarse de golpe
+         el bloque se pega al borde izquierdo). El contenedor centrado es .compra-rejilla, el mismo ancho que la cabecera. --}}
     <div class="compra-pista" data-compra-pista>
+      <div class="compra-rejilla">
         <div class="compra-texto">
             <h2 id="como-se-compra-titulo" class="display text-4xl text-texto md:text-6xl">Cómo se compra</h2>
             <p class="mt-3 max-w-md text-texto-2">Eliges butaca, la guardamos 8 minutos, pagas y recibes la entrada con QR.</p>
@@ -96,6 +99,16 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Sesión 11: en escritorio con movimiento, una sola ilustración de Rive (rive/compra) sustituye a los pasos 2 a 4.
+                 La cuenta atrás es HTML sobre el lienzo; si el runtime no carga, siguen las tres vistas de arriba. --}}
+            <div class="compra-vista compra-vista--rive" data-vista-rive data-rive-src="{{ asset('rive/compra.riv') }}" hidden>
+                <div class="compra-marco compra-marco--rive">
+                    <canvas class="compra-lienzo" tabindex="-1"></canvas>
+                    <span class="compra-cuenta compra-cuenta--rive cifras" data-cuenta-rive><x-icon name="clock" class="h-4 w-4" /><b data-cuenta-rive-texto>8:00</b></span>
+                </div>
+            </div>
         </div>
+      </div>
     </div>
 </section>

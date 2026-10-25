@@ -99,7 +99,7 @@
     </form>
 </dialog>
 
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 (function () {
     const dialogo = document.getElementById('dialogo-borrar');
     const abrir = document.getElementById('abrir-borrar');

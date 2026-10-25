@@ -14,7 +14,7 @@
     </div>
 </header>
 
-<div class="mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 md:pb-14">
+<div class="mx-auto max-w-7xl px-4 pb-pagina pt-6 sm:px-6">
 
     @if (session('success'))
         <div class="alert alert-success mt-6" role="status"><x-icon name="check-circle" class="mt-0.5 h-4 w-4 shrink-0" />{{ session('success') }}</div>

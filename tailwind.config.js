@@ -31,6 +31,15 @@ export default {
                 ok: '#6FD39A',
                 error: '#FF7A85',
             },
+            // Escala de espaciado vertical (sesión 13): una sola para todas las páginas públicas.
+            //   bloque   entre bloques de una misma sección (20 a 32 px)
+            //   pagina   relleno vertical de una página (24 a 40 px)
+            //   seccion  entre secciones, antes del pie (40 a 64 px)
+            spacing: {
+                bloque: 'var(--esp-bloque)',
+                pagina: 'var(--esp-pagina)',
+                seccion: 'var(--esp-seccion)',
+            },
             borderRadius: {
                 control: '8px',
                 card: '12px',

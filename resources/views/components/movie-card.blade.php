@@ -13,7 +13,7 @@
 @if ($variante === 'tira')
 <article {{ $attributes->merge(['class' => 'frame group']) }} data-inclinar>
     <div class="frame-cuadro">
-        <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+        <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}"
              src="{{ str_replace('/t/p/w500/', '/t/p/w342/', $pelicula->poster_url) }}" alt="Póster de {{ $pelicula->titulo }}"
              width="300" height="450" loading="lazy" fetchpriority="low" decoding="async" draggable="false"
              class="frame-img" style="view-transition-name: {{ $nombreVista }}">
@@ -33,7 +33,7 @@
 @else
 <article {{ $attributes->merge(['class' => 'group relative flex flex-col gap-3']) }} data-inclinar>
     <div class="frame-cuadro overflow-hidden rounded-card border border-sala-700 bg-sala-850">
-        <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+        <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}"
              src="{{ str_replace('/t/p/w500/', '/t/p/w342/', $pelicula->poster_url) }}" alt="Póster de {{ $pelicula->titulo }}"
              width="300" height="450"
              @if ($prioridad) fetchpriority="high" @else loading="lazy" @endif decoding="async"

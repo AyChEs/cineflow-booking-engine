@@ -4,7 +4,7 @@
 
 @section('content')
 @php $sesion = $reserva->sesion; @endphp
-<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 md:py-14">
+<div class="mx-auto max-w-3xl px-4 py-pagina sm:px-6">
     <div class="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
             <p class="cifras text-sm text-texto-2">Reserva {{ $reserva->id }}</p>
@@ -49,7 +49,7 @@
         @endif
         @if (auth()->user()->isAdmin())
             <a href="{{ route('reservas.edit', $reserva->id) }}" class="btn btn-secondary"><x-icon name="pencil" class="h-4 w-4" />Editar</a>
-            <form action="{{ route('reservas.destroy', $reserva->id) }}" method="POST" onsubmit="return confirm('¿Borrar esta reserva?')">
+            <form action="{{ route('reservas.destroy', $reserva->id) }}" method="POST" data-confirmar="¿Borrar esta reserva?">
                 @csrf @method('DELETE')
                 <button type="submit" class="btn btn-danger"><x-icon name="trash" class="h-4 w-4" />Borrar</button>
             </form>

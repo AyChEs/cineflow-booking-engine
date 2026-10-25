@@ -11,7 +11,7 @@
                 @if(auth()->check() && auth()->user()->isAdmin())
                     <a href="{{ route('sesiones.edit', $sesion->id) }}" class="btn btn-primary" style="font-size: 0.875rem;">Editar</a>
                     <form method="POST" action="{{ route('sesiones.destroy', $sesion->id) }}" style="display: inline;"
-                          onsubmit="return confirm('¿Borrar esta sesión y sus reservas?')">
+                          data-confirmar="¿Borrar esta sesión y sus reservas?">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-secondary" style="font-size: 0.875rem; color: #FF7A85; border-color: #FF7A85;">Borrar</button>
                     </form>

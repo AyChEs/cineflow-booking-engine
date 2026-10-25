@@ -23,7 +23,7 @@
     @hasSection('mov')
         {{-- Movimiento (sesión 09): solo en las páginas públicas. La compra, el acceso y el panel no lo cargan. --}}
         @vite('resources/css/movimiento.css')
-        <script>
+        <script nonce="{{ Vite::cspNonce() }}">
             (function () {
                 var q = function (c) { return window.matchMedia(c).matches; };
                 var h = document.documentElement;
@@ -61,7 +61,7 @@
     <header class="site-header">
         <div class="site-header-inner">
             <a href="{{ route('home') }}" class="logo" aria-label="{{ config('app.name') }}, ir a la portada">
-                <x-marca.logo />
+                <x-marca.logo :animado="trim($__env->yieldContent('mov')) === 'portada'" />
             </a>
 
             <nav class="site-nav" aria-label="Principal">
@@ -146,7 +146,7 @@
     </main>
 
     <footer class="site-footer">
-        <div class="mx-auto grid max-w-7xl gap-8 px-4 pt-14 sm:px-6 md:grid-cols-[1.4fr,1fr,1fr]">
+        <div class="mx-auto grid max-w-7xl gap-8 px-4 pt-seccion sm:px-6 md:grid-cols-[1.4fr,1fr,1fr]">
             <div>
                 <x-marca.logo />
                 <p class="pie-lema mt-6">{{ config('marca.lema') }}</p>
@@ -157,6 +157,8 @@
                     <li><a href="{{ route('peliculas.index') }}">Cartelera</a></li>
                     <li><a href="{{ route('cines.index') }}">Cines</a></li>
                     <li><a href="{{ route('marca') }}">Marca</a></li>
+                    <li><a href="{{ route('legal.aviso') }}">Aviso legal</a></li>
+                    <li><a href="{{ route('legal.privacidad') }}">Privacidad</a></li>
                 </ul>
             </nav>
             <div class="space-y-2">

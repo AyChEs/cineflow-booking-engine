@@ -9,7 +9,7 @@
     <h2 id="resumen-titulo" class="mb-4 text-lg font-semibold text-texto">Tu compra</h2>
 
     <div class="flex gap-4">
-        <img data-respaldo="{{ $sesion->pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+        <img data-respaldo="{{ $sesion->pelicula->cartel_respaldo_url }}"
              src="{{ $sesion->pelicula->poster_url }}" alt="" width="300" height="450" decoding="async"
              class="aspect-[2/3] w-16 shrink-0 rounded-control border border-sala-700 object-cover">
         <dl class="min-w-0 text-sm">
@@ -39,9 +39,17 @@
     @if ($step >= 2)
         {{-- Cuenta atrás del bloqueo: visible cada segundo, anunciada solo a los 5, 2 y 1 minutos y a los 30 s. --}}
         <div id="cuenta-atras" class="mt-5 rounded-control border border-sala-700 bg-sala-950 p-3 text-sm {{ $expiresAt ? '' : 'hidden' }}"
-             data-expires="{{ $expiresAt?->toIso8601String() }}">
+             data-expires="{{ $expiresAt?->toIso8601String() }}" data-total="480">
             <p class="flex items-center gap-2 text-texto">
-                <x-icon name="clock" class="h-4 w-4 shrink-0 text-marquesina" />
+                {{-- Anillo decorativo (sesión 11): lo pinta Rive (rive/anillo); el SVG es la reserva y se vacía con --resto. El texto y los avisos siguen siendo HTML. --}}
+                <span class="anillo" data-rive="anillo" data-rive-src="{{ asset('rive/anillo.riv') }}" aria-hidden="true">
+                    <svg viewBox="0 0 96 96" class="anillo-svg" focusable="false">
+                        <circle cx="48" cy="48" r="36" class="anillo-pista" pathLength="1"/>
+                        <circle cx="48" cy="48" r="36" class="anillo-arco" pathLength="1"/>
+                    </svg>
+                    <canvas class="anillo-lienzo" tabindex="-1"></canvas>
+                    <x-icon name="clock" class="anillo-reloj h-4 w-4 text-marquesina" />
+                </span>
                 <span role="timer" id="cuenta-atras-timer" aria-label="Tus butacas están reservadas">
                     <span aria-hidden="true">Tus butacas están reservadas durante <strong class="cifras" id="cuenta-atras-valor">8:00</strong></span>
                 </span>
