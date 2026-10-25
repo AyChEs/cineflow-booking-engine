@@ -38,6 +38,8 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 10 | Imágenes propias: haz, butaca, sala y vestíbulo (`docs/MARCA.md`, «Imágenes propias») | | 09 | hecha (PR #13) |
 | 11 | Piezas de Rive: logotipo animado, ilustración de «Cómo se compra» y anillo de la cuenta atrás (`docs/MARCA.md`, «Piezas de Rive») | | 10 | hecha (PR #15) |
 | 12 | Stripe solo en modo de prueba: claves `live` desactivadas salvo `STRIPE_PERMITIR_LIVE=true` | | 05 | hecha (PR #16) |
+| 13 | Móvil y espacios: coreografía sin pins, carruseles con scroll-snap, escala de espaciado y cabeceras de seguridad (`docs/MARCA.md`, «Móvil y espacios») | | 11 | hecha (PR #17) |
+| 14 | Legal: aviso legal, privacidad y consentimiento en el registro | | 13 | hecha (PR #18) |
 
 ## Orden y paralelo
 
