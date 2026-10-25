@@ -17,7 +17,7 @@
 <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-16">
     <section aria-labelledby="marca-titulo" class="grid items-center gap-10 md:grid-cols-[1.2fr,1fr]">
         <div>
-            <x-marca.logo tam="lg" />
+            <x-marca.logo tam="lg" animado />
             <h1 id="marca-titulo" class="display mt-8 text-[3.25rem] leading-[.9] text-texto md:text-[6rem]">La butaca es la entrada.</h1>
             <p class="mt-6 max-w-prose text-lg text-texto-2">En un cine no compras una película: compras un sitio en la oscuridad. La marca se construye con los tres objetos que lo cuentan, la butaca, la entrada perforada y el haz del proyector.</p>
             <p class="mt-4 text-sm text-texto-2">Guía completa en <code class="text-texto">docs/MARCA.md</code>.</p>

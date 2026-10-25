@@ -61,7 +61,7 @@
     <header class="site-header">
         <div class="site-header-inner">
             <a href="{{ route('home') }}" class="logo" aria-label="{{ config('app.name') }}, ir a la portada">
-                <x-marca.logo />
+                <x-marca.logo :animado="trim($__env->yieldContent('mov')) === 'portada'" />
             </a>
 
             <nav class="site-nav" aria-label="Principal">

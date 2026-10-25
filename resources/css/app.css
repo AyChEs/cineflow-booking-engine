@@ -123,6 +123,41 @@
     line-height: 1;
     padding-top: .06em;
 }
+/* Símbolo animado con Rive: el lienzo tiene un margen de 8 u a cada lado para que la butaca y las mitades
+   del troquel se muevan sin recortarse. Hasta que el runtime pinta, y si no llega a cargar, se ve el SVG. */
+.rive-logo {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1.12em;
+    height: 1.12em;
+}
+.rive-logo .marca-logo-simbolo { width: 100%; height: 100%; }
+.rive-logo-lienzo {
+    position: absolute;
+    inset: -12.5%;
+    width: 125%;
+    height: 125%;
+    pointer-events: none;
+    opacity: 0;
+}
+.rive-logo.rive-listo .rive-logo-lienzo { opacity: 1; }
+.rive-logo.rive-listo .marca-logo-simbolo { visibility: hidden; }
+/* Anillo de la cuenta atrás: SVG de reserva con --resto (0 a 1) y lienzo de Rive encima cuando carga */
+.anillo { position: relative; display: inline-grid; place-items: center; flex-shrink: 0; width: 2.75rem; height: 2.75rem; }
+.anillo-svg, .anillo-lienzo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.anillo-pista, .anillo-arco { fill: none; stroke-width: 8; }
+.anillo-pista { stroke: theme('colors.sala.700'); }
+.anillo-arco {
+    stroke: theme('colors.marquesina');
+    transform: rotate(-90deg);
+    transform-origin: 48px 48px;
+    stroke-dasharray: 0 calc(1 - var(--resto, 1)) var(--resto, 1);
+}
+.anillo-lienzo { opacity: 0; }
+.anillo.rive-listo .anillo-lienzo { opacity: 1; }
+.anillo.rive-listo .anillo-svg { visibility: hidden; }
+.anillo-reloj { position: relative; }
 .marca-logo--md { font-size: 1.75rem; }
 .marca-logo--lg { font-size: 2.5rem; }
 

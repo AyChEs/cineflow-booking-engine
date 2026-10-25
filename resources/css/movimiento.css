@@ -370,15 +370,19 @@
 
 /* ── Cómo se compra ── */
 .compra { position: relative; margin-top: 5rem; }
-.compra-pista {
+/* .compra-pista es lo que GSAP fija: todo el ancho, sin márgenes automáticos (con ellos, al fijarse de golpe en escritorio
+   el texto saltaba al borde izquierdo). El contenido se centra en .compra-rejilla, con el ancho y el margen de la cabecera. */
+.compra-pista { width: 100%; }
+.compra-rejilla {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 2.5rem;
     width: 100%;
     max-width: 80rem;
     margin: 0 auto;
-    padding: 0 clamp(1rem, 4vw, 2rem);
+    padding: 0 1rem;
 }
+@media (min-width: 640px) { .compra-rejilla { padding: 0 1.5rem; } }
 .compra-pasos { margin-top: 2rem; display: grid; gap: 1.1rem; }
 .compra-paso { display: grid; grid-template-columns: 2.4rem 1fr; gap: .9rem; align-items: start; }
 .compra-paso-num {
@@ -453,13 +457,14 @@
 .entrada-qr { width: 5.6rem; height: 5.6rem; border-radius: 4px; }
 
 @media (min-width: 1024px) {
-    .compra-pista { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 4rem; }
+    .compra-rejilla { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 4rem; }
     .compra-texto { position: sticky; top: 6rem; }
     .compra-escena { grid-template-columns: 1fr; }
 }
 /* Escena fijada: las cuatro ilustraciones se apilan en la misma celda */
 @media (min-width: 1024px) {
-    .mov-escena .compra-pista { height: calc(100svh - var(--cabecera)); align-content: center; align-items: center; }
+    .mov-escena .compra-pista { display: flex; align-items: center; height: calc(100svh - var(--cabecera)); }
+    .mov-escena .compra-rejilla { align-items: center; }
     .mov-escena .compra-texto { position: static; }
     .mov-escena .compra-escena { display: grid; }
     .mov-escena .compra-vista { grid-area: 1 / 1; align-self: start; }
@@ -472,6 +477,17 @@
 }
 @media (min-width: 640px) and (max-width: 1023px) {
     .compra-escena { grid-template-columns: 1fr 1fr; }
+}
+
+/* Sesión 11: ilustración de Rive. Hasta que el runtime pinta, y si no llega a cargar, siguen las vistas HTML de los pasos 2 a 4.
+   Las vistas se ocultan con visibility (no con display) para que la escena no cambie de alto al llegar Rive. */
+.compra-vista--rive { align-self: center; }
+.compra-marco--rive { position: relative; padding: .75rem; }
+.compra-lienzo { display: block; width: 100%; aspect-ratio: 560 / 440; pointer-events: none; }
+.compra-cuenta--rive { position: absolute; left: 50%; bottom: 1.1rem; translate: -50% 0; opacity: 0; }
+@media (min-width: 1024px) {
+    .mov-escena .compra--rive .compra-vista:not([data-vista="0"]):not([data-vista-rive]) { visibility: hidden !important; }
+    .mov-escena .compra-vista--rive { grid-area: 1 / 1; }
 }
 
 /* ── El nombre a todo el ancho, con pósteres que lo cruzan ── */
