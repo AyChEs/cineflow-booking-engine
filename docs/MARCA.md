@@ -97,30 +97,45 @@ Motivo secundario: **el haz del proyector**, un cono de luz `texto` a muy baja o
 ## Imágenes
 
 - Pósteres reales de TMDB. Si no hay red, carteles sustitutos tipográficos de la marca (`php artisan posters:generate-placeholders`): título grande en Big Shoulders, degradado del color del género, haz, grano y créditos con los datos reales.
-- Fondo de la portada: `config('marca.hero_imagen')` (por defecto `public/img/hero-sala.webp`). Si no existe, la imagen de la película destacada.
+- Fondo de la portada y de la ficha: el backdrop de TMDB de la película destacada (`peliculas.fondo_path`), entonado con rojo telón. Sin él, el póster o el fondo del cartel sustituto.
 - Nunca fotos de stock ni personas.
 
 ## Movimiento
 
 Principios:
 
-1. **La luz se enciende, no aparece.** Los rótulos entran letra a letra como una marquesina.
-2. **La sala se abre.** Bandas panorámicas que se retiran al cargar la portada.
-3. **La cartelera pasa como película.** Desplazamiento horizontal ligado al scroll.
-4. **Lo tuyo responde.** La butaca se hunde al elegirla; la entrada se imprime.
-5. **El pago no se adorna.** En la compra solo hay microinteracciones de respuesta.
+1. **La luz se enciende, no aparece.** El título de la portada se enciende letra a letra como una marquesina, con una fila de bombillas que se turnan.
+2. **La sala se abre.** Dos bandas panorámicas se retiran al cargar la portada; un haz de proyector barre la escena y un grano de película la recorre.
+3. **La cartelera pasa como película.** En escritorio, la portada y la cartelera son una sola escena fijada: el hero se encoge hasta ser el primer fotograma de una tira de celuloide con perforaciones y el scroll la hace avanzar. En móvil es un carrusel táctil con perforaciones.
+4. **Lo tuyo responde.** La butaca se hunde al pulsarla y al quedar elegida; la entrada sale como si se imprimiera.
+5. **El pago no se adorna.** En la compra solo hay microinteracciones de respuesta (la butaca se hunde). Nada de GSAP, Lenis ni transiciones de página.
+
+Dónde vive cada cosa:
+
+| Pieza | Archivo |
+|---|---|
+| Estilos del movimiento (solo páginas públicas) | `resources/css/movimiento.css` |
+| Chunk de GSAP, ScrollTrigger, SplitText y Lenis | `resources/js/movimiento/` (se carga solo si el layout declara `@section('mov')`) |
+| Portada: hero y escena fijada | `portada.js` |
+| «Cómo se compra» en cuatro pasos | `compra.js` y `resources/views/portada/` |
+| Nombre en contorno que se rellena | `nombre.js` |
+| Inclinación 3D con foco, botones magnéticos, logotipo del pie | `micro.js` |
+| Transiciones entre páginas | `@view-transition` en `movimiento.css` (View Transitions API, sin JavaScript) |
 
 | Tipo | Duración | Curva |
 |---|---|---|
-| Respuesta (pulsar, elegir butaca, hover) | 120 a 180 ms | `cubic-bezier(.2, .8, .2, 1)` |
-| Entrada de elementos | 600 a 900 ms | `cubic-bezier(.16, 1, .3, 1)` (salida suave) |
-| Marquesina (por letra) | 35 a 45 ms de retardo, 500 ms cada una | `cubic-bezier(.16, 1, .3, 1)` |
-| Bandas panorámicas | 1,1 s | `cubic-bezier(.65, 0, .35, 1)` |
-| Ligado al scroll | lo marca el scroll | lineal, `scrub` de 0,6 a 1 s |
+| Respuesta (pulsar, elegir butaca, hover) | 120 a 260 ms | `cubic-bezier(.2, .8, .2, 1)` |
+| Entrada de elementos | 600 a 900 ms | `expo.out` |
+| Marquesina (por letra) | 55 ms de retardo, 550 ms cada una, con parpadeo | lineal por tramos |
+| Bandas panorámicas | 1,15 s | `power3.inOut` |
+| Ligado al scroll | lo marca el scroll | lineal, `scrub` de 0,6 a 0,8 s |
+| Entrada impresa | 0,9 s en 18 pasos | `steps(18)` |
 
-- Solo `transform` y `opacity`.
-- `prefers-reduced-motion: reduce`: estado final, sin movimiento ni desplazamiento suave.
-- Nada bloquea el teclado ni mueve el foco.
+- Solo `transform` y `opacity`. Lo que parece recorte (la ventana que rellena el nombre, la entrada que sale de la ranura) es un `overflow: hidden` fijo con contenido que se mueve.
+- `prefers-reduced-motion: reduce`: no se descarga GSAP ni Lenis, no hay `@view-transition` y todo está en su estado final (título encendido, bandas abiertas, nombre relleno, tira de carrusel).
+- Sin JavaScript o si el chunk falla: el contenido sigue visible (el script del layout lo deshace a los 4,5 s).
+- El scroll suave de Lenis solo con ratón. Nada bloquea el teclado ni mueve el foco.
+- La escena fijada solo se activa en pantallas de 1024 px o más con ratón; en el resto, el hero hace zoom y paralaje al salir y la cartelera es un carrusel.
 
 ## Usos correctos e incorrectos
 

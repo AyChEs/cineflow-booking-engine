@@ -14,8 +14,8 @@
 <article {{ $attributes->merge(['class' => 'frame group']) }} data-inclinar>
     <div class="frame-cuadro">
         <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
-             src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}"
-             width="300" height="450" loading="lazy" decoding="async" draggable="false"
+             src="{{ str_replace('/t/p/w500/', '/t/p/w342/', $pelicula->poster_url) }}" alt="Póster de {{ $pelicula->titulo }}"
+             width="300" height="450" loading="lazy" fetchpriority="low" decoding="async" draggable="false"
              class="frame-img" style="view-transition-name: {{ $nombreVista }}">
         <span class="frame-foco" aria-hidden="true"></span>
         <div class="frame-pie">

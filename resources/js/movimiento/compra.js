@@ -71,7 +71,8 @@ export function iniciarCompra({ gsap, ScrollTrigger }) {
         });
 
         const marcar = (tiempo) => {
-            const i = Math.min(3, Math.floor(tiempo + 0.02));
+            // Cada paso se marca cuando su ilustración ya domina la escena (0,8 · 1,95 · 2,95 en la línea de tiempo)
+            const i = tiempo < 0.8 ? 0 : tiempo < 1.95 ? 1 : tiempo < 2.95 ? 2 : 3;
             pasos.forEach((p, n) => (n === i ? p.setAttribute('data-activo', '') : p.removeAttribute('data-activo')));
         };
 

@@ -111,7 +111,7 @@
             <x-marca.nombre-ancho :relleno="true" class="nombre-relleno-capa" data-nombre-relleno />
         </div>
         @foreach ($resto->take(3) as $i => $pelicula)
-            <img src="{{ $pelicula->poster_url }}" alt="" width="300" height="450" loading="lazy" decoding="async"
+            <img src="{{ str_replace('/t/p/w500/', '/t/p/w342/', $pelicula->poster_url) }}" alt="" width="300" height="450" loading="lazy" fetchpriority="low" decoding="async"
                  class="cruce cruce--{{ $i + 1 }}" data-cruce="{{ $i + 1 }}"
                  onerror="this.onerror=null;this.src='{{ $pelicula->cartel_respaldo_url }}'">
         @endforeach

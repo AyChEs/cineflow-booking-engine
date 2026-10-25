@@ -493,3 +493,17 @@
 .cruce--2 { left: 46%; top: 22%; transform: rotate(5deg); }
 .cruce--3 { left: 78%; top: 4%; transform: rotate(-4deg); }
 /* Con el nombre relleno en su estado final (sin movimiento) */
+
+/* ── Ficha de película: fondo de la película tras la cabecera ── */
+.ficha-fondo {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 36rem;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background: #C41A3D;
+}
+.ficha-fondo img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 25%; mix-blend-mode: multiply; opacity: .55; }
+.ficha-fondo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #0E0D10 4%, rgb(14 13 16 / .72) 55%, rgb(14 13 16 / .9)); }
+main:has(.ficha-fondo) { position: relative; isolation: isolate; }

@@ -15,6 +15,10 @@
         default => ucfirst(\Carbon\Carbon::parse($dia)->locale('es')->isoFormat('dddd D [de] MMMM')),
     };
 @endphp
+{{-- El fondo de la película, oscurecido y teñido de rojo telón, vuelve a la ficha el tono de la portada --}}
+<div class="ficha-fondo" aria-hidden="true">
+    <img src="{{ $pelicula->fondo_url }}" alt="" width="1280" height="720" decoding="async" onerror="this.remove()">
+</div>
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-12">
 
     <a href="{{ route('peliculas.index') }}{{ $cineId ? '?cine_id='.$cineId : '' }}"

@@ -34,7 +34,7 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 06 | Accesibilidad global, rendimiento y textos | GLM | 03, 04, 05 | hecha (PR #9) |
 | 07 | Revisión final | Revisión | 06 | hecha (PR #10); el PR a `main` lo abre Ayman |
 | 08 | Marca: símbolo, tipografía de cartelería, color y motivo (`docs/MARCA.md`) | | 07 | hecha (PR #11) |
-| 09 | Movimiento: portada de cine, tira de celuloide, «Cómo se compra», transiciones y microinteracciones | | 08 | pendiente |
+| 09 | Movimiento: portada de cine, tira de celuloide, «Cómo se compra», transiciones y microinteracciones | | 08 | en curso |
 
 ## Orden y paralelo
 
