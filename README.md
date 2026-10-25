@@ -142,7 +142,7 @@ The interface targets **WCAG 2.2 AA** and is in Spanish.
 php artisan test
 ```
 
-Runs 94 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
+Runs 101 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
 
 ## Deployment
 

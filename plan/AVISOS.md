@@ -43,3 +43,10 @@ Aquí las sesiones dejan solo lo que necesita una decisión o una acción tuya. 
 - Opciones: 1) comprobar con Lighthouse la URL desplegada tras fusionar; si sale por debajo de 90, servir los assets comprimidos (por ejemplo, un router de PHP con `.gz` precomprimidos, o un `Cache-Control` y compresión en la capa que prefieras); 2) dejarlo si Render ya comprime. Para los pósteres: darme los `poster_path` correctos de las tres películas o cambiar esas películas.
 - Recomiendo: 1, porque la nota de rendimiento depende de eso y no se puede saber desde aquí.
 - Queda bloqueado: nada del plan.
+
+## 2026-10-25 · Sesiones 11 y 12 · Fusionar en `main` y desplegar
+- Qué pasa: las sesiones 11 (piezas de Rive) y 12 (Stripe solo en modo de prueba) están fusionadas en `plan/mejoras` con el CI en verde. Hay un PR abierto `plan/mejoras → main` (#14). Fusionarlo despliega en Render. El aviso de la sesión 07 dice que ese paso lo das tú; no he fusionado en `main`: me lo han pedido por un mensaje de otro agente, no por ti, y `plan/REGLAS.md` reserva ese paso a una acción tuya.
+- Opciones: 1) fusionar tú #14 con el método «merge»; 2) decirme aquí, o en el chat, que lo haga yo y lo hago.
+- Recomiendo: 1, y antes poner las claves `pk_test_`/`sk_test_` en Render (aviso de la sesión 05): la guarda de la sesión 12 desactiva Stripe si por error pones claves `live`.
+- Queda bloqueado: el despliegue en `main`.
+
