@@ -100,6 +100,8 @@ Card payments use **Stripe Checkout in test mode**; the reservation is confirmed
 
 Stripe is enabled only when **both** `STRIPE_SECRET` and `STRIPE_WEBHOOK_SECRET` are set; otherwise step 3 uses the built-in simulated payment (card with Luhn check, or Bizum), which confirms directly.
 
+**Test mode only, guaranteed.** If `STRIPE_KEY` or `STRIPE_SECRET` start with `pk_live_`, `sk_live_` or `rk_live_` and `STRIPE_PERMITIR_LIVE=true` is not set, Stripe is **disabled**: the keys are cleared from the config (so neither the webhook nor refunds can use them), step 3 uses the simulated payment and a clear `Stripe DESACTIVADO` warning goes to the log (at most once every 10 minutes). Real money is only possible by setting `STRIPE_PERMITIR_LIVE=true` on purpose. Covered by `tests/Feature/StripeSoloPruebasTest.php`.
+
 ```env
 STRIPE_KEY=pk_test_xxx
 STRIPE_SECRET=sk_test_xxx
@@ -140,7 +142,7 @@ The interface targets **WCAG 2.2 AA** and is in Spanish.
 php artisan test
 ```
 
-Runs 76 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
+Runs 94 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
 
 ## Deployment
 

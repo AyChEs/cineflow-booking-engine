@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Contracts\PasarelaPago;
 use App\Mail\Transport\BrevoApiTransport;
 use App\Services\StripePasarela;
+use App\Services\StripeService;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
@@ -16,6 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Guarda de dinero real: con claves «live» y sin STRIPE_PERMITIR_LIVE=true, Stripe se desactiva y se usa el pago simulado.
+        (new StripeService())->aplicarGuarda();
+
         // Pasarela de pago real; las pruebas la sustituyen por un doble sin red.
         $this->app->bind(PasarelaPago::class, fn () => new StripePasarela((string) config('services.stripe.secret')));
     }
