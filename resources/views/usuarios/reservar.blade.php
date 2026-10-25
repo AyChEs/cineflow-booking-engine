@@ -24,7 +24,7 @@
 
             <div class="form-group" style="margin-bottom: 0;">
                 <label for="fk_sesion_id" class="form-label">Sesión disponible</label>
-                <select id="fk_sesion_id" name="fk_sesion_id" class="form-select" required onchange="onSessionChange(this.value)">
+                <select id="fk_sesion_id" name="fk_sesion_id" class="form-select" required>
                     <option value="">-- Choose a showtime --</option>
                     @foreach($sesiones as $sesion)
                         <option value="{{ $sesion->id }}" {{ old('fk_sesion_id') == $sesion->id ? 'selected' : '' }}>
@@ -56,7 +56,7 @@
                     <label class="tipus-card {{ old('tipus_entrada', 'adult') === $val ? 'selected' : '' }}" data-val="{{ $val }}"
                            style="cursor: pointer; display: flex; flex-direction: column; align-items: center; padding: 1rem 0.75rem; border-radius: 10px; border: 2px solid var(--border-subtle); transition: all 0.15s; text-align: center; user-select: none;">
                         <input type="radio" name="tipus_entrada" value="{{ $val }}" style="display:none;"
-                               {{ old('tipus_entrada', 'adult') === $val ? 'checked' : '' }} onchange="updatePrice()">
+                               {{ old('tipus_entrada', 'adult') === $val ? 'checked' : '' }}>
                         <span style="font-size: 1.8rem; margin-bottom: 0.4rem;">{{ $opt['icon'] }}</span>
                         <span style="font-weight: 700; color: var(--color-text); font-size: 0.9rem;">{{ $opt['label'] }}</span>
                         <span style="color: var(--color-text-secondary); font-size: 0.75rem; margin-top: 0.2rem;">{{ $opt['desc'] }}</span>
@@ -134,7 +134,7 @@
 </div>
 
 {{-- JavaScript --}}
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 // Data injected from controller
 const sesionesData = @json($sesiones->map(fn($s) => [
     'id'           => $s->id,
@@ -317,6 +317,10 @@ window.addEventListener('DOMContentLoaded', () => {
         updatePrice();
     }
 });
+
+// Antes eran onchange="…" en el HTML; la CSP no permite manejadores en línea (middleware CabecerasDeSeguridad).
+document.getElementById('fk_sesion_id')?.addEventListener('change', (e) => onSessionChange(e.target.value));
+document.querySelectorAll('input[name="tipus_entrada"]').forEach((i) => i.addEventListener('change', updatePrice));
 </script>
 
 <style>

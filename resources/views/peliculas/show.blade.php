@@ -18,14 +18,14 @@
 {{-- El fondo de la película, oscurecido y teñido de rojo telón, vuelve a la ficha el tono de la portada --}}
 <div class="ficha-fondo" aria-hidden="true">
     @if ($pelicula->tiene_fondo)
-        <img src="{{ $pelicula->fondo_url }}" alt="" width="1280" height="720" decoding="async" onerror="this.remove()">
+        <img src="{{ $pelicula->fondo_url }}" alt="" width="1280" height="720" decoding="async" data-quitar-si-falla>
     @else
         {{-- Sin fondo propio: la sala de la marca, en lugar del póster ampliado --}}
         <x-marca.imagen nombre="sala" sizes="100vw" />
     @endif
     <x-marca.imagen nombre="haz" sizes="(min-width: 1024px) 70vw, 100vw" class="ficha-haz" data-haz />
 </div>
-<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-12">
+<div class="mx-auto max-w-6xl px-4 py-pagina sm:px-6">
 
     <a href="{{ route('peliculas.index') }}{{ $cineId ? '?cine_id='.$cineId : '' }}"
        class="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-texto-2 no-underline hover:text-texto">
@@ -33,7 +33,7 @@
     </a>
 
     <div class="grid items-start gap-8 md:grid-cols-[18rem,1fr] md:gap-12">
-        <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+        <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}"
              src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
              fetchpriority="high" decoding="async"
              class="mx-auto aspect-[2/3] w-48 rounded-card border border-sala-700 bg-sala-850 object-cover sm:w-60 md:w-full" style="view-transition-name: poster-{{ $pelicula->id }}">
@@ -76,7 +76,7 @@
                             <x-icon name="pencil" class="h-4 w-4" />Editar
                         </a>
                         <form action="{{ route('peliculas.destroy', $pelicula->id) }}" method="POST"
-                              onsubmit="return confirm('¿Borrar esta película y sus sesiones?')">
+                              data-confirmar="¿Borrar esta película y sus sesiones?">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-danger"><x-icon name="trash" class="h-4 w-4" />Borrar</button>
                         </form>
@@ -86,14 +86,14 @@
         </div>
     </div>
 
-    <section class="mt-14" aria-labelledby="sesiones">
+    <section class="mt-seccion" aria-labelledby="sesiones">
         <h2 id="sesiones" class="display mb-6 text-3xl text-texto">Sesiones</h2>
 
         @forelse ($porDia as $dia => $sesionesDia)
-            <section class="mb-8" aria-labelledby="dia-{{ $dia }}">
+            <section class="mb-8 last:mb-0" aria-labelledby="dia-{{ $dia }}">
                 <h3 id="dia-{{ $dia }}" class="mb-4 text-lg font-semibold text-texto">{{ $nombreDia($dia) }}</h3>
                 @foreach ($sesionesDia->groupBy(fn ($s) => $s->sala->cine->nombre) as $nombreCine => $sesionesCine)
-                    <div class="mb-4">
+                    <div class="mb-4 last:mb-0">
                         <p class="mb-2 flex items-center gap-1.5 text-sm text-texto-2">
                             <x-icon name="map-pin" class="h-4 w-4 shrink-0" />{{ $nombreCine }}
                         </p>

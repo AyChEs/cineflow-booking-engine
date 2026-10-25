@@ -126,13 +126,13 @@
         @foreach ($resto->take(3) as $i => $pelicula)
             <img src="{{ str_replace('/t/p/w500/', '/t/p/w342/', $pelicula->poster_url) }}" alt="" width="300" height="450" loading="lazy" fetchpriority="low" decoding="async"
                  class="cruce cruce--{{ $i + 1 }}" data-cruce="{{ $i + 1 }}"
-                 onerror="this.onerror=null;this.src='{{ $pelicula->cartel_respaldo_url }}'">
+                 data-respaldo="{{ $pelicula->cartel_respaldo_url }}">
         @endforeach
     </div>
 </section>
 
 @if ($cines->isNotEmpty())
-<section class="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 md:py-20" aria-labelledby="nuestros-cines">
+<section class="mx-auto w-full max-w-7xl px-4 pb-pagina pt-seccion sm:px-6" aria-labelledby="nuestros-cines">
     <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
         <h2 id="nuestros-cines" class="display text-4xl text-texto md:text-5xl">Cines</h2>
         <a href="{{ route('cines.index') }}" class="btn btn-secondary btn-sm">

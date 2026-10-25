@@ -4,7 +4,7 @@
 
 @section('content')
 @php $usuario = Auth::user(); @endphp
-<div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14">
+<div class="mx-auto max-w-5xl px-4 py-pagina sm:px-6">
     <h1 class="display text-4xl text-texto">Hola, {{ $usuario->name }}</h1>
 
     @if (session('error'))

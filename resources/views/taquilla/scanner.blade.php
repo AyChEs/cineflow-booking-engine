@@ -49,7 +49,7 @@
 </div>
 
 {{-- html5-qrcode se carga desde resources/js/escaner.js (autoalojado) --}}
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 (function () {
     const validarBase = "{{ url('/entrada/validar') }}";
     const resultEl  = document.getElementById('result');

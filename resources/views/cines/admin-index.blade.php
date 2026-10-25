@@ -35,7 +35,7 @@
                 <td class="table-actions">
                     <a href="{{ route('cines.show', $cine->id) }}" class="table-link">Ver</a>
                     <a href="{{ route('cines.edit', $cine->id) }}" class="table-link" style="color: var(--color-accent-bright);">Editar</a>
-                    <form action="{{ route('cines.destroy', $cine->id) }}" method="POST" style="display:inline" onsubmit="return confirm('¿Borrar este cine?')">
+                    <form action="{{ route('cines.destroy', $cine->id) }}" method="POST" style="display:inline" data-confirmar="¿Borrar este cine?">
                         @csrf @method('DELETE')
                         <button type="submit" class="table-link" style="background:none;border:none;cursor:pointer;color:#FF7A85;">Borrar</button>
                     </form>

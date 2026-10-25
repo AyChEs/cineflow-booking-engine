@@ -69,7 +69,7 @@
                             <a href="{{ route('reservas.edit', $reserva) }}"
                                class="table-link" style="color: var(--color-accent-bright);">Editar</a>
                             <form action="{{ route('reservas.destroy', $reserva) }}" method="POST"
-                                  class="inline" onsubmit="return confirm('¿Borrar esta reserva?')">
+                                  class="inline" data-confirmar="¿Borrar esta reserva?">
                                 @csrf @method('DELETE')
                                 <button type="submit"
                                         class="table-link bg-transparent border-none cursor-pointer text-red-400 hover:text-red-300">

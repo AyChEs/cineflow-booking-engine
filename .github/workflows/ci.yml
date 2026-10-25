@@ -96,3 +96,6 @@ jobs:
 
       - name: Rive pieces (logo, how-to-buy illustration, countdown ring)
         run: node tests/browser/rive.spec.mjs
+
+      - name: Mobile (carousels with scroll-snap, no pins, spacing scale)
+        run: node tests/browser/movil.spec.mjs

@@ -119,7 +119,7 @@
                     </thead>
                     <tbody>
                         @forelse($proximasSesiones as $s)
-                        <tr style="border-bottom:1px solid var(--border-subtle)22;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background=''">
+                        <tr class="fila-hover" style="border-bottom:1px solid var(--border-subtle)22;transition:background 0.15s;">
                             <td style="padding:0.65rem 1rem;font-weight:600;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;">{{ optional($s->pelicula)->titulo ?? '—' }}</td>
                             <td style="padding:0.65rem 1rem;color:var(--color-text-secondary);white-space:nowrap;">
                                 {{ $s->fecha_hora?->format('d/m') ?? '—' }}
@@ -132,7 +132,7 @@
                             <td style="padding:0.65rem 0.75rem;text-align:right;font-weight:700;">{{ number_format($s->preu_base, 2, ',', '.') }}</td>
                             <td style="padding:0.65rem 1rem;text-align:right;white-space:nowrap;">
                                 <a href="{{ route('sesiones.edit', $s) }}" style="color:var(--color-accent-bright);font-size:0.75rem;text-decoration:none;margin-right:0.5rem;">Editar</a>
-                                <form action="{{ route('sesiones.destroy', $s) }}" method="POST" style="display:inline" onsubmit="return confirm('¿Borrar?')">
+                                <form action="{{ route('sesiones.destroy', $s) }}" method="POST" style="display:inline" data-confirmar="¿Borrar?">
                                     @csrf @method('DELETE')
                                     <button type="submit" style="background:none;border:none;color:#FF7A85;font-size:0.75rem;cursor:pointer;padding:0;">Borrar</button>
                                 </form>

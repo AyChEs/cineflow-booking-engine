@@ -126,7 +126,7 @@
                     <div class="text-xs text-texto-2 pt-1">
                         <p class="font-semibold text-white mb-1">Poster selected from TMDB</p>
                         <p>Sube un archivo para cambiarlo o déjalo para usar el de TMDB.</p>
-                        <button type="button" onclick="clearTmdbPoster()"
+                        <button type="button" data-quitar-poster-tmdb
                                 class="text-carmin-400 hover:opacity-70 mt-2 transition-opacity">
                             <x-icon name="close" class="h-4 w-4 mr-1" />Quitar el póster de TMDB
                         </button>
@@ -165,7 +165,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 // Alpine.js widget to search for movies on TMDB and auto-fill the form
 function tmdbSearchWidget() {
     return {
@@ -240,5 +240,8 @@ function clearTmdbPoster() {
     document.getElementById('posterPreviewWrap').classList.add('hidden');
     document.getElementById('posterPreviewWrap').classList.remove('flex');
 }
+
+// Antes era onclick="…" en el HTML; la CSP no permite manejadores en línea (middleware CabecerasDeSeguridad).
+document.querySelectorAll('[data-quitar-poster-tmdb]').forEach((b) => b.addEventListener('click', clearTmdbPoster));
 </script>
 @endsection

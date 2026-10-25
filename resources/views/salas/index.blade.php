@@ -35,7 +35,7 @@
                 <td class="table-actions">
                     <a href="{{ route('salas.show', $sala) }}" class="table-link">Ver</a>
                     <a href="{{ route('salas.edit', $sala) }}" class="table-link" style="color: var(--color-accent-bright);">Editar</a>
-                    <form action="{{ route('salas.destroy', $sala) }}" method="POST" style="display:inline" onsubmit="return confirm('¿Borrar esta sala?')">
+                    <form action="{{ route('salas.destroy', $sala) }}" method="POST" style="display:inline" data-confirmar="¿Borrar esta sala?">
                         @csrf @method('DELETE')
                         <button type="submit" class="table-link" style="background:none;border:none;cursor:pointer;color:#FF7A85;">Borrar</button>
                     </form>
