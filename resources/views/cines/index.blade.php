@@ -1,5 +1,7 @@
 @extends('layout')
 
+@section('mov', 'sitio')
+
 @section('title', 'Cines')
 
 @section('content')

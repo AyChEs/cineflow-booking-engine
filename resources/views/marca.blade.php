@@ -1,4 +1,6 @@
 @extends('layout')
+
+@section('mov', 'sitio')
 @section('title', 'Marca')
 @section('description', 'Sistema de marca de '.config('app.name').': símbolo, color, tipografía, motivo y movimiento.')
 @section('content')

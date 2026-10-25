@@ -1,5 +1,7 @@
 @extends('layout')
 
+@section('mov', 'sitio')
+
 @section('title', $pelicula->titulo)
 
 @section('content')
@@ -13,6 +15,10 @@
         default => ucfirst(\Carbon\Carbon::parse($dia)->locale('es')->isoFormat('dddd D [de] MMMM')),
     };
 @endphp
+{{-- El fondo de la película, oscurecido y teñido de rojo telón, vuelve a la ficha el tono de la portada --}}
+<div class="ficha-fondo" aria-hidden="true">
+    <img src="{{ $pelicula->fondo_url }}" alt="" width="1280" height="720" decoding="async" onerror="this.remove()">
+</div>
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-12">
 
     <a href="{{ route('peliculas.index') }}{{ $cineId ? '?cine_id='.$cineId : '' }}"
@@ -24,7 +30,7 @@
         <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
              src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
              fetchpriority="high" decoding="async"
-             class="mx-auto aspect-[2/3] w-48 rounded-card border border-sala-700 bg-sala-850 object-cover sm:w-60 md:w-full">
+             class="mx-auto aspect-[2/3] w-48 rounded-card border border-sala-700 bg-sala-850 object-cover sm:w-60 md:w-full" style="view-transition-name: poster-{{ $pelicula->id }}">
 
         <div class="min-w-0">
             <h1 class="display break-words text-[2.25rem] text-texto md:text-[3rem]">{{ $pelicula->titulo }}</h1>

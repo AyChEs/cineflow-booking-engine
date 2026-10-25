@@ -17,11 +17,29 @@
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
+    @stack('precarga')
     <link rel="preload" href="{{ Vite::asset('resources/fonts/big-shoulders-display-latin-wght.woff2') }}" as="font" type="font/woff2" crossorigin>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @hasSection('mov')
+        {{-- Movimiento (sesión 09): solo en las páginas públicas. La compra, el acceso y el panel no lo cargan. --}}
+        @vite('resources/css/movimiento.css')
+        <script>
+            (function () {
+                var q = function (c) { return window.matchMedia(c).matches; };
+                var h = document.documentElement;
+                if (q('(prefers-reduced-motion: reduce)')) return;
+                h.classList.add('mov-ok');
+                @if (trim($__env->yieldContent('mov')) === 'portada')
+                if (q('(min-width: 1024px) and (min-height: 560px) and (pointer: fine)')) h.classList.add('mov-escena');
+                @endif
+                // Si el movimiento no arranca, el contenido no se queda oculto.
+                setTimeout(function () { if (!window.__mov) h.classList.remove('mov-ok', 'mov-escena'); }, 4500);
+            })();
+        </script>
+    @endif
     @stack('head')
 </head>
-<body class="flex min-h-screen flex-col">
+<body class="flex min-h-screen flex-col" @hasSection('mov') data-mov="@yield('mov')" @endif>
     <a href="#contenido" class="skip-link">Saltar al contenido</a>
 
     @php
@@ -147,11 +165,10 @@
                 <p><a href="https://github.com/AyChEs/cineflow-booking-engine">Código en GitHub</a></p>
             </div>
         </div>
-        {{-- El nombre a todo el ancho: contorno que se rellena con el scroll (data-relleno). Decorativo. --}}
-        <svg class="pie-nombre" viewBox="0 0 1000 214" aria-hidden="true" focusable="false" data-relleno>
-            <text class="pie-nombre-trazo" x="4" y="211" textLength="992" lengthAdjust="spacing" font-size="262">{{ config('app.name') }}</text>
-            <text class="pie-nombre-relleno" x="4" y="211" textLength="992" lengthAdjust="spacing" font-size="262">{{ config('app.name') }}</text>
-        </svg>
+        {{-- El logotipo a todo el ancho. Decorativo para lectores de pantalla (el nombre ya está arriba). --}}
+        <div class="pie-logo" data-pie-logo>
+            <x-marca.logo-ancho decorativo />
+        </div>
     </footer>
 </body>
 </html>

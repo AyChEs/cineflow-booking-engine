@@ -150,6 +150,9 @@ export function iniciarMapa(raiz, cuentaAtras) {
 
         if (datos.ok) {
             ponerEstado(b, 'tuya');
+            // La butaca se hunde al quedar elegida (la animación solo se aplica si no se pide menos movimiento).
+            b.classList.add('seat--hunde');
+            b.addEventListener('animationend', () => b.classList.remove('seat--hunde'), { once: true });
             caducidad.set(id, enMinutos(MINUTOS_BLOQUEO));
             mostrarAviso('');
             actualizarResumen();

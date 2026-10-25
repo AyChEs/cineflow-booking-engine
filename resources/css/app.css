@@ -160,7 +160,7 @@
     @apply text-carmin-400;
 }
 
-/* Pie: datos, enlaces y el nombre a todo el ancho en contorno */
+/* Pie: datos, enlaces y el logotipo a todo el ancho */
 .site-footer {
     @apply relative mt-20 overflow-hidden border-t border-sala-700 text-sm text-texto-2;
 }
@@ -170,25 +170,10 @@
 .pie-lema {
     @apply display text-3xl text-texto sm:text-4xl;
 }
-.pie-nombre {
-    @apply block w-full select-none;
-    margin-top: clamp(1rem, 4vw, 3rem);
-    margin-bottom: -1.2%;
-}
-.pie-nombre text {
-    font-family: theme('fontFamily.contorno');
-    font-weight: 900;
-    text-transform: uppercase;
-}
-.pie-nombre .pie-nombre-trazo {
-    fill: none;
-    stroke: theme('colors.carmin.500');
-    stroke-width: 1.4;
-}
-.pie-nombre .pie-nombre-relleno {
-    fill: theme('colors.carmin.500');
-    clip-path: inset(0 100% 0 0);
-}
+.pie-logo { padding: clamp(1.5rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem) 0; overflow: hidden; }
+.logo-ancho { display: block; width: 100%; height: auto; }
+.logo-ancho-simbolo { fill: theme('colors.carmin.500'); }
+.logo-ancho-nombre { fill: theme('colors.texto.DEFAULT'); font-family: theme('fontFamily.display'); font-weight: 900; text-transform: uppercase; }
 
 /* Botones */
 .btn {
@@ -395,6 +380,17 @@
         }
     }
 
+    /* La butaca se hunde al pulsarla y se asienta al quedar elegida (solo transform) */
+    @media (prefers-reduced-motion: no-preference) {
+        button.seat:not([aria-disabled="true"]):active {
+            transform: translateY(2px) scale(.88);
+            transition-duration: 60ms;
+        }
+        .seat--hunde {
+            animation: seat-hunde 260ms cubic-bezier(.2, .8, .2, 1);
+        }
+    }
+
     /* Tuya: relleno de marquesina, número y ✓ */
     .seat--tuya {
         @apply bg-marquesina text-sala-950;
@@ -443,6 +439,13 @@
     .seat.is-pendiente {
         opacity: .6;
     }
+}
+
+@keyframes seat-hunde {
+    0% { transform: scale(1); }
+    35% { transform: translateY(2px) scale(.84); }
+    70% { transform: scale(1.08); }
+    100% { transform: scale(1); }
 }
 
 /* Utilidades heredadas (las vistas antiguas las usan con estos valores) */

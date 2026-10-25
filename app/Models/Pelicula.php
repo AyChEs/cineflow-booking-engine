@@ -21,6 +21,7 @@ class Pelicula extends Model
         'classificacio_edad',
         'trailer_url',
         'poster_path',
+        'fondo_path',
         'tmdb_id',
         'rating',
     ];
@@ -64,11 +65,15 @@ class Pelicula extends Model
     }
 
     /**
-     * Imagen panorámica para la portada: el fondo del cartel sustituto si existe
+     * Imagen panorámica para la portada: el backdrop de TMDB (fondo_path), el fondo del cartel sustituto si existe
      * (public/carteles/*-fondo.webp); si no, el propio póster.
      */
     public function getFondoUrlAttribute(): string
     {
+        if ($this->fondo_path) {
+            return 'https://image.tmdb.org/t/p/w1280'.$this->fondo_path;
+        }
+
         if ($this->poster_path && Str::startsWith($this->poster_path, 'carteles/')) {
             $fondo = Str::replaceLast('.webp', '-fondo.webp', $this->poster_path);
             if (is_file(public_path($fondo))) {
@@ -77,6 +82,17 @@ class Pelicula extends Model
         }
 
         return str_replace('/t/p/w500/', '/t/p/w780/', $this->poster_url);
+    }
+
+    /** srcset del fondo de TMDB (w780 y w1280) para no descargar la imagen grande en móvil; null si el fondo no es de TMDB. */
+    public function getFondoSrcsetAttribute(): ?string
+    {
+        if (! $this->fondo_path) {
+            return null;
+        }
+        $base = 'https://image.tmdb.org/t/p/';
+
+        return $base.'w780'.$this->fondo_path.' 780w, '.$base.'w1280'.$this->fondo_path.' 1280w';
     }
 
     /**

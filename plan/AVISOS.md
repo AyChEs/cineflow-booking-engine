@@ -37,3 +37,9 @@ Aquí las sesiones dejan solo lo que necesita una decisión o una acción tuya. 
 - Recomiendo: 2 y luego 1. Al fusionar en `main`, Render desplegará: antes pon las claves de Stripe (aviso de la sesión 05) o la demo seguirá con el pago simulado. Las migraciones nuevas (`checkout_pagos`, `stripe_eventos`) se aplican con el `migrate` del arranque.
 - Queda bloqueado: nada del plan; solo la prueba real con Stripe.
 - Ramas: no he podido borrar las ramas `mejora/*` fusionadas desde este entorno (el proxy rechaza el borrado). Puedes borrarlas en GitHub.
+
+## 2026-10-25 · Sesión 09 · Lighthouse en Render y pósteres que no cargan
+- Qué pasa: 1) Lighthouse móvil da 89 a 96 en la portada y 92 a 100 en el resto, pero **medido detrás de un proxy con gzip y caché larga**. La demo corre con `php artisan serve` (`docker/entrypoint.sh`), que sirve el CSS y el JS sin comprimir; sin gzip del borde de Render, la portada baja hacia 75 a 80. No lo he tocado porque cambiar cómo se sirve la app roza el hosting. 2) Tres pósteres del seeder dan 404 en TMDB (`Inside Out 2`, `Mufasa: El Rey León`, `Nosferatu`): sus `poster_path` están mal desde el principio y la web usa el cartel de respaldo. 3) La sesión 09 añade la columna `peliculas.fondo_path` (imagen panorámica de TMDB para la portada y la ficha); el seeder la rellena para seis películas y el resto usa el póster.
+- Opciones: 1) comprobar con Lighthouse la URL desplegada tras fusionar; si sale por debajo de 90, servir los assets comprimidos (por ejemplo, un router de PHP con `.gz` precomprimidos, o un `Cache-Control` y compresión en la capa que prefieras); 2) dejarlo si Render ya comprime. Para los pósteres: darme los `poster_path` correctos de las tres películas o cambiar esas películas.
+- Recomiendo: 1, porque la nota de rendimiento depende de eso y no se puede saber desde aquí.
+- Queda bloqueado: nada del plan.

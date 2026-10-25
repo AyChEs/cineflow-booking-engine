@@ -90,3 +90,6 @@ jobs:
 
       - name: Seat map with the keyboard
         run: node tests/browser/seat-map.spec.mjs
+
+      - name: Motion (scroll, reduced motion, no horizontal scroll)
+        run: node tests/browser/movimiento.spec.mjs
