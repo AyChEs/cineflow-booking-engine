@@ -35,18 +35,29 @@ export function iniciarCompra({ gsap, ScrollTrigger }) {
           .fromTo(chip, { scale: 0.5, opacity: 0, transformOrigin: '100% 50%' }, { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(2.5)' }, t + 0.12);
     }
 
-    // Móvil y táctil: cada ilustración se anima una vez al entrar.
+    // Móvil y táctil: las ilustraciones son un carrusel con scroll-snap (movimiento.css). Cada una se anima una vez, cuando
+    // la mayor parte de su tarjeta entra en pantalla (IntersectionObserver mira a la vez el scroll vertical y el del carrusel).
     function estatica() {
-        const disparadores = [];
+        const limpieza = [];
         const crear = (vista, construir) => {
             const tl = gsap.timeline({ paused: true });
             construir(tl);
-            disparadores.push(ScrollTrigger.create({ trigger: vista, start: 'top 82%', once: true, onEnter: () => tl.play() }));
+            if (!('IntersectionObserver' in window)) return tl.progress(1);
+            const observador = new IntersectionObserver((entradas) => {
+                if (!entradas.some((e) => e.isIntersecting)) return;
+                tl.play();
+                observador.disconnect();
+            }, { threshold: 0.6 });
+            observador.observe(vista);
+            limpieza.push(() => { observador.disconnect(); tl.kill(); });
         };
-        crear(v0, (tl) => dibujarMapa(v0, tl, 0, 1.2));
+        crear(v0, (tl) => dibujarMapa(v0, tl, 0, 1.0));
         crear(v1, (tl) => ilumina(v1, tl, 0.1));
-        crear(v3, (tl) => tl.fromTo(v3.querySelector('[data-entrada]'), { yPercent: -108 }, { yPercent: 0, duration: 1.6, ease: 'steps(16)' }));
-        return () => disparadores.forEach((d) => d.kill());
+        crear(v3, (tl) => tl.fromTo(v3.querySelector('[data-entrada]'), { yPercent: -108 }, { yPercent: 0, duration: 1.3, ease: 'steps(16)' }));
+        return () => {
+            limpieza.forEach((f) => f());
+            gsap.set([...seccion.querySelectorAll('[data-vista] *')], { clearProps: 'transform,opacity' });
+        };
     }
 
     // Escritorio: escena fijada.

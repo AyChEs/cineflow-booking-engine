@@ -32,8 +32,7 @@
 
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;">
             @foreach($sessionsDelDia as $sesion)
-            <div style="background:var(--color-bg-secondary);border:1px solid var(--border-subtle);border-radius:12px;padding:1.25rem;transition:border-color 0.2s;"
-                 onmouseover="this.style.borderColor='var(--color-accent-bright)44'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+            <div class="tarjeta-sesion-hover" style="background:var(--color-bg-secondary);border:1px solid var(--border-subtle);border-radius:12px;padding:1.25rem;transition:border-color 0.2s;">
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.75rem;">
                     <div>
                         <p style="font-weight:800;font-size:0.95rem;margin:0 0 0.2rem;text-transform:uppercase;letter-spacing:0.5px;">

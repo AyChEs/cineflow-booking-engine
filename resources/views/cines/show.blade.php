@@ -20,7 +20,7 @@
         default => ucfirst(\Carbon\Carbon::parse($dia)->locale('es')->isoFormat('dddd D [de] MMMM')),
     };
 @endphp
-<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-12">
+<div class="mx-auto max-w-6xl px-4 py-pagina sm:px-6">
 
     <a href="{{ route('cines.index') }}" class="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-texto-2 no-underline hover:text-texto">
         <x-icon name="arrow-left" class="h-4 w-4" />Todos los cines
@@ -45,13 +45,13 @@
         @endauth
     </div>
 
-    <section class="mt-12" aria-labelledby="en-este-cine">
+    <section class="mt-seccion" aria-labelledby="en-este-cine">
         <h2 id="en-este-cine" class="display mb-6 text-3xl text-texto">En este cine</h2>
 
         @forelse ($sesiones->groupBy('fk_pelicula_id') as $sesionesPeli)
             @php $pelicula = $sesionesPeli->first()->pelicula; @endphp
             <article class="mb-6 grid gap-5 rounded-card border border-sala-700 bg-sala-900 p-4 sm:grid-cols-[7rem,1fr] sm:p-6">
-                <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
+                <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}"
              src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
                      loading="lazy" decoding="async"
                      class="hidden aspect-[2/3] w-28 rounded-control border border-sala-700 object-cover sm:block">

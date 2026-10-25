@@ -14,7 +14,7 @@
         ['Marquesina', 'marquesina', '#EBD67C', 'Solo lo tuyo y el foco', '12,3:1 sobre superficie'],
     ];
 @endphp
-<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-16">
+<div class="mx-auto max-w-7xl px-4 py-pagina sm:px-6">
     <section aria-labelledby="marca-titulo" class="grid items-center gap-10 md:grid-cols-[1.2fr,1fr]">
         <div>
             <x-marca.logo tam="lg" animado />
@@ -42,7 +42,7 @@
         </figure>
     </section>
 
-    <section aria-labelledby="marca-tamanos" class="mt-20 grid gap-6 md:grid-cols-2">
+    <section aria-labelledby="marca-tamanos" class="mt-seccion grid gap-6 md:grid-cols-2">
         <div class="rounded-card border border-sala-700 bg-sala-900 p-6">
             <h2 id="marca-tamanos" class="display text-3xl text-texto">De la pestaña al cartel</h2>
             <div class="mt-6 flex flex-wrap items-end gap-6 text-carmin-500">
@@ -67,7 +67,7 @@
         </div>
     </section>
 
-    <section aria-labelledby="marca-color" class="mt-20">
+    <section aria-labelledby="marca-color" class="mt-seccion">
         <h2 id="marca-color" class="display text-4xl text-texto">Color</h2>
         <p class="mt-2 max-w-prose text-texto-2">70 % sala, 20 % luz, 10 % rojo telón. La marquesina solo aparece cuando algo es tuyo.</p>
         <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -84,7 +84,7 @@
         </ul>
     </section>
 
-    <section aria-labelledby="marca-tipo" class="mt-20 grid gap-6 md:grid-cols-[1.4fr,1fr]">
+    <section aria-labelledby="marca-tipo" class="mt-seccion grid gap-6 md:grid-cols-[1.4fr,1fr]">
         <div class="rounded-card border border-sala-700 bg-sala-900 p-6">
             <h2 id="marca-tipo" class="text-sm font-semibold text-texto-2">Big Shoulders Display · títulos</h2>
             <p class="display mt-4 text-[4rem] leading-[.9] text-texto md:text-[7rem]">Sala 3 · 22:15</p>
@@ -98,7 +98,7 @@
         </div>
     </section>
 
-    <section aria-labelledby="marca-motivo" class="mt-20">
+    <section aria-labelledby="marca-motivo" class="mt-seccion">
         <h2 id="marca-motivo" class="display text-4xl text-texto">La perforación</h2>
         <p class="mt-2 max-w-prose text-texto-2">Una idea en tres escalas: las muescas de la entrada, las perforaciones del celuloide y las filas de butacas.</p>
         <div class="mt-8 grid gap-6 md:grid-cols-3">
@@ -119,7 +119,7 @@
         </div>
     </section>
 
-    <section aria-labelledby="marca-archivos" class="mt-20">
+    <section aria-labelledby="marca-archivos" class="mt-seccion">
         <h2 id="marca-archivos" class="display text-4xl text-texto">Archivos</h2>
         <ul class="mt-6 flex flex-wrap gap-3">
             @foreach (['simbolo.svg' => 'Símbolo', 'logo-horizontal.svg' => 'Logotipo horizontal', 'logo-horizontal-sobre-claro.svg' => 'Sobre claro', 'logo-mono-claro.svg' => 'Monocromo claro', 'logo-mono-oscuro.svg' => 'Monocromo oscuro', 'favicon.svg' => 'Favicon', 'og.png' => 'Imagen para redes'] as $archivo => $texto)

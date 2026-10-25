@@ -5,7 +5,7 @@
     $sesion = $reserva->sesion;
     $butacasOrdenadas = collect($butaques)->sortBy(fn ($b) => sprintf('%s%03d', preg_replace('/\d+/', '', $b), (int) preg_replace('/\D+/', '', $b)))->join(', ');
 @endphp
-<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 md:py-14">
+<div class="mx-auto max-w-3xl px-4 py-pagina sm:px-6">
     <div class="mb-8 flex items-start gap-3">
         <x-icon name="check-circle" class="mt-1 h-7 w-7 shrink-0 text-ok" />
         <div>

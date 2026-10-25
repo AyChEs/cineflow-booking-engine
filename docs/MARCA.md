@@ -153,6 +153,17 @@ Dónde vive cada cosa:
 - El scroll suave de Lenis solo con ratón. Nada bloquea el teclado ni mueve el foco.
 - La escena fijada solo se activa en pantallas de 1024 px o más con ratón; en el resto, el hero hace zoom y paralaje al salir y la cartelera es un carrusel.
 
+## Móvil y espacios (sesión 13)
+
+**Móvil y táctil** (`(max-width: 1023px), (pointer: coarse)`) tiene su propia coreografía, más corta y sin pins:
+
+- Portada: el hero no se encoge ni se fija. Entra un 40 % más rápido y, al salir, la imagen se acerca un 8 % y el contenido se desvanece, con el scroll mandando directamente (`scrub: true`, sin la inercia del escritorio).
+- El haz se funde y se queda quieto; el grano no se anima; el rojo telón del hero es un color plano en vez de una mezcla `multiply`; sin perspectiva 3D en los pósteres ni `will-change` en los botones. Lenis solo con ratón.
+- La tira de celuloide es un carrusel táctil con `scroll-snap-type: x mandatory`. Las cuatro ilustraciones de «Cómo se compra» también (la siguiente asoma a la derecha) y se animan una vez, cuando su tarjeta entra en pantalla (IntersectionObserver): la portada mide 3,7 mil px a 390 px en vez de 4,8 mil.
+- `tests/browser/movil.spec.mjs` lo comprueba a 390×844 y 360×780.
+
+**Escala de espaciado vertical** (tokens de Tailwind sobre variables CSS, `app.css`): `bloque` (20 a 32 px, entre bloques de una sección), `pagina` (24 a 40 px, relleno vertical de una página) y `seccion` (40 a 64 px, entre secciones y antes del pie). El hueco entre el último contenido y el pie queda entre 64 y 104 px en todas las páginas públicas (antes, de 120 a 160 px).
+
 ## Piezas de Rive (sesión 11)
 
 Tres piezas hechas con la CLI de Rive 1.8.0 y pintadas con el runtime `@rive-app/canvas-lite` (MIT). Los fuentes son **solo RML, sin scripts** (nada de `.luau` ni `.wgsl`) y viven en `rive/<nombre>/`; los `.riv` construidos, en `public/rive/`. `npm run rive` los reconstruye todos y copia el WebAssembly del runtime a `public/rive/rive.wasm` (necesita `rive` en el PATH; la CLI vive en `~/.rive/bin`). El runtime se carga con `import()` solo cuando una pieza entra en pantalla y su `.wasm` sale de nuestro dominio, sin CDN.

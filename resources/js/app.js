@@ -2,12 +2,14 @@ import './bootstrap';
 
 import Alpine from 'alpinejs';
 import { enfocarPrimerError, iniciarApariciones, iniciarMenu } from './menu';
+import { iniciarInteracciones } from './interacciones';
 
 window.Alpine = Alpine;
 
 Alpine.start();
 
 iniciarMenu();
+iniciarInteracciones();
 iniciarApariciones();
 enfocarPrimerError();
 

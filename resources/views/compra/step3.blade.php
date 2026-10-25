@@ -10,7 +10,7 @@
     $modoTarjeta = old('card_mode', $savedCard ? 'saved' : 'new');
 @endphp
 
-<div class="mx-auto grid max-w-5xl items-start gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr,20rem] lg:py-12">
+<div class="mx-auto grid max-w-5xl items-start gap-6 px-4 py-pagina sm:px-6 lg:grid-cols-[1fr,20rem]">
     <div class="rounded-card border border-sala-700 bg-sala-900 p-4 sm:p-6">
         <h1 class="display text-3xl text-texto">Pago</h1>
 
@@ -103,7 +103,7 @@
 </div>
 
 @unless ($stripeEnabled)
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 (function () {
     const form = document.getElementById('payForm');
     const paneles = { targeta: document.getElementById('panel-targeta'), bizum: document.getElementById('panel-bizum') };

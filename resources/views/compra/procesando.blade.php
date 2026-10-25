@@ -30,7 +30,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 (function () {
     const caja = document.getElementById('procesando');
     const texto = document.getElementById('procesando-texto');

@@ -11,7 +11,7 @@
                 @if(auth()->user()->isAdmin())
                     <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-primary" style="font-size: 0.875rem;">Editar</a>
                     <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display: inline;"
-                          onsubmit="return confirm('¿Borrar este usuario?')">
+                          data-confirmar="¿Borrar este usuario?">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-secondary" style="font-size: 0.875rem; color: #FF7A85; border-color: #FF7A85;">Borrar</button>
                     </form>

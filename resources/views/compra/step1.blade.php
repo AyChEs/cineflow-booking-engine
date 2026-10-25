@@ -4,7 +4,7 @@
 
 @include('compra._progress', ['step' => 1])
 
-<div class="mx-auto grid max-w-5xl items-start gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr,20rem] lg:py-12">
+<div class="mx-auto grid max-w-5xl items-start gap-6 px-4 py-pagina sm:px-6 lg:grid-cols-[1fr,20rem]">
     <div class="rounded-card border border-sala-700 bg-sala-900 p-4 sm:p-6">
         <h1 class="display text-3xl text-texto">Elige tus entradas</h1>
         <p class="mt-2 text-texto-2">Hasta 10 entradas por compra. El precio depende del tipo de entrada.</p>
@@ -61,7 +61,7 @@
     @include('compra._sidebar', ['sesion' => $sesion, 'step' => 1, 'compra' => null])
 </div>
 
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 (function () {
     const form = document.getElementById('step1form');
     const boton = document.getElementById('btnSeguent');

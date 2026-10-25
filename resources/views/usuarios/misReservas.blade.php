@@ -3,7 +3,7 @@
 @section('title', 'Mis entradas')
 
 @section('content')
-<div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14">
+<div class="mx-auto max-w-5xl px-4 py-pagina sm:px-6">
     <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
         <h1 class="display text-4xl text-texto">Mis entradas</h1>
         <a href="{{ route('peliculas.index') }}" class="btn btn-primary"><x-icon name="ticket" class="h-4 w-4" />Comprar entradas</a>
@@ -42,7 +42,7 @@
                     <div class="flex flex-wrap items-center gap-3 sm:justify-end">
                         <x-estado-reserva :estat="$reserva->estat" />
                         @if ($reserva->estat === 'pendent')
-                            <form action="{{ route('reservas.cancelar', $reserva) }}" method="POST" onsubmit="return confirm('¿Cancelar esta reserva?')">
+                            <form action="{{ route('reservas.cancelar', $reserva) }}" method="POST" data-confirmar="¿Cancelar esta reserva?">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
                             </form>

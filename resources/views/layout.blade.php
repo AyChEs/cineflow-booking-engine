@@ -23,7 +23,7 @@
     @hasSection('mov')
         {{-- Movimiento (sesión 09): solo en las páginas públicas. La compra, el acceso y el panel no lo cargan. --}}
         @vite('resources/css/movimiento.css')
-        <script>
+        <script nonce="{{ Vite::cspNonce() }}">
             (function () {
                 var q = function (c) { return window.matchMedia(c).matches; };
                 var h = document.documentElement;
@@ -146,7 +146,7 @@
     </main>
 
     <footer class="site-footer">
-        <div class="mx-auto grid max-w-7xl gap-8 px-4 pt-14 sm:px-6 md:grid-cols-[1.4fr,1fr,1fr]">
+        <div class="mx-auto grid max-w-7xl gap-8 px-4 pt-seccion sm:px-6 md:grid-cols-[1.4fr,1fr,1fr]">
             <div>
                 <x-marca.logo />
                 <p class="pie-lema mt-6">{{ config('marca.lema') }}</p>
