@@ -40,6 +40,8 @@ return [
         'secret'   => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
         'currency' => env('STRIPE_CURRENCY', 'eur'),
+        // Solo modo de prueba: con claves pk_live_/sk_live_/rk_live_ Stripe se desactiva salvo que esto sea true.
+        'permitir_live' => env('STRIPE_PERMITIR_LIVE', false),
     ],
 
     'movies_api' => [
