@@ -2,6 +2,7 @@
 // el lector de pantalla solo oye avisos a los 5, 2 y 1 minutos y a los 30 segundos.
 
 const AVISOS = [300, 120, 60, 30];
+const TOTAL = 480; // el bloqueo dura 8 minutos
 
 function formato(seg) {
     const m = Math.floor(seg / 60);
@@ -31,6 +32,10 @@ export function iniciarCuentaAtras(caja, alTerminar) {
         if (!fin) return;
         const seg = Math.max(0, Math.round((fin.getTime() - Date.now()) / 1000));
         valor.textContent = formato(seg);
+
+        // Anillo decorativo: --resto (0 a 1) vacía el SVG de reserva y el evento se lo cuenta al anillo de Rive.
+        caja.style.setProperty('--resto', (Math.min(seg, TOTAL) / TOTAL).toFixed(4));
+        caja.dispatchEvent(new CustomEvent('cuenta:segundos', { detail: { segundos: Math.min(seg, TOTAL) } }));
 
         const minuto = Math.ceil(seg / 60);
         if (minuto !== ultimoMinuto) {

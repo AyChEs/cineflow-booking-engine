@@ -108,7 +108,7 @@ Cuatro imágenes **generadas con IA por Ayman Charoui** para CineFlow. No son fo
 |---|---|---|---|
 | Sala vacía con butacas rojas y pantalla blanca (16:9) | `sala` | Hero de la portada y fondo de la ficha cuando la película no tiene fondo propio (`Pelicula::tiene_fondo`); fondo de «Elige la butaca. El resto es cine.»; fondo de acceso y registro | Siempre oscurecida (opacidad de .3 a .8 y velos). En acceso y registro el formulario va en una tarjeta opaca, así que el contraste no depende de la foto |
 | Haz de proyector sobre negro (16:9) | `haz` | Portada y ficha de película | Capa `mix-blend-mode: screen`. GSAP la gira sobre su foco (`movimiento/haz.js`, 11 s, ida y vuelta) y la pausa fuera de pantalla. Con `prefers-reduced-motion` queda quieta. En el hero con la sala no se pinta: la sala ya trae el suyo |
-| Butaca roja bajo un foco (4:5) | `butaca` | «Cómo se compra», paso 2 («Tu butaca queda guardada 8 minutos») | Banda recortada sobre el mapa, con el sitio y la cuenta atrás sobre un velo oscuro |
+| Butaca roja bajo un foco (4:5) | `butaca` | «Cómo se compra», paso 2 («Tu butaca queda guardada 8 minutos») | Banda recortada sobre el mapa, con el sitio y la cuenta atrás sobre un velo oscuro. En escritorio con movimiento, cuando carga la ilustración de Rive (ver «Piezas de Rive»), ocupa su lugar; la foto sigue en móvil, con movimiento reducido y si el runtime no carga |
 | Vestíbulo de noche con mostrador rojo y cajas de luz (16:9) | `vestibulo` | Cabecera de «Cines» | Es la imagen LCP de esa página: sin `loading="lazy"` y con `fetchpriority="high"` |
 
 - Solo la imagen del hero sin fondo propio (portada) y la cabecera de «Cines» cargan con prioridad; el resto es `loading="lazy"`.
@@ -136,6 +136,7 @@ Dónde vive cada cosa:
 | Nombre en contorno que se rellena | `nombre.js` |
 | Inclinación 3D con foco, botones magnéticos, logotipo del pie | `micro.js` |
 | Transiciones entre páginas | `@view-transition` en `movimiento.css` (View Transitions API, sin JavaScript) |
+| Piezas de Rive (logotipo, ilustración de compra, anillo) | `resources/js/rive/` y `rive/` (ver «Piezas de Rive») |
 
 | Tipo | Duración | Curva |
 |---|---|---|
@@ -151,6 +152,25 @@ Dónde vive cada cosa:
 - Sin JavaScript o si el chunk falla: el contenido sigue visible (el script del layout lo deshace a los 4,5 s).
 - El scroll suave de Lenis solo con ratón. Nada bloquea el teclado ni mueve el foco.
 - La escena fijada solo se activa en pantallas de 1024 px o más con ratón; en el resto, el hero hace zoom y paralaje al salir y la cartelera es un carrusel.
+
+## Piezas de Rive (sesión 11)
+
+Tres piezas hechas con la CLI de Rive 1.8.0 y pintadas con el runtime `@rive-app/canvas-lite` (MIT). Los fuentes son **solo RML, sin scripts** (nada de `.luau` ni `.wgsl`) y viven en `rive/<nombre>/`; los `.riv` construidos, en `public/rive/`. `npm run rive` los reconstruye todos y copia el WebAssembly del runtime a `public/rive/rive.wasm` (necesita `rive` en el PATH; la CLI vive en `~/.rive/bin`). El runtime se carga con `import()` solo cuando una pieza entra en pantalla y su `.wasm` sale de nuestro dominio, sin CDN.
+
+| Pieza | Fuente | `.riv` | Dónde | Cómo se maneja |
+|---|---|---|---|---|
+| Logotipo animado | `rive/logo` | 4,5 KB | Cabecera de la portada y logotipo grande de `/marca` | Al cargar, una vez, y al pasar el ratón o el foco. En táctil se queda el SVG |
+| Ilustración de «Cómo se compra» | `rive/compra` | 16,7 KB | Portada, escena fijada de escritorio (pasos 2 a 4) | Entrada numérica `progreso` (0 a 100) del view model, que escribe el ScrollTrigger de `movimiento/compra.js` |
+| Anillo de la cuenta atrás | `rive/anillo` | 0,9 KB | Compra, pasos 2 y 3 | Entrada numérica `resto` (segundos, 0 a 480) que escribe `cuenta-atras.js` cada segundo |
+
+- **Logotipo.** La butaca suelta los brazos y el asiento y se queda en el respaldo, que es la entrada; los cuatro troqueles saltan, las dos mitades se separan por la línea de perforaciones y vuelven a juntarse; la butaca vuelve y el reposo es exactamente el símbolo de `<x-marca.simbolo>`. Dura 2 s (una máquina de estados con un disparador `repetir`).
+- **Ilustración de compra.** La butaca se ilumina bajo el haz y se marca como tuya (marquesina); su anillo de 8:00 se vacía hasta 2:00; entra la tarjeta, un barrido la valida y se marca; sale la entrada impresa por la ranura, con el símbolo y la línea de corte. No lleva texto (la versión lite no pinta texto de Rive): la cuenta atrás es HTML encima del lienzo y los pasos son los de siempre.
+- **Anillo.** Marquesina sobre pista `sala-700`; en el último minuto pasa a `carmin-400` **de golpe**, porque un fundido entre amarillo y rojo pasa por el naranja. La punta gira con el arco.
+- **Accesibilidad.** Los lienzos llevan `aria-hidden` y no reciben foco. El número de la cuenta atrás, su `role="timer"` y los avisos de 5, 2, 1 minuto y 30 segundos siguen en HTML. El mapa de butacas no se ha tocado.
+- **Movimiento reducido.** No se descarga el runtime: se ve el SVG del símbolo, las vistas HTML de «Cómo se compra» y un anillo SVG que se vacía en saltos de un segundo (es información, como el número).
+- **Si el runtime falla.** Queda el SVG, las vistas HTML y el anillo SVG, sin errores en consola.
+- **Alineación del bloque de texto de «Cómo se compra».** Al fijarse la escena de golpe (un salto de scroll), GSAP movía `.compra-pista` al borde izquierdo porque llevaba `margin: 0 auto`. Ahora el elemento fijado va a todo el ancho y el contenido se centra en `.compra-rejilla`, con el mismo ancho y margen que la cabecera.
+- **Peso.** Runtime: 58 KB de JavaScript y 807 KB de WebAssembly (332 KB comprimido), una sola vez para las tres piezas. Archivos `.riv`: 22 KB en total.
 
 ## Usos correctos e incorrectos
 

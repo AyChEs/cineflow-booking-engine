@@ -24,6 +24,15 @@ if (modoMovimiento && !window.matchMedia('(prefers-reduced-motion: reduce)').mat
     else window.addEventListener('load', cuandoCargue, { once: true });
 }
 
+// Piezas de Rive (sesión 11): logotipo animado, ilustración de «Cómo se compra» y anillo de la cuenta atrás.
+// Un chunk aparte, después de la carga y solo con movimiento permitido. Sin él cada pieza se queda con su SVG o su HTML.
+if (document.querySelector('[data-rive]') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const cargarRive = () => import('./rive/index.js').then((m) => m.iniciarRive()).catch(() => {});
+    const alCargar = () => ('requestIdleCallback' in window ? requestIdleCallback(cargarRive, { timeout: 2500 }) : setTimeout(cargarRive, 400));
+    if (document.readyState === 'complete') alCargar();
+    else window.addEventListener('load', alCargar, { once: true });
+}
+
 // Compra: mapa de butacas (paso 2) y cuenta atrás del bloqueo (pasos 2 y 3), solo donde existen.
 const mapa = document.getElementById('seat-map');
 const caja = document.getElementById('cuenta-atras');

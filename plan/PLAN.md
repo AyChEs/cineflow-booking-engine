@@ -36,6 +36,7 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 08 | Marca: símbolo, tipografía de cartelería, color y motivo (`docs/MARCA.md`) | | 07 | hecha (PR #11) |
 | 09 | Movimiento: portada de cine, tira de celuloide, «Cómo se compra», transiciones y microinteracciones | | 08 | hecha (PR #12) |
 | 10 | Imágenes propias: haz, butaca, sala y vestíbulo (`docs/MARCA.md`, «Imágenes propias») | | 09 | hecha (PR #13) |
+| 11 | Piezas de Rive: logotipo animado, ilustración de «Cómo se compra» y anillo de la cuenta atrás (`docs/MARCA.md`, «Piezas de Rive») | | 10 | en curso (PR pendiente) |
 
 ## Orden y paralelo
 
