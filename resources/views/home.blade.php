@@ -7,11 +7,17 @@
     $tituloDestacada = $destacada?->titulo ?? ($tmdbHero['title'] ?? null);
     $sinopsis = $destacada?->sinopsis ?? ($tmdbHero['description'] ?? null);
     $fondo = $destacada?->fondo_url ?? ($tmdbHero['image_url'] ?? null);
+    // Sin fondo propio (ni backdrop de TMDB ni fondo del cartel sustituto) el hero usa la sala de la marca, no el póster ampliado.
+    $usaSala = $tituloDestacada && ($destacada ? ! $destacada->tiene_fondo : ! $fondo);
     $enlace = $destacada ? route('peliculas.show', $destacada) : route('peliculas.index');
     $resto = $destacada ? $peliculas->reject(fn ($p) => $p->id === $destacada->id)->values() : $peliculas;
 @endphp
 
-@if ($fondo)
+@if ($usaSala)
+    @push('precarga')
+        <link rel="preload" as="image" type="image/avif" imagesrcset="{{ collect(config('marca.fotos.sala.anchos'))->map(fn ($w) => asset("img/marca/fotos/sala-{$w}.avif")." {$w}w")->join(', ') }}" imagesizes="100vw" fetchpriority="high">
+    @endpush
+@elseif ($fondo)
     @push('precarga')
         <link rel="preconnect" href="https://image.tmdb.org">
         <link rel="preload" as="image" href="{{ $fondo }}" @if ($destacada?->fondo_srcset) imagesrcset="{{ $destacada->fondo_srcset }}" imagesizes="100vw" @endif fetchpriority="high">
@@ -28,14 +34,20 @@
         <div class="film" data-film>
             @if ($tituloDestacada)
             <article class="frame-hero" data-hero aria-labelledby="destacada">
-                @if ($fondo)
+                @if ($usaSala)
+                    <div class="hero-media hero-media--sala" data-hero-media aria-hidden="true">
+                        <x-marca.imagen nombre="sala" sizes="100vw" :prioridad="true" />
+                    </div>
+                @elseif ($fondo)
                     <div class="hero-media" data-hero-media aria-hidden="true">
                         <img src="{{ $fondo }}" @if ($destacada?->fondo_srcset) srcset="{{ $destacada->fondo_srcset }}" sizes="100vw" @endif alt="" width="1280" height="720" fetchpriority="high" decoding="async">
                     </div>
                 @endif
                 <div class="hero-tinte" aria-hidden="true"></div>
                 <div class="hero-rojo" aria-hidden="true"></div>
-                <div class="hero-haz" aria-hidden="true"></div>
+                <div class="hero-haz" aria-hidden="true">
+                    <x-marca.imagen nombre="haz" sizes="100vw" class="hero-haz-img" data-haz />
+                </div>
                 <div class="hero-grano" aria-hidden="true"></div>
 
                 <div class="hero-contenido" data-hero-contenido>
@@ -104,6 +116,7 @@
 
 {{-- ── El nombre, a todo el ancho: se rellena con el scroll y los pósteres lo cruzan ── --}}
 <section class="nombre-gigante" data-nombre aria-labelledby="lema">
+    <div class="nombre-fondo" aria-hidden="true"><x-marca.imagen nombre="sala" sizes="100vw" /></div>
     <h2 id="lema" class="nombre-lema display">{{ config('marca.lema') }}</h2>
     <div class="nombre-lienzo" aria-hidden="true">
         <x-marca.nombre-ancho class="nombre-trazo-capa" />

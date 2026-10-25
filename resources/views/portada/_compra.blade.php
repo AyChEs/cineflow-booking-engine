@@ -48,7 +48,10 @@
 
             <div class="compra-vista" data-vista="1">
                 <div class="compra-marco">
-                    <p class="compra-marco-cabecera"><span>Fila D, butaca 5</span><span class="compra-cuenta cifras" data-cuenta><x-icon name="clock" class="h-4 w-4" /><b data-cuenta-texto>8:00</b></span></p>
+                    <figure class="compra-foto">
+                        <x-marca.imagen nombre="butaca" sizes="(min-width: 1024px) 32rem, 90vw" class="compra-foto-img" />
+                        <figcaption class="compra-foto-pie"><span>Fila D, butaca 5</span><span class="compra-cuenta cifras" data-cuenta><x-icon name="clock" class="h-4 w-4" /><b data-cuenta-texto>8:00</b></span></figcaption>
+                    </figure>
                     @include('portada._mapa', ['tuya' => true])
                     <p class="compra-marco-pie"><span class="compra-barra"><i data-cuenta-barra></i></span>La butaca es tuya hasta que se acabe el tiempo.</p>
                 </div>

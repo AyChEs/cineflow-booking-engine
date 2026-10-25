@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 
 import { iniciarInclinacion, iniciarMagneticos, iniciarPieLogo } from './micro.js';
+import { iniciarHaz } from './haz.js';
 import { iniciarPortada } from './portada.js';
 import { iniciarCompra } from './compra.js';
 import { iniciarNombre } from './nombre.js';
@@ -31,6 +32,7 @@ export function iniciar(modo) {
     iniciarInclinacion();
     iniciarMagneticos(gsap);
     iniciarPieLogo(gsap, ScrollTrigger);
+    iniciarHaz(gsap, ScrollTrigger);
 
     if (modo === 'portada') {
         iniciarPortada({ gsap, ScrollTrigger, SplitText });

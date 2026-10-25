@@ -5,9 +5,16 @@
 @section('title', 'Cines')
 
 @section('content')
-<div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14">
-    <h1 class="display text-4xl text-texto md:text-5xl">Cines</h1>
-    <p class="cifras mt-2 text-texto-2">{{ $cines->count() }} {{ $cines->count() === 1 ? 'cine' : 'cines' }}</p>
+<header class="cines-cabecera">
+    {{-- El vestíbulo de noche es la imagen más grande de la página: carga ya y con prioridad --}}
+    <x-marca.imagen nombre="vestibulo" sizes="100vw" class="cines-cabecera-img" :prioridad="true" />
+    <div class="cines-cabecera-texto mx-auto max-w-7xl px-4 sm:px-6">
+        <h1 class="display text-4xl text-texto md:text-5xl">Cines</h1>
+        <p class="cifras mt-2 text-texto-2">{{ $cines->count() }} {{ $cines->count() === 1 ? 'cine' : 'cines' }}</p>
+    </div>
+</header>
+
+<div class="mx-auto max-w-7xl px-4 pb-10 pt-6 sm:px-6 md:pb-14">
 
     @if (session('success'))
         <div class="alert alert-success mt-6" role="status"><x-icon name="check-circle" class="mt-0.5 h-4 w-4 shrink-0" />{{ session('success') }}</div>

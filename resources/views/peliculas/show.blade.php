@@ -17,7 +17,13 @@
 @endphp
 {{-- El fondo de la película, oscurecido y teñido de rojo telón, vuelve a la ficha el tono de la portada --}}
 <div class="ficha-fondo" aria-hidden="true">
-    <img src="{{ $pelicula->fondo_url }}" alt="" width="1280" height="720" decoding="async" onerror="this.remove()">
+    @if ($pelicula->tiene_fondo)
+        <img src="{{ $pelicula->fondo_url }}" alt="" width="1280" height="720" decoding="async" onerror="this.remove()">
+    @else
+        {{-- Sin fondo propio: la sala de la marca, en lugar del póster ampliado --}}
+        <x-marca.imagen nombre="sala" sizes="100vw" />
+    @endif
+    <x-marca.imagen nombre="haz" sizes="(min-width: 1024px) 70vw, 100vw" class="ficha-haz" data-haz />
 </div>
 <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-12">
 

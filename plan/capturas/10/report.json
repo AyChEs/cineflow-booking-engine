@@ -1,0 +1,70 @@
+[
+ {
+  "url": "/",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/cines",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/login",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/register",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/peliculas/3",
+  "w": 390,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 390,
+  "consoleErrors": []
+ },
+ {
+  "url": "/",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/cines",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/login",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/register",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "url": "/peliculas/3",
+  "w": 1440,
+  "hscroll": false,
+  "violations": []
+ },
+ {
+  "w": 1440,
+  "consoleErrors": []
+ }
+]
