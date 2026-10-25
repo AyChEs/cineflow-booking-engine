@@ -41,7 +41,7 @@ try {
         const page = await contexto.newPage();
 
         // Públicas
-        for (const [nombre, ruta] of [['portada', '/'], ['cartelera', '/peliculas'], ['cines', '/cines'], ['login', '/login'], ['registro', '/register'], ['marca', '/marca']]) {
+        for (const [nombre, ruta] of [['portada', '/'], ['cartelera', '/peliculas'], ['cines', '/cines'], ['login', '/login'], ['registro', '/register'], ['marca', '/marca'], ['aviso legal', '/aviso-legal'], ['privacidad', '/privacidad']]) {
             await page.goto(BASE + ruta, { waitUntil: 'networkidle' });
             await revisar(page, nombre, ancho);
         }

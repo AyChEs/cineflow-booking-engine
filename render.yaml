@@ -21,6 +21,9 @@ services:
         value: sqlite
       - key: SESSION_DRIVER
         value: file
+      # Cookies solo por HTTPS (Secure); HttpOnly y SameSite=Lax ya son los valores por defecto.
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
       - key: CACHE_STORE
         value: file
       - key: QUEUE_CONNECTION
