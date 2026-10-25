@@ -93,3 +93,6 @@ jobs:
 
       - name: Motion (scroll, reduced motion, no horizontal scroll)
         run: node tests/browser/movimiento.spec.mjs
+
+      - name: Rive pieces (logo, how-to-buy illustration, countdown ring)
+        run: node tests/browser/rive.spec.mjs
