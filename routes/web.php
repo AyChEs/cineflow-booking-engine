@@ -46,6 +46,8 @@ Route::get('/sesiones/{id}', [SesionController::class, 'show'])
     ->whereNumber('id')
     ->name('sesiones.show');
 Route::get('/cines', [CineController::class, 'index'])->name('cines.index');
+// Sistema de marca (docs/MARCA.md)
+Route::view('/marca', 'marca')->name('marca');
 Route::get('/cines/{id}', [CineController::class, 'show'])
     ->whereNumber('id')
     ->name('cines.show');
