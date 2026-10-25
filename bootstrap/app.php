@@ -26,6 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Esborra la sessió de compra quan l'usuari surt del flux de compra
         $middleware->web(append: [
             \App\Http\Middleware\ClearPurchaseSession::class,
+            // Cabeceras de seguridad (CSP con nonce, HSTS en HTTPS, etc.); config/seguridad.php.
+            \App\Http\Middleware\CabecerasDeSeguridad::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

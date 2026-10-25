@@ -136,13 +136,17 @@ The interface targets **WCAG 2.2 AA** and is in Spanish.
 
 `tests/browser/a11y.spec.mjs` runs axe on 13 screens (home to ticket, including the three purchase steps) at 390 and 1440 px and fails on any serious or critical violation; `tests/browser/seat-map.spec.mjs` drives the seat map with the keyboard only. `tests/browser/movimiento.spec.mjs` checks the public pages' motion (no horizontal scroll, no layout shift, final state with reduced motion). The three run in CI (`a11y` job). Brand system: `docs/MARCA.md` and `/marca`.
 
+## Security headers
+
+Every web response goes through `App\Http\Middleware\CabecerasDeSeguridad` (settings in `config/seguridad.php`): a **Content-Security-Policy with a per-request nonce** (inline scripts carry `nonce="{{ Vite::cspNonce() }}"`; no inline event handlers; `'wasm-unsafe-eval'` for the Rive WebAssembly; `'unsafe-eval'` only on pages that use Alpine expressions), images only from the app, `data:`/`blob:` and TMDB, forms only to the app and Stripe Checkout (`checkout.stripe.com`), no iframes, `frame-ancestors 'none'`, plus `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy` (camera only in the box-office scanner), `Cross-Origin-Opener-Policy` and HSTS (only over HTTPS). `SECURITY_HEADERS=false` turns it off; `CSP_IMG_HOSTS` adds image origins. Covered by `tests/Feature/CabecerasDeSeguridadTest.php`.
+
 ## Tests
 
 ```bash
 php artisan test
 ```
 
-Runs 101 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
+Runs 112 tests against SQLite: full purchase flow, lock expiration, race-condition prevention, pessimistic locking, guest locks, the Stripe webhook (signature, idempotency, refunds, seat release), views, authentication and profile.
 
 ## Deployment
 
