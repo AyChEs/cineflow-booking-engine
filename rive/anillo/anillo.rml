@@ -1,0 +1,66 @@
+<Rive version="1" kind="fragment">
+    <!-- Anillo de la cuenta atrás de la compra (pasos 2 y 3). Decorativo: el número y los avisos son HTML.
+         La página escribe los segundos que quedan en «resto» (0 a 480) y todo lo demás sale de ahí:
+         el arco se vacía como una aguja de reloj, la punta gira con él y en el último minuto el amarillo pasa a rojo de golpe (un fundido pasaría por el naranja, que la marca no usa). -->
+    <Artboard defaultStateMachineId="0:7" viewModelId="0:40" viewModelInstanceId="0:41" clip="false" width="96" height="96" styleId="0:3" name="Anillo" id="0:2">
+        <LayoutComponentStyle name="Estilo" id="0:3"/>
+        <Node x="48" y="48" name="Anillo">
+            <Node name="Punta" id="0:26">
+                <DataBindContext sourcePathIds="0:40-0:45" propertyKey="15" converterId="0:52"/>
+                <Shape x="0" y="-36" opacity="0" name="Punta roja">
+                    <DataBindContext sourcePathIds="0:40-0:45" propertyKey="18" converterId="0:51"/>
+                    <Ellipse width="10" height="10" originX="0.5" originY="0.5" name="Forma"/>
+                    <Fill name="Relleno"><SolidColor colorValue="FFF0566B" name="Carmín 400"/></Fill>
+                </Shape>
+                <Shape x="0" y="-36" name="Punta" id="0:25">
+                    <Ellipse width="10" height="10" originX="0.5" originY="0.5" name="Forma"/>
+                    <Fill name="Relleno"><SolidColor colorValue="FFEBD67C" name="Marquesina"/></Fill>
+                </Shape>
+            </Node>
+            <Shape opacity="0" name="Arco rojo" id="0:22">
+                <DataBindContext sourcePathIds="0:40-0:45" propertyKey="18" converterId="0:51"/>
+                <Ellipse width="72" height="72" originX="0.5" originY="0.5" name="Forma"/>
+                <Stroke thickness="8" cap="round" join="round" name="Trazo">
+                    <SolidColor colorValue="FFF0566B" name="Carmín 400"/>
+                    <TrimPath start="0" end="1" name="Recorte" id="0:24">
+                        <DataBindContext sourcePathIds="0:40-0:45" propertyKey="114" converterId="0:50"/>
+                    </TrimPath>
+                </Stroke>
+            </Shape>
+            <Shape name="Arco" id="0:21">
+                <Ellipse width="72" height="72" originX="0.5" originY="0.5" name="Forma"/>
+                <Stroke thickness="8" cap="round" join="round" name="Trazo">
+                    <SolidColor colorValue="FFEBD67C" name="Marquesina"/>
+                    <TrimPath start="0" end="1" name="Recorte" id="0:23">
+                        <DataBindContext sourcePathIds="0:40-0:45" propertyKey="114" converterId="0:50"/>
+                    </TrimPath>
+                </Stroke>
+            </Shape>
+            <Shape name="Pista" id="0:20">
+                <Ellipse width="72" height="72" originX="0.5" originY="0.5" name="Forma"/>
+                <Stroke thickness="8" name="Trazo"><SolidColor colorValue="FF3A3641" name="Sala 700"/></Stroke>
+            </Shape>
+        </Node>
+
+        <StateMachine name="Anillo" id="0:7">
+            <StateMachineLayer name="Capa" id="0:8">
+                <AnyState x="300" y="-120"/>
+                <ExitState x="500" y="-120"/>
+                <EntryState x="0" y="0"><StateTransition stateToId="0:9"/></EntryState>
+                <AnimationState animationId="0:10" x="200" y="0" id="0:9"/>
+            </StateMachineLayer>
+        </StateMachine>
+        <LinearAnimation loopValue="oneShot" fps="60" duration="1" name="Reposo" id="0:10"/>
+    </Artboard>
+
+    <DataConverterRangeMapper minInput="0" maxInput="480" minOutput="1" maxOutput="0" clampLower="true" clampUpper="true" name="Segundos a recorrido" id="0:50"/>
+    <DataConverterRangeMapper minInput="60" maxInput="60.001" minOutput="1" maxOutput="0" clampLower="true" clampUpper="true" name="Último minuto" id="0:51"/>
+    <DataConverterRangeMapper minInput="0" maxInput="480" minOutput="6.2831855" maxOutput="0" clampLower="true" clampUpper="true" name="Segundos a ángulo" id="0:52"/>
+
+    <ViewModel defaultInstanceId="0:41" name="Cuenta" id="0:40">
+        <ViewModelPropertyNumber name="resto" id="0:45"/>
+        <ViewModelInstance exports="true" name="Predeterminada" id="0:41">
+            <ViewModelInstanceNumber propertyValue="480" viewModelPropertyId="0:45"/>
+        </ViewModelInstance>
+    </ViewModel>
+</Rive>
