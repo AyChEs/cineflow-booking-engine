@@ -35,6 +35,7 @@ Después de la revisión, Opus solo revisa el resultado final.
 | 07 | Revisión final | Revisión | 06 | hecha (PR #10); el PR a `main` lo abre Ayman |
 | 08 | Marca: símbolo, tipografía de cartelería, color y motivo (`docs/MARCA.md`) | | 07 | hecha (PR #11) |
 | 09 | Movimiento: portada de cine, tira de celuloide, «Cómo se compra», transiciones y microinteracciones | | 08 | hecha (PR #12) |
+| 10 | Imágenes propias: haz, butaca, sala y vestíbulo (`docs/MARCA.md`, «Imágenes propias») | | 09 | hecha (PR #13) |
 
 ## Orden y paralelo
 
