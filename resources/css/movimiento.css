@@ -1,0 +1,495 @@
+/*
+ * Movimiento de las páginas públicas (sesión 09, docs/MARCA.md «Movimiento»).
+ * Solo se anima transform y opacity. Con prefers-reduced-motion: reduce no hay movimiento y todo
+ * se ve en su estado final (el script inline del layout no añade .mov-ok ni .mov-escena).
+ *
+ *   .mov-ok       la página va a animarse: lo que entra empieza oculto.
+ *   .mov-escena   escritorio con ratón: la portada y la cartelera forman una escena fijada.
+ */
+
+:root {
+    --cabecera: 4rem;
+    --k: .6; /* escala del hero al encogerse hasta ser el primer fotograma de la tira */
+    --celuloide: #08070A;
+    /* perforación de celuloide: muesca redondeada de 28 px de paso */
+    --perf: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='12'%3E%3Crect x='6' y='1' width='16' height='10' rx='3' fill='%23F2EEE6' fill-opacity='.5'/%3E%3C/svg%3E");
+    --grano: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Transiciones entre páginas (View Transitions API, solo las páginas públicas) ── */
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+}
+.site-header { view-transition-name: cabecera; }
+::view-transition-group(cabecera) { animation-duration: 0s; }
+::view-transition-old(root) { animation: 160ms cubic-bezier(.4, 0, 1, 1) both vt-sale; }
+::view-transition-new(root) { animation: 360ms cubic-bezier(.16, 1, .3, 1) both vt-entra; }
+::view-transition-group(*) { animation-duration: 420ms; animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+@keyframes vt-sale { to { opacity: 0; } }
+@keyframes vt-entra { from { opacity: 0; transform: translateY(14px); } }
+
+/* ── Fotogramas: inclinación 3D y foco que sigue al cursor (se aplica a las tarjetas de película) ── */
+[data-inclinar] { perspective: 900px; }
+.frame-cuadro { position: relative; transform-style: preserve-3d; }
+.frame-foco {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 30%), rgb(255 246 230 / .34), transparent 62%);
+}
+@media (prefers-reduced-motion: no-preference) {
+    .frame-cuadro {
+        transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+        transition: transform 240ms cubic-bezier(.2, .8, .2, 1);
+    }
+    .frame-foco { transition: opacity 200ms ease; }
+    [data-inclinar]:hover .frame-foco,
+    [data-inclinar]:focus-within .frame-foco { opacity: 1; }
+    [data-inclinar].is-mueve .frame-cuadro { transition-duration: 60ms; }
+}
+
+/* ── Botones magnéticos: el desplazamiento lo pone movimiento.js (transform) ── */
+[data-magnetico] { will-change: transform; }
+
+/* ── Portada: hero de cine a sangre ── */
+.escena { position: relative; }
+.escena-pista { display: flex; flex-direction: column; }
+.film { display: contents; }
+
+.frame-hero {
+    order: 1;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    height: clamp(34rem, calc(100svh - var(--cabecera)), 58rem);
+    background: var(--celuloide);
+}
+.hero-media { position: absolute; inset: -5% 0; z-index: -4; }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 30%; }
+/* Oscurece a la izquierda (donde va el texto) y abajo (donde se funde con la sala) */
+.hero-tinte {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    background:
+        linear-gradient(90deg, rgb(8 7 10 / .94) 0, rgb(8 7 10 / .62) 38%, rgb(8 7 10 / 0) 72%),
+        linear-gradient(0deg, rgb(14 13 16) 0, rgb(14 13 16 / 0) 34%);
+}
+/* Entonado: el color de la película se tiñe de rojo telón para que la portada sea de la marca */
+.hero-rojo { position: absolute; inset: 0; z-index: -2; background: #C41A3D; mix-blend-mode: multiply; opacity: .5; }
+
+/* Haz de proyector: un cono de luz que barre la escena */
+.hero-haz { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.hero-haz::before {
+    content: '';
+    position: absolute;
+    top: -12%;
+    left: 66%;
+    width: 130%;
+    height: 170%;
+    transform-origin: 50% 0;
+    transform: translateX(-50%) rotate(-24deg);
+    /* cono de luz con bordes suaves y que se apaga hacia abajo */
+    background: conic-gradient(from 163deg at 50% 0, transparent 0deg, rgb(255 246 230 / .13) 6deg, rgb(255 246 230 / .30) 17deg, rgb(255 246 230 / .13) 28deg, transparent 34deg);
+    -webkit-mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / .55) 55%, transparent 92%);
+    mask-image: linear-gradient(180deg, #000 0, rgb(0 0 0 / .55) 55%, transparent 92%);
+}
+
+/* Grano de película: ruido pequeño que salta de sitio (solo transform) */
+.hero-grano {
+    position: absolute;
+    inset: -40%;
+    z-index: 3;
+    pointer-events: none;
+    opacity: .13;
+    background-image: var(--grano);
+    background-size: 180px 180px;
+}
+
+.hero-contenido {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2rem) clamp(2rem, 7vh, 4.5rem);
+}
+/* Marquesina: una fila de bombillas que se turnan */
+.hero-bombillas {
+    position: relative;
+    height: 12px;
+    width: min(100%, 38rem);
+    margin-bottom: 1.1rem;
+}
+.hero-bombillas::before,
+.hero-bombillas::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 6px 6px, #FFF6E6 0 3.2px, rgb(255 246 230 / .35) 3.6px, transparent 6px) 0 0 / 24px 12px repeat-x;
+}
+.hero-bombillas::after { transform: translateX(12px); }
+.hero-etiqueta { font-size: .9rem; font-weight: 600; color: #F0566B; margin-bottom: .6rem; }
+.hero-titulo {
+    font-family: theme('fontFamily.display');
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: clamp(3.4rem, 10.5vw, 9.5rem);
+    line-height: .86;
+    letter-spacing: .004em;
+    color: #F2EEE6;
+    max-width: 16ch;
+    text-shadow: 0 0 38px rgb(224 40 74 / .38);
+    text-wrap: balance;
+}
+.hero-titulo .letra { display: inline-block; }
+.hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin-top: 1.1rem; font-size: .9rem; color: #D5D1D9; }
+.hero-genero { border: 1px solid rgb(242 238 230 / .4); border-radius: 999px; padding: 0 .6rem; font-size: .8rem; }
+.hero-sinopsis {
+    margin-top: 1rem;
+    max-width: 38rem;
+    font-size: 1.05rem;
+    color: #E4E0EA;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.hero-acciones { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.6rem; }
+.hero-trailer { background: rgb(8 7 10 / .45); }
+.hero-fotograma-enlace { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+
+/* Bandas panorámicas: cubren la portada y se abren al cargar */
+.hero-banda {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 6;
+    height: 51%;
+    background: #050407;
+    pointer-events: none;
+}
+.hero-banda--sup { top: 0; transform: translateY(-100%); }
+.hero-banda--inf { bottom: 0; transform: translateY(100%); }
+.hero-banda::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgb(242 238 230 / .55);
+}
+.hero-banda--sup::after { bottom: 0; }
+.hero-banda--inf::after { top: 0; }
+
+/* Mientras se espera al script, el título y las bandas están en su posición de partida */
+.mov-ok .hero-banda--sup,
+.mov-ok .hero-banda--inf { transform: none; }
+.mov-ok [data-titulo],
+.mov-ok .hero-bombillas,
+.mov-ok [data-hero-detalle] { visibility: hidden; }
+.mov-ok.mov-listo [data-titulo],
+.mov-ok.mov-listo .hero-bombillas,
+.mov-ok.mov-listo [data-hero-detalle] { visibility: visible; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero-grano { animation: grano 1s steps(1, end) infinite; }
+    .hero-haz::before { animation: haz 11s cubic-bezier(.45, 0, .55, 1) infinite alternate; }
+    .hero-bombillas::before { animation: bombilla 1.2s steps(1, end) infinite; }
+    .hero-bombillas::after { animation: bombilla 1.2s steps(1, end) infinite reverse; }
+}
+@keyframes grano {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-6%, 4%); }
+    20% { transform: translate(5%, -7%); }
+    30% { transform: translate(-9%, -3%); }
+    40% { transform: translate(8%, 6%); }
+    50% { transform: translate(-3%, 9%); }
+    60% { transform: translate(7%, -2%); }
+    70% { transform: translate(-8%, 7%); }
+    80% { transform: translate(4%, -9%); }
+    90% { transform: translate(-5%, 2%); }
+}
+@keyframes haz { from { transform: translateX(-50%) rotate(-34deg); } to { transform: translateX(-50%) rotate(10deg); } }
+@keyframes bombilla { 0% { opacity: 1; } 50% { opacity: .2; } }
+
+/* ── Cartelera: tira de celuloide ── */
+.tira-cabecera {
+    order: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    max-width: 80rem;
+    margin: 3.5rem auto 1.25rem;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+}
+.tira { order: 3; }
+.tira-lista {
+    display: flex;
+    gap: 1.1rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding: 2.6rem max(1rem, calc((100vw - 80rem) / 2 + 2rem));
+    scroll-padding-inline: max(1rem, calc((100vw - 80rem) / 2 + 2rem));
+    background:
+        var(--perf) repeat-x 0 12px / 28px 12px local,
+        var(--perf) repeat-x 0 calc(100% - 12px) / 28px 12px local,
+        var(--celuloide) local;
+}
+.tira-lista::-webkit-scrollbar { display: none; }
+.tira-lista > li { flex: 0 0 min(66vw, 15.5rem); scroll-snap-align: start; }
+.film-banda, .film-progreso { display: none; }
+
+.frame { position: relative; display: block; width: 100%; aspect-ratio: 2 / 3; }
+.frame-cuadro { width: 100%; height: 100%; border-radius: .5rem; overflow: hidden; background: #221F27; }
+.frame-img { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; }
+.frame-pie {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 4rem .9rem .9rem;
+    background: linear-gradient(0deg, rgb(8 7 10 / .96) 0, rgb(8 7 10 / .7) 55%, transparent);
+    /* Los pósteres ya llevan su título: el pie solo se muestra al apuntar o enfocar (los lectores lo leen siempre) */
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 200ms ease, transform 240ms cubic-bezier(.2, .8, .2, 1);
+}
+.frame:hover .frame-pie, .frame:focus-within .frame-pie { opacity: 1; transform: none; }
+/* En táctil no hay hover: queda visible solo la línea de datos; el título (el enlace) sigue ahí para los lectores */
+@media (hover: none) {
+    .frame-pie { opacity: 1; transform: none; padding-top: 2.2rem; }
+    .frame-titulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .frame-meta { margin-top: 0; }
+}
+.frame-titulo {
+    font-family: theme('fontFamily.display');
+    font-weight: 800;
+    font-size: 1.7rem;
+    line-height: .95;
+    text-transform: uppercase;
+    color: #F2EEE6;
+}
+.frame-enlace { color: inherit; text-decoration: none; }
+.frame-enlace::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: .5rem; }
+.frame-enlace:focus-visible { outline: none; }
+.frame-enlace:focus-visible::after { outline: 2px solid theme('colors.foco'); outline-offset: 3px; }
+.frame-meta { margin-top: .35rem; font-size: .8rem; color: #C9C5CE; }
+.frame:hover .frame-titulo, .frame:focus-within .frame-titulo { color: #fff; }
+
+/* Escena fijada (escritorio con movimiento): el hero es el primer fotograma de la tira */
+@media (min-width: 1024px) {
+    .mov-escena .escena-pista {
+        position: relative;
+        display: block;
+        height: calc(100svh - var(--cabecera));
+        overflow: hidden;
+        container-type: size;
+    }
+    .mov-escena .film {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: max-content;
+        height: 100%;
+        padding-right: 8rem;
+        will-change: transform;
+    }
+    .mov-escena .frame-hero {
+        order: 0;
+        flex: none;
+        width: 100cqw;
+        height: 100%;
+        /* Al encogerse a escala k ocupa k·100cqw: el resto de fotogramas queda pegado a su borde */
+        margin-right: calc(100cqw * (var(--k) - 1) + 1.4rem);
+        transform-origin: 0 50%;
+        border-radius: .5rem;
+        z-index: 2; /* por encima de la banda y de los fotogramas: la tira sale de detrás al encogerse */
+    }
+    .mov-escena .tira, .mov-escena .tira-lista, .mov-escena .tira-lista > li { display: contents; }
+    .mov-escena .tira-lista { padding: 0; background: none; }
+    .mov-escena .frame {
+        flex: none;
+        width: auto;
+        height: calc(var(--k) * 100cqh);
+        margin-right: 1.4rem;
+        z-index: 1;
+    }
+    .mov-escena .film-banda {
+        display: block;
+        position: absolute;
+        z-index: 0;
+        left: -3rem;
+        right: 0;
+        top: 50%;
+        height: calc(var(--k) * 100cqh + 4.6rem);
+        transform: translateY(-50%);
+        opacity: 0;
+        background:
+            var(--perf) repeat-x 0 .85rem / 28px 12px,
+            var(--perf) repeat-x 0 calc(100% - .85rem) / 28px 12px,
+            var(--celuloide);
+    }
+    .mov-escena .tira-cabecera {
+        position: absolute;
+        z-index: 3;
+        left: 0;
+        right: 0;
+        top: calc((100cqh - var(--k) * 100cqh - 4.6rem) / 2 - 5.5rem);
+        margin: 0 auto;
+        opacity: 0;
+    }
+    .mov-escena .film-progreso {
+        display: block;
+        position: absolute;
+        left: clamp(1rem, 4vw, 2rem);
+        right: clamp(1rem, 4vw, 2rem);
+        bottom: calc((100cqh - var(--k) * 100cqh - 4.6rem) / 2 - 2.2rem);
+        height: 2px;
+        background: #3A3641;
+        opacity: 0;
+    }
+    .mov-escena .film-progreso i { display: block; height: 100%; background: theme('colors.carmin.500'); transform-origin: 0 50%; transform: scaleX(0); }
+}
+
+/* ── Cómo se compra ── */
+.compra { position: relative; margin-top: 5rem; }
+.compra-pista {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+}
+.compra-pasos { margin-top: 2rem; display: grid; gap: 1.1rem; }
+.compra-paso { display: grid; grid-template-columns: 2.4rem 1fr; gap: .9rem; align-items: start; }
+.compra-paso-num {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    border: 2px solid theme('colors.carmin.500');
+    font-family: theme('fontFamily.display');
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #F2EEE6;
+}
+.compra-paso-titulo { font-family: theme('fontFamily.display'); font-weight: 800; font-size: 1.65rem; line-height: 1; color: #F2EEE6; }
+.compra-paso-texto { margin-top: .35rem; max-width: 28rem; color: theme('colors.texto.2'); font-size: .95rem; }
+
+.compra-escena { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+.compra-vista { position: relative; }
+.compra-marco {
+    border: 1px solid theme('colors.sala.700');
+    border-radius: 1rem;
+    background: theme('colors.sala.900');
+    padding: 1.1rem 1.1rem 1.25rem;
+    overflow: hidden;
+}
+.compra-marco-cabecera { display: flex; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: .6rem; font-size: .9rem; font-weight: 600; color: #F2EEE6; }
+.compra-marco-cabecera .cifras { color: theme('colors.texto.2'); font-weight: 400; }
+.mapa-svg { display: block; width: 100%; height: auto; }
+.compra-cuenta { display: inline-flex; align-items: center; gap: .35rem; padding: .15rem .65rem; border-radius: 999px; background: #EBD67C; color: #0E0D10 !important; font-weight: 700 !important; }
+.compra-marco-pie { display: flex; flex-direction: column; gap: .5rem; margin-top: .6rem; font-size: .85rem; color: theme('colors.texto.2'); }
+.compra-barra { display: block; height: 4px; border-radius: 2px; background: theme('colors.sala.700'); overflow: hidden; }
+.compra-barra i { display: block; height: 100%; width: 100%; background: #EBD67C; transform-origin: 0 50%; }
+
+.compra-pago { display: grid; gap: .8rem; }
+.compra-resumen { display: grid; gap: .5rem; padding-bottom: .8rem; border-bottom: 1px solid theme('colors.sala.700'); }
+.compra-resumen div { display: flex; justify-content: space-between; gap: 1rem; font-size: .9rem; }
+.compra-resumen dt { color: #F2EEE6; }
+.compra-resumen dd { color: theme('colors.texto.2'); }
+.compra-campos { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.compra-campo { display: grid; gap: .15rem; padding: .55rem .75rem; border: 1px solid theme('colors.libre'); border-radius: 8px; background: theme('colors.sala.950'); }
+.compra-campo span { font-size: .75rem; color: theme('colors.texto.2'); }
+.compra-campo b { font-weight: 600; font-size: .95rem; color: #F2EEE6; }
+.compra-pagar { display: grid; place-items: center; min-height: 2.8rem; border-radius: 8px; background: theme('colors.carmin.500'); color: #fff; font-weight: 600; box-shadow: 0 0 0 1px #F0566B33, 0 8px 24px #B3203A33; }
+
+/* Entrada: troquelada, con su talón y su QR */
+.compra-impresora { position: relative; padding-top: 1.4rem; }
+.compra-ranura { position: absolute; z-index: 2; top: 0; left: 4%; right: 4%; height: 1.4rem; border-radius: 999px; background: #08070A; border: 1px solid theme('colors.sala.700'); }
+.compra-hueco { position: relative; z-index: 1; margin: 0 7%; overflow: hidden; padding-top: .7rem; }
+.entrada {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    background: theme('colors.carmin.500');
+    color: #fff;
+    border-radius: 12px;
+    -webkit-mask: radial-gradient(circle 11px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 11px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+    mask: radial-gradient(circle 11px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 11px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+.entrada-cuerpo { padding: 1.2rem 1.2rem 1.2rem 1.6rem; display: grid; gap: .7rem; align-content: space-between; }
+.entrada-marca { display: inline-flex; align-items: center; gap: .4rem; font-family: theme('fontFamily.display'); font-weight: 900; text-transform: uppercase; font-size: 1.05rem; }
+.entrada-titulo { font-family: theme('fontFamily.display'); font-weight: 900; text-transform: uppercase; font-size: 2.3rem; line-height: .9; }
+.entrada-datos { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: .3rem 1.2rem; }
+.entrada-datos dt { font-size: .75rem; color: #fff; opacity: .9; }
+.entrada-datos dd { font-family: theme('fontFamily.display'); font-weight: 800; font-size: 1.6rem; line-height: 1; }
+.entrada-talon { display: grid; justify-items: center; align-content: center; gap: .45rem; padding: 1rem 2rem 1rem 1.2rem; border-left: 2px dotted rgb(14 13 16 / .55); font-size: .8rem; }
+.entrada-qr { width: 5.6rem; height: 5.6rem; border-radius: 4px; }
+
+@media (min-width: 1024px) {
+    .compra-pista { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 4rem; }
+    .compra-texto { position: sticky; top: 6rem; }
+    .compra-escena { grid-template-columns: 1fr; }
+}
+/* Escena fijada: las cuatro ilustraciones se apilan en la misma celda */
+@media (min-width: 1024px) {
+    .mov-escena .compra-pista { height: calc(100svh - var(--cabecera)); align-content: center; align-items: center; }
+    .mov-escena .compra-texto { position: static; }
+    .mov-escena .compra-escena { display: grid; }
+    .mov-escena .compra-vista { grid-area: 1 / 1; align-self: start; }
+    /* El paso activo se lee en blanco; los demás en gris secundario (contraste AA, sin bajar la opacidad) */
+    .mov-escena .compra-paso-titulo { color: theme('colors.texto.2'); transition: color 200ms; }
+    .mov-escena .compra-paso[data-activo] .compra-paso-titulo { color: #F2EEE6; }
+    .mov-escena .compra-paso:not([data-activo]) .compra-paso-num { border-color: theme('colors.sala.700'); color: theme('colors.texto.2'); }
+    .mov-escena .compra-paso-num { transition: background-color 200ms; }
+    .mov-escena .compra-paso[data-activo] .compra-paso-num { background: theme('colors.carmin.500'); }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+    .compra-escena { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── El nombre a todo el ancho, con pósteres que lo cruzan ── */
+.nombre-gigante { position: relative; margin-top: 3rem; padding-bottom: 2rem; overflow: hidden; }
+.nombre-lema {
+    position: relative;
+    z-index: 2;
+    max-width: 80rem;
+    margin: 0 auto 1.5rem;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+    font-size: clamp(2rem, 4.5vw, 3.4rem);
+    color: #F2EEE6;
+}
+.nombre-lienzo { position: relative; width: 100%; padding: 0 1%; }
+.nombre-ancho { display: block; width: 100%; height: auto; }
+.nombre-ancho text { font-family: theme('fontFamily.contorno'); font-weight: 900; text-transform: uppercase; }
+.nombre-ancho-trazo { fill: none; stroke: theme('colors.carmin.500'); stroke-width: 1.6; }
+.nombre-ancho-relleno { fill: theme('colors.carmin.500'); }
+.nombre-trazo-capa { position: relative; z-index: 1; }
+.nombre-ventana { position: absolute; z-index: 1; inset: 0 1%; overflow: hidden; }
+.nombre-relleno-capa { position: absolute; inset: 0; }
+.cruce {
+    position: absolute;
+    z-index: 2;
+    width: clamp(5rem, 13vw, 11rem);
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: .4rem;
+    border: 1px solid rgb(242 238 230 / .25);
+    box-shadow: 0 18px 40px rgb(0 0 0 / .5);
+}
+.cruce--1 { left: 13%; top: 8%; transform: rotate(-7deg); }
+.cruce--2 { left: 46%; top: 22%; transform: rotate(5deg); }
+.cruce--3 { left: 78%; top: 4%; transform: rotate(-4deg); }
+/* Con el nombre relleno en su estado final (sin movimiento) */

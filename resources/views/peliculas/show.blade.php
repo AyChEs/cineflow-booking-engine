@@ -1,5 +1,7 @@
 @extends('layout')
 
+@section('mov', 'sitio')
+
 @section('title', $pelicula->titulo)
 
 @section('content')
@@ -24,7 +26,7 @@
         <img data-respaldo="{{ $pelicula->cartel_respaldo_url }}" onerror="this.onerror=null;this.src=this.dataset.respaldo"
              src="{{ $pelicula->poster_url }}" alt="Póster de {{ $pelicula->titulo }}" width="300" height="450"
              fetchpriority="high" decoding="async"
-             class="mx-auto aspect-[2/3] w-48 rounded-card border border-sala-700 bg-sala-850 object-cover sm:w-60 md:w-full">
+             class="mx-auto aspect-[2/3] w-48 rounded-card border border-sala-700 bg-sala-850 object-cover sm:w-60 md:w-full" style="view-transition-name: poster-{{ $pelicula->id }}">
 
         <div class="min-w-0">
             <h1 class="display break-words text-[2.25rem] text-texto md:text-[3rem]">{{ $pelicula->titulo }}</h1>
